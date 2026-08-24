@@ -7084,6 +7084,15 @@ const acChip = (a, sel) => {
   <span style="font-size:12.5px;font-weight:600;color:var(--s900)">${a.name}</span>
   ${a.current ? `<span class="cov"><i style="background:${SU}"></i>Current</span>` : ""}
   ${stale ? staleTag() : ""}
+  ${(() => {
+    /* §6 · One contextual state per case, not a row of badges: either it
+       clears everything, or the first limit it misses and by how much. */
+    if (!CRITERIA.length || stale) return "";
+    const f = failsOf(c);
+    if (!f.length) return `<span class="cov" style="border-color:rgba(14,157,168,.3);background:linear-gradient(168deg,rgba(14,157,168,.1),rgba(14,157,168,.05));color:var(--su700)"><i style="background:${SU}"></i>Meets criteria</span>`;
+    const x = f[0];
+    return staleTag(`${x.k.label} ${x.k.fmt(Math.abs(x.by)).replace("−", "")} ${x.k.op === "≤" ? "above limit" : "below target"}`);
+  })()}
   <span style="display:inline-flex;align-items:center;gap:5px">
     <i style="width:4px;height:4px;border-radius:50%;background:${SB};display:block"></i>
     <span class="t-meta">${c.t.short}</span>
@@ -7108,7 +7117,22 @@ const decisionTiles = () => {
       <span class="band" style="font-size:10px">${label}</span>
       <span style="display:block;font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">${fmt(f(w))}</span>
       <span class="t-meta" style="display:block;margin-top:7px">${w.a.name}</span>
-      ${beaten ? `<span class="t-meta" style="display:block;margin-top:6px;color:#9A6208;line-height:1.45">${beaten.a.name} scores higher but is outdated</span>` : ""}
+      ${beaten ? `<span class="t-meta" style="display:block;margin-top:6px;color:${WARN.ink};line-height:1.45">${beaten.a.name} scores higher but is outdated</span>` : ""}
+      ${(() => {
+        /* §7 · With constraints on, the honest headline is the leader among
+           the cases the user would accept — and the outright leader beside
+           it when they differ, because that gap is what the limit costs. */
+        if (!CRITERIA.length) return "";
+        const ok = fresh.filter((z) => eligible(z.c));
+        if (!ok.length) return `<span class="t-meta" style="display:block;margin-top:6px;color:${WARN.ink};line-height:1.45">No case in this comparison meets the criteria</span>`;
+        const wIn = ok.reduce((x, y) => (better(f(y), f(x)) ? y : x));
+        if (wIn.a.id === w.a.id) return `<span class="t-meta" style="display:block;margin-top:6px;color:var(--su700);line-height:1.45">Also the leader within your criteria</span>`;
+        const x0 = failsOf(w.c)[0];
+        return `<span style="display:block;margin-top:8px;padding-top:8px;border-top:1px solid var(--hair)">
+          <span class="t-meta" style="display:block;color:${WARN.ink};line-height:1.45">${w.a.name} is outside your criteria — ${x0.k.label} ${x0.k.fmt(Math.abs(x0.by)).replace("−", "")} ${x0.k.op === "≤" ? "above limit" : "below target"}</span>
+          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.45">Within criteria: <b style="font-weight:600;color:var(--s900)">${fmt(f(wIn))}</b> · ${wIn.a.name}</span>
+        </span>`;
+      })()}
     </div>`;
   };
   return `
@@ -7144,23 +7168,6 @@ const cmpRowAlt = (label, get, src2, best) => {
 const impactBlock = (fromId, toId) => {
   const A = acMetrics(AC(fromId)), B = acMetrics(AC(toId));
   const k = diffKind(A.c, B.c);
-  const row = (label, from, to, delta, good) => `
-  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
-    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">${label}</span>
-    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">${from}</span>
-    <span style="flex:none;color:var(--s400);display:flex">${ic("right", 13, 2)}</span>
-    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${to}</span>
-    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:${good === null ? "var(--s700)" : good ? "#0E9469" : "#C22222"}">${delta}</span>
-  </div>`;
-  const side = (band, tone, chip, rows) => `
-  <div style="flex:1;min-width:0;padding:18px 20px;border-radius:var(--r-sm);
-       background:linear-gradient(168deg,${tone === "rv" ? "rgba(175,71,178,.05)" : "rgba(37,99,235,.05)"},rgba(255,255,255,0) 70%);
-       box-shadow:inset 0 0 0 1px ${tone === "rv" ? "rgba(175,71,178,.14)" : "rgba(37,99,235,.14)"}">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-      <span class="band" style="font-size:10px;color:${tone === "rv" ? "var(--rv600)" : "var(--b700)"}">${band}</span>${chip}
-    </div>
-    ${rows}
-  </div>`;
   /* §10 · "What did I have to change and what did I get in return?" — the
      shortest form of the trade-off, in the header, before the evidence.
      The sentence underneath is selected from the figures, never written:
@@ -7183,29 +7190,48 @@ const impactBlock = (fromId, toId) => {
     <span class="t-card" style="font-size:16px">${AC(toId).name}</span>
     <span class="t-meta">vs ${AC(fromId).name}</span>
     <span class="cov"><i style="background:${k.dot}"></i>${k.label}</span>
-    <span style="flex:1"></span>
-    <span style="display:inline-flex;align-items:center;gap:10px">
-      <span class="t-meta">Requires</span>
-      <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${capital ? (dCap >= 0 ? "+" : "−") + "€" + Math.abs(dCap).toFixed(1) + "M" : "no new capital"}</b>
-      <span style="color:var(--s400);display:flex">${ic("right", 13, 2)}</span>
-      <span class="t-meta">Produces</span>
-      <b style="font-size:13.5px;font-weight:600;color:${dNpv >= 0 ? "#0E9469" : "#C22222"};font-variant-numeric:tabular-nums">${(dNpv >= 0 ? "+" : "−") + eurMs(Math.abs(dNpv))} NPV</b>
-    </span>
   </div>
-  <div style="display:flex;gap:16px;align-items:stretch">
-    ${side("Technical change", "sb", src("storebrid"), A.c.t.id === B.c.t.id
-      ? `<div style="margin-top:13px;font-size:13.5px;font-weight:600;color:var(--s400)">None</div>
-         <div class="t-meta" style="margin-top:7px;line-height:1.55">Same StoreBrid simulation — ${B.c.t.mw} MW / ${B.c.t.mwh} MWh, ${B.c.t.gwh} GWh discharged. Nothing was rebuilt to earn the difference.</div>`
-      : row("Storage capacity", A.c.t.mwh + " MWh", B.c.t.mwh + " MWh", (B.c.t.mwh - A.c.t.mwh >= 0 ? "+" : "−") + Math.abs(B.c.t.mwh - A.c.t.mwh) + " MWh", null) +
-        row("Duration", A.c.t.dur.toFixed(1) + " h", B.c.t.dur.toFixed(1) + " h", (B.c.t.dur - A.c.t.dur >= 0 ? "+" : "−") + Math.abs(B.c.t.dur - A.c.t.dur).toFixed(1) + " h", null) +
-        row("Energy discharged", A.c.t.gwh + " GWh", B.c.t.gwh + " GWh", (B.c.t.gwh - A.c.t.gwh >= 0 ? "+" : "−") + Math.abs(B.c.t.gwh - A.c.t.gwh).toFixed(1) + " GWh", null))}
-    ${side("Financial impact", "rv", src("revenew"),
-      row("CAPEX", "€" + A.capex.toFixed(1) + "M", "€" + B.capex.toFixed(1) + "M", (B.capex - A.capex >= 0 ? "+" : "−") + "€" + Math.abs(B.capex - A.capex).toFixed(1) + "M", B.capex <= A.capex) +
-      row("Revenue", eurM(A.rev), eurM(B.rev), (B.rev - A.rev >= 0 ? "+" : "−") + eurM(Math.abs(B.rev - A.rev)) + "/yr", B.rev >= A.rev) +
-      row("NPV", eurMs(A.npv), eurMs(B.npv), (B.npv - A.npv >= 0 ? "+" : "−") + "€" + Math.abs(B.npv - A.npv).toFixed(1) + "M", B.npv >= A.npv) +
-      row("IRR", A.irr.toFixed(1) + "%", B.irr.toFixed(1) + "%", (B.irr - A.irr >= 0 ? "+" : "−") + Math.abs(B.irr - A.irr).toFixed(1) + " pp", B.irr >= A.irr) +
-      row("Payback", A.pb.toFixed(1) + " y", B.pb.toFixed(1) + " y", (B.pb - A.pb >= 0 ? "+" : "−") + Math.abs(B.pb - A.pb).toFixed(1) + " y", B.pb <= A.pb))}
-  </div>
+  ${(() => {
+    /* §4 · The three questions a comparison has to answer before any table:
+       what does it cost, what does that buy technically, and what comes out
+       financially. Splitting ENABLES from REQUIRES matters — capital and
+       the physical capability it buys are different things, and collapsing
+       them into "technical change" hides which one the user is trading. */
+    const sgn = (v, d, u) => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(d) + u;
+    const tSame = A.c.t.id === B.c.t.id;
+    const grp = (band, tone, sr, rows, none) => `
+      <div style="flex:1;min-width:0;padding:16px 20px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="band" style="font-size:10px;color:${tone}">${band}</span>${sr}
+        </div>
+        ${rows.length ? `<div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">${rows.map(([v, l]) => `
+          <span>
+            <span style="display:block;font-size:16px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${v}</span>
+            <span class="t-meta" style="display:block;margin-top:2px">${l}</span>
+          </span>`).join("")}</div>`
+        : `<p class="t-meta" style="margin-top:12px;line-height:1.55">${none}</p>`}
+      </div>`;
+    return `
+<div style="display:flex;align-items:stretch;margin-bottom:16px;border-radius:var(--r-sm);overflow:hidden;
+     background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.28));box-shadow:inset 0 0 0 1px var(--hair)">
+  ${grp("Requires", "var(--b700)", src("storebrid"),
+    tSame ? [] : [[sgn(B.c.t.mwh - A.c.t.mwh, 0, " MWh"), "additional storage"],
+                  [sgn(B.capex - A.capex, 1, "M").replace(/([+−])/, "$1€"), "additional CAPEX"]],
+    "No additional capital. The same StoreBrid simulation stands behind both cases.")}
+  <span style="width:1px;background:var(--hair);flex:none"></span>
+  ${grp("Enables", "var(--b700)", src("storebrid"),
+    tSame ? [] : [[sgn(B.c.t.gwh - A.c.t.gwh, 1, " GWh/yr"), "more energy discharged"],
+                  [sgn(B.c.t.dur - A.c.t.dur, 1, " h"), "duration at the same power"]],
+    "Nothing changes physically — the asset moves the same energy.")}
+  <span style="width:1px;background:var(--hair);flex:none"></span>
+  ${grp("Produces", "var(--rv600)", src("revenew"),
+    [[sgn(B.rev - A.rev, 2, "M/yr").replace(/([+−])/, "$1€"), "expected revenue"],
+     [sgn(B.npv - A.npv, 1, "M").replace(/([+−])/, "$1€"), "net present value"],
+     [sgn(B.irr - A.irr, 1, " pp"), "internal rate of return"]], "")}
+</div>`;
+  })()}
+
+
   <div style="display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)">
     <span class="band" style="flex:none;color:var(--su700);padding-top:2px">Trade-off</span>
     <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.6">${tradeOff}</span>
@@ -7280,6 +7306,38 @@ function deltaBars(w = 1240) {
 }
 
 /* §6 · a comparison someone made is worth keeping */
+/* §2-§3 · What the user brought with them from the matrix: what they are
+   optimising, what they will not accept, and what everything is measured
+   against. Editable here so nobody has to walk back to the matrix to move
+   a limit — but only these three. Anything that would change a model is a
+   deep link, not a field. */
+const decisionContext = ({ mk = "npvObj" } = {}) => {
+  const objLabel = mk === "npvObj" ? "Maximise NPV" : objectiveOf(mk);
+  const cell = (band, body, edit) => `
+    <div style="flex:none;padding:0 20px;border-left:1px solid var(--hair)">
+      <span class="band" style="font-size:10px">${band}</span>
+      <div style="display:flex;align-items:center;gap:9px;margin-top:7px">${body}
+        ${edit ? `<a href="#" style="font-size:11.5px;font-weight:500">Edit</a>` : ""}</div>
+    </div>`;
+  return `
+<section class="panel" style="display:flex;align-items:center;padding:15px 0;margin-bottom:20px;flex-wrap:wrap;row-gap:12px">
+  <div style="flex:1;min-width:220px;padding:0 20px">
+    <span class="band" style="font-size:10px;color:var(--su700)">Decision context</span>
+    <div class="t-meta" style="margin-top:7px;line-height:1.45">Carried from the case matrix. It sets what these deltas are for.</div>
+  </div>
+  ${cell("Objective", `<b style="font-size:13.5px;font-weight:600;color:var(--s900)">${objLabel}</b>${src("revenew")}`, true)}
+  ${cell("Constraints", CRITERIA.length
+      ? CRITERIA.map(({ key, target }) => {
+          const k = CRIT_SPEC[key];
+          return `<span class="cov" style="gap:6px"><span style="color:var(--s500)">${k.label}</span><b style="font-weight:600;color:var(--s900)">${k.op} ${k.fmt(target)}</b></span>`;
+        }).join("")
+      : `<span class="t-meta">None</span>`, true)}
+  ${cell("Baseline", `<span style="display:inline-flex;align-items:center;gap:7px">
+      <i style="width:5px;height:5px;border-radius:50%;background:${SU};display:block"></i>
+      <b style="font-size:13.5px;font-weight:600;color:var(--s900)">${AC("base").name}</b></span>`, true)}
+</section>`;
+};
+
 const savedBar = () => `
 <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;margin-bottom:20px;border-radius:var(--r-sm);
      background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 72%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.16)">
@@ -7291,7 +7349,7 @@ const savedBar = () => `
   <span style="display:flex;gap:8px;flex:none">
     <button class="btn btn-ghost" style="height:32px;font-size:12px">${ic("clock", 14)}Saved comparisons${ic("down", 13, 1.8)}</button>
     <button class="btn btn-secondary" style="height:32px;font-size:12px">${ic("file", 14)}Export brief</button>
-    <button class="btn btn-secondary" style="height:32px;font-size:12px">${ic("check", 14, 1.9)}Save</button>
+    <button class="btn btn-secondary" style="height:32px;font-size:12px">${ic("check", 14, 1.9)}Save decision brief</button>
   </span>
 </div>`;
 
@@ -7306,6 +7364,7 @@ ${head({
   meta: "Compare saved analysis cases and see what each trade-off costs and returns. Exploring every possible pairing is <a href=\"#\">Case matrix</a>.",
   actions: `<button class="btn btn-primary">${ic("plus", 16, 1.9)}New analysis case</button>`,
 })}
+${decisionContext()}
 ${savedBar()}
 <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap">
   ${ACASES.map((a) => acChip(a, true)).join("")}
@@ -7324,6 +7383,47 @@ ${decisionTiles()}
 <p class="t-meta" style="margin-top:12px;line-height:1.6;max-width:112ch">
   Four objectives, three analysis cases, no single winner. The Suite names the trade-off; the choice is yours.
 </p>
+
+${(() => {
+  /* §8 · The matrix already computed how far each asset moves across the
+     financial cases. Here it answers a different question than it does
+     there: not "which configuration is steadiest" but "how much of this
+     delta survives if the market view turns out wrong". One row per case,
+     not another matrix. */
+  const rows = ACASES.map((a) => {
+    const c = acCase(a);
+    const vs = SCEN.map((sc) => caseOf(c.t.id, sc.id).irr);
+    return { a, c, lo: Math.min(...vs), hi: Math.max(...vs) };
+  });
+  const A0 = Math.min(...rows.map((r) => r.lo)) - 0.6, B0 = Math.max(...rows.map((r) => r.hi)) + 0.6;
+  const pct = (v) => ((v - A0) / (B0 - A0)) * 100;
+  return `
+${sec({ label: "Market sensitivity", source: src("combined"),
+        sub: "How far each case's IRR moves across the three financial cases, holding its asset constant. The range belongs to the technical simulation, so two cases built on the same asset share it and differ only in where they sit inside it. Modelled views, not probabilities — a range, not a distribution." })}
+<section class="panel" style="padding:22px 26px">
+  ${rows.map((r, i) => `
+  <div style="display:flex;align-items:center;gap:16px;padding:13px 0;${i ? "border-top:1px solid var(--hair)" : ""}">
+    <span style="flex:none;width:200px;min-width:0">
+      <span style="display:block;font-size:13.5px;font-weight:600;color:var(--s900)">${r.a.name}</span>
+      <span class="t-meta" style="display:block;margin-top:2px">${r.c.t.short}</span>
+    </span>
+    <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
+      <span style="position:absolute;left:0;right:0;top:9px;height:1px;background:var(--hair);display:block"></span>
+      <span style="position:absolute;top:6.5px;height:7px;border-radius:4px;display:block;
+            left:${pct(r.lo).toFixed(1)}%;width:${(pct(r.hi) - pct(r.lo)).toFixed(1)}%;
+            background:linear-gradient(90deg,rgba(175,71,178,.34),rgba(37,99,235,.5))"></span>
+      <span class="mk" style="position:absolute;top:4px;left:${pct(r.c.irr).toFixed(1)}%;margin-left:-6px;width:12px;height:12px;
+            border-radius:50%;display:block;background:#fff;box-shadow:0 0 0 2px ${SU}"></span>
+    </span>
+    <span style="flex:none;width:132px;text-align:right;font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${r.lo.toFixed(1)}–${r.hi.toFixed(1)}%</span>
+  </div>`).join("")}
+  <div style="display:flex;align-items:center;gap:16px;margin-top:14px;padding-top:12px;border-top:1px solid var(--hair)">
+    <span style="display:inline-flex;align-items:center;gap:7px"><i style="width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px ${SU};display:block"></i><span class="t-meta">Where this case sits on its own financial case</span></span>
+    <span style="flex:1"></span>
+    <a href="#" style="font-size:12.5px;font-weight:500">Full sensitivity in the case matrix${ic("right", 12, 2)}</a>
+  </div>
+</section>`;
+})()}
 
 <section class="panel lift" style="padding:24px 26px;margin-top:26px">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:12px">
@@ -7428,10 +7528,76 @@ const createAC = () => {
   });
 };
 writeFileSync("CreateAnalysisCase.dc.html",
-  doc({ w: 1440, h: 2380, side: projectSide("compare"), body: alternativesBody(), overlay: createAC() }));
+  doc({ w: 1440, h: 2820, side: projectSide("compare"), body: alternativesBody(), overlay: createAC() }));
+
+/* ═══════════════════════════════════════════════════════════════
+   §13-§17 · DECISION BRIEF
+   "Save comparison" kept a set of chips. What was missing was the
+   reasoning: what question was being asked, what was being optimised,
+   what would not be accepted, and what the person concluded. All of it
+   already exists on the screen except the last two, so the brief is a
+   capture step, not a new module — the only things it asks for are the
+   question and the note, because those are the only things the product
+   cannot derive.
+
+   §18-§19 · It also stays out of the way of the other two concepts: a
+   brief is saved reasoning, the baseline is the reference for deltas,
+   and the current analysis is what Overview shows. Nothing here
+   approves, locks or signs anything off.
+   ═══════════════════════════════════════════════════════════════ */
+const briefRow = (label, body, sr) => `
+<div style="display:flex;align-items:flex-start;gap:16px;padding:11px 0;border-top:1px solid var(--hair)">
+  <span class="t-meta" style="width:132px;flex:none;padding-top:2px">${label}</span>
+  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s900);line-height:1.55">${body}</span>
+  ${sr ? `<span style="flex:none">${sr}</span>` : ""}
+</div>`;
+
+const decisionBrief = () => {
+  const base = acMetrics(AC("base")), high = acMetrics(AC("high"));
+  return capabilityModal({
+    title: "Save decision brief", context: "Valencia BESS · Compare", accent: SU, source: src("suite"),
+    openIn: "Saved briefs", width: 720,
+    footNote: "A brief records reasoning, not approval. Nothing here is signed off or locked, and the figures re-read from both products when it is reopened.",
+    cancel: "Cancel", confirm: "Save decision brief",
+    body: `
+    <div style="padding:22px 24px">
+      ${field("Decision question", "Is 4 h storage worth the additional CAPEX?", { req: true,
+        help: "The question this comparison exists to answer. It is what the brief is filed under." })}
+
+      <div class="wash" style="padding:16px 18px;margin-top:4px">
+        <div class="band" style="font-size:10px;color:var(--su700)">Captured from this comparison</div>
+        <div style="margin-top:6px">
+          ${briefRow("Objective", `Maximise NPV`, src("revenew"))}
+          ${briefRow("Constraints", CRITERIA.map(({ key, target }) => {
+            const k = CRIT_SPEC[key]; return `${k.label} ${k.op} ${k.fmt(target)}`;
+          }).join(" · ") || "None")}
+          ${briefRow("Baseline", AC("base").name, src("suite"))}
+          ${briefRow("Cases compared", ACASES.map((a) => a.name).join(" · "), src("suite"))}
+          ${briefRow("Key deltas",
+            `High storage: +€${(high.capex - base.capex).toFixed(1)}M CAPEX → ${eurMs(high.npv - base.npv)} NPV, ${(high.irr - base.irr).toFixed(1)} pp IRR`,
+            src("combined"))}
+          ${briefRow("Sensitivity", `Base 2 h 9.6–13.4% IRR · 4 h variant 10.0–14.1% IRR across the three financial cases`, src("combined"))}
+          ${briefRow("Trade-off",
+            `The extra €${(high.capex - base.capex).toFixed(1)}M adds ${eurMs(high.npv - base.npv)} of absolute value but improves return on capital by only ${(high.irr - base.irr).toFixed(1)} pp.`,
+            src("combined"))}
+          ${briefRow("Data status",
+            `<span style="display:inline-flex;align-items:center;gap:8px">${staleTag()}<span class="t-meta">Stress test — excluded from the deterministic conclusions</span></span>`)}
+          ${briefRow("Saved by", "Victor Andújar · 21 August 2026, 14:22")}
+        </div>
+      </div>
+
+      ${field("Decision note", "Proceed with Base 2 h for now; High storage only becomes attractive under High spread assumptions.", {
+        help: "Optional, and yours to write. The Suite never generates this." })}
+    </div>`,
+  });
+};
+
+writeFileSync("DecisionBrief.dc.html", doc({ w: 1440, h: 2820, side: projectSide("compare"),
+  body: alternativesBody(), overlay: decisionBrief() }));
+console.log("DecisionBrief.dc.html");
 
 writeFileSync("CompareAlternatives.dc.html",
-  doc({ w: 1440, h: 2380, side: projectSide("compare"), body: alternativesBody() }));
+  doc({ w: 1440, h: 2820, side: projectSide("compare"), body: alternativesBody() }));
 
 /* ═══════════════════════════════════════════════════════════════
    §3 · SIGN IN — the way into the Suite
@@ -7564,7 +7730,7 @@ console.log("Login.dc.html", login.length);
 
 /* §2 · the full table as its own destination, one level below Compare. */
 writeFileSync("CompareAllMetrics.dc.html",
-  doc({ w: 1440, h: 3200, side: projectSide("compare"), body: alternativesBody({ detail: true }) }));
+  doc({ w: 1440, h: 3660, side: projectSide("compare"), body: alternativesBody({ detail: true }) }));
 console.log("CompareAllMetrics.dc.html");
 
 /* ═══════════════════════════════════════════════════════════════
@@ -7711,13 +7877,14 @@ const PAGES = [
      ["CaseMatrix.dc.html", 1440, 3190, "2 · Case matrix"],
      ["CaseMatrixRobustness.dc.html", 1440, 1180, "2b · Case matrix — robustness"],
      ["CaseMatrixUnevaluated.dc.html", 1440, 3190, "2c · Case matrix — evaluation states"],
-     ["CompareAlternatives.dc.html", 1440, 2380, "3 · Compare"],
-     ["CompareAllMetrics.dc.html", 1440, 3200, "3b · Compare — all metrics"]],
+     ["CompareAlternatives.dc.html", 1440, 2820, "3 · Compare"],
+     ["CompareAllMetrics.dc.html", 1440, 3660, "3b · Compare — all metrics"],
+     ["DecisionBrief.dc.html", 1440, 2820, "3c · Save decision brief"]],
     [["OverviewChangeSim.dc.html", 1440, 2190, "4 · Change technical simulation"],
      ["OverviewChangeScenario.dc.html", 1440, 2190, "5 · Change financial case"],
      ["OverviewTechnical.dc.html", 1440, 2190, "6 · Technical details"]],
     [["FinancialDetails.dc.html", 1440, 1160, "7 · Financial details"],
-     ["CreateAnalysisCase.dc.html", 1440, 2380, "8 · Create analysis case"],
+     ["CreateAnalysisCase.dc.html", 1440, 2820, "8 · Create analysis case"],
      ["CompareExplained.dc.html", 1440, 4910, "9 · Explain difference"]],
     [["OverviewStale.dc.html", 1440, 2280, "10 · Financial results outdated"],
      ["EditProjectDetails.dc.html", 1440, 2190, "11 · Project details"]],
@@ -7746,6 +7913,7 @@ const PAGES = [
 ];
 
 const NOTES = {
+  "DecisionBrief.dc.html": ["n-brief", "3c · SAVE DECISION BRIEF\n\nSaving a comparison kept a set of chips. What it never kept was the reasoning: what question was being asked, what was being optimised, what would not be accepted, and what the person concluded.\n\nEverything in the captured block already exists on the screen — objective, constraints, baseline, cases, deltas, sensitivity, trade-off, data status. So the brief is a capture step, not a new module, and it asks for exactly two things the product cannot derive: the question and the note. The note is explicitly the user's to write; nothing generates it.\n\nIt stays out of the way of the other two concepts. A brief is saved reasoning; the baseline is the reference deltas are measured against; the current analysis is what Overview shows. And it stops short of governance — no approvals, no sign-off, no locking. The figures re-read from both products when it is reopened, so a brief follows its sources instead of freezing a copy of them."],
   "CaseMatrixUnevaluated.dc.html": ["n-uneval", "2c · CASE MATRIX — EVALUATION STATES\n\nEvery other screen assumes a combination can be read live, because that is what the current architecture implies. If evaluating one turns out to cost something, the matrix must not draw a number that does not exist yet.\n\nSo the cell has a second life cycle beside its freshness one: NOT EVALUATED with a Calculate action, CALCULATING while it runs, then AVAILABLE. Saved analysis cases are always available — they were evaluated when they were named. The layout does not change; only what the cell is allowed to claim.\n\nDesigned so the product can ship against either backend model without a redesign, and so nobody has to decide the architecture to unblock the design."],
   "CaseMatrixRobustness.dc.html": ["n-robust", "2b · CASE MATRIX — ROBUSTNESS\n\nThe same screen, second tab. The matrix already holds every asset against every financial case, so the spread of a row is free information: how much of the outcome the market decides rather than the asset.\n\nThe language is constrained by what the data actually is. Three financial cases are three modelled views; they carry no probabilities. So this reads as a RANGE, never a distribution — no risk, no confidence, no expected value, and nothing weighted, because weighting needs probabilities nobody supplied.\n\nThe three summaries — highest upside, highest floor, smallest variation — are readings, not a ranking. Which of them matters depends on the decision, and the Suite has no way to know that. Note the honest tie: two configurations move by the same 3.8 pp, and the card says so rather than picking one."],
   "ActivityDecisions.dc.html": ["n-actdec", "ACTIVITY — ANALYSIS & DECISIONS\n\nThe same screen with a second filter axis. Provenance answers WHICH PRODUCT did it; this one answers WHAT KIND of thing happened — and the kind people come looking for is the decision.\n\nWhere the current analysis changed, the row keeps the figures each pairing produced at that moment: what was active, what replaced it, what each was worth. That answers \"what was active before, what replaced it, when, and who changed it\" without turning Activity into an audit screen.\n\nThis is why there is no Decision History page. With these two filters, one would be the same events under a second name."],

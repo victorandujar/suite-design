@@ -43,7 +43,7 @@
       "file": "CompareAlternatives.dc.html",
       "y": 0,
       "w": 1440,
-      "h": 2380,
+      "h": 2820,
       "title": "3 · Compare",
       "print": "fixed",
       "page": "page-1"
@@ -52,15 +52,24 @@
       "file": "CompareAllMetrics.dc.html",
       "y": 0,
       "w": 1440,
-      "h": 3200,
+      "h": 3660,
       "title": "3b · Compare — all metrics",
+      "print": "fixed",
+      "page": "page-1"
+    },
+    {
+      "file": "DecisionBrief.dc.html",
+      "y": 0,
+      "w": 1440,
+      "h": 2820,
+      "title": "3c · Save decision brief",
       "print": "fixed",
       "page": "page-1"
     },
     {
       "file": "OverviewChangeSim.dc.html",
       "x": 0,
-      "y": 4140,
+      "y": 4600,
       "w": 1440,
       "h": 2190,
       "title": "4 · Change technical simulation",
@@ -70,7 +79,7 @@
     {
       "file": "OverviewChangeScenario.dc.html",
       "x": 1560,
-      "y": 4140,
+      "y": 4600,
       "w": 1440,
       "h": 2190,
       "title": "5 · Change financial case",
@@ -80,7 +89,7 @@
     {
       "file": "OverviewTechnical.dc.html",
       "x": 3120,
-      "y": 4140,
+      "y": 4600,
       "w": 1440,
       "h": 2190,
       "title": "6 · Technical details",
@@ -90,7 +99,7 @@
     {
       "file": "FinancialDetails.dc.html",
       "x": 0,
-      "y": 7270,
+      "y": 7730,
       "w": 1440,
       "h": 1160,
       "title": "7 · Financial details",
@@ -100,9 +109,9 @@
     {
       "file": "CreateAnalysisCase.dc.html",
       "x": 1560,
-      "y": 7270,
+      "y": 7730,
       "w": 1440,
-      "h": 2380,
+      "h": 2820,
       "title": "8 · Create analysis case",
       "print": "fixed",
       "page": "page-1"
@@ -110,7 +119,7 @@
     {
       "file": "CompareExplained.dc.html",
       "x": 3120,
-      "y": 7270,
+      "y": 7730,
       "w": 1440,
       "h": 4910,
       "title": "9 · Explain difference",
@@ -120,7 +129,7 @@
     {
       "file": "OverviewStale.dc.html",
       "x": 0,
-      "y": 13120,
+      "y": 13580,
       "w": 1440,
       "h": 2280,
       "title": "10 · Financial results outdated",
@@ -130,7 +139,7 @@
     {
       "file": "EditProjectDetails.dc.html",
       "x": 1560,
-      "y": 13120,
+      "y": 13580,
       "w": 1440,
       "h": 2190,
       "title": "11 · Project details",
@@ -140,7 +149,7 @@
     {
       "file": "Login.dc.html",
       "x": 0,
-      "y": 16340,
+      "y": 16800,
       "w": 1440,
       "h": 900,
       "title": "Sign in",
@@ -150,7 +159,7 @@
     {
       "file": "NeedsAttention.dc.html",
       "x": 1560,
-      "y": 16340,
+      "y": 16800,
       "w": 1440,
       "h": 1710,
       "title": "Needs attention",
@@ -160,7 +169,7 @@
     {
       "file": "Main.dc.html",
       "x": 0,
-      "y": 18990,
+      "y": 19450,
       "w": 1440,
       "h": 1710,
       "title": "Home",
@@ -170,7 +179,7 @@
     {
       "file": "Projects.dc.html",
       "x": 1560,
-      "y": 18990,
+      "y": 19450,
       "w": 1440,
       "h": 800,
       "title": "Projects",
@@ -180,7 +189,7 @@
     {
       "file": "CreateProject.dc.html",
       "x": 3120,
-      "y": 18990,
+      "y": 19450,
       "w": 1440,
       "h": 1380,
       "title": "Create project",
@@ -190,7 +199,7 @@
     {
       "file": "Analytics.dc.html",
       "x": 0,
-      "y": 21640,
+      "y": 22100,
       "w": 1440,
       "h": 1990,
       "title": "Analytics",
@@ -200,7 +209,7 @@
     {
       "file": "Files.dc.html",
       "x": 1560,
-      "y": 21640,
+      "y": 22100,
       "w": 1440,
       "h": 870,
       "title": "Files",
@@ -210,7 +219,7 @@
     {
       "file": "Activity.dc.html",
       "x": 3120,
-      "y": 21640,
+      "y": 22100,
       "w": 1440,
       "h": 1280,
       "title": "Activity",
@@ -220,7 +229,7 @@
     {
       "file": "Settings.dc.html",
       "x": 0,
-      "y": 24570,
+      "y": 25030,
       "w": 1440,
       "h": 1600,
       "title": "Settings",
@@ -230,7 +239,7 @@
     {
       "file": "ActivityDecisions.dc.html",
       "x": 1560,
-      "y": 24570,
+      "y": 25030,
       "w": 1440,
       "h": 1180,
       "title": "Activity — analysis & decisions",
@@ -240,7 +249,7 @@
     {
       "file": "ProjectStoreBrid.dc.html",
       "x": 0,
-      "y": 27110,
+      "y": 27570,
       "w": 1440,
       "h": 1170,
       "title": "Project — engineering licence",
@@ -250,7 +259,7 @@
     {
       "file": "ProjectReveNew.dc.html",
       "x": 1560,
-      "y": 27110,
+      "y": 27570,
       "w": 1440,
       "h": 1140,
       "title": "Project — financial licence",
@@ -260,7 +269,7 @@
     {
       "file": "ProjectNew.dc.html",
       "x": 3120,
-      "y": 27110,
+      "y": 27570,
       "w": 1440,
       "h": 1020,
       "title": "New project",
@@ -270,7 +279,7 @@
     {
       "file": "States.dc.html",
       "x": 0,
-      "y": 29220,
+      "y": 29680,
       "w": 1440,
       "h": 850,
       "title": "Empty and unavailable",
@@ -280,7 +289,7 @@
     {
       "file": "Administration.dc.html",
       "x": 1560,
-      "y": 29220,
+      "y": 29680,
       "w": 1440,
       "h": 1200,
       "title": "Administration & licences",
@@ -290,7 +299,7 @@
     {
       "file": "SourceAttribution.dc.html",
       "x": 3120,
-      "y": 29220,
+      "y": 29680,
       "w": 860,
       "h": 1130,
       "title": "Patterns",
@@ -300,7 +309,7 @@
     {
       "file": "Flows.dc.html",
       "x": 0,
-      "y": 31360,
+      "y": 31820,
       "w": 1440,
       "h": 1580,
       "title": "End-to-end flows",
@@ -355,9 +364,16 @@
       "page": "page-1"
     },
     {
+      "id": "n-brief",
+      "y": -760,
+      "w": 640,
+      "text": "3c · SAVE DECISION BRIEF\n\nSaving a comparison kept a set of chips. What it never kept was the reasoning: what question was being asked, what was being optimised, what would not be accepted, and what the person concluded.\n\nEverything in the captured block already exists on the screen — objective, constraints, baseline, cases, deltas, sensitivity, trade-off, data status. So the brief is a capture step, not a new module, and it asks for exactly two things the product cannot derive: the question and the note. The note is explicitly the user's to write; nothing generates it.\n\nIt stays out of the way of the other two concepts. A brief is saved reasoning; the baseline is the reference deltas are measured against; the current analysis is what Overview shows. And it stops short of governance — no approvals, no sign-off, no locking. The figures re-read from both products when it is reopened, so a brief follows its sources instead of freezing a copy of them.",
+      "page": "page-1"
+    },
+    {
       "id": "n-chsim",
       "x": 0,
-      "y": 3380,
+      "y": 3840,
       "w": 640,
       "text": "2 · CHANGE TECHNICAL SIMULATION\n\nThe same three simulations, as a focused drawer for when the choice is the only thing on your mind.\n\nEach one shows the figures that separate it — energy, cycles, CAPEX. Creating or editing one is StoreBrid's job, and the footer says so.\n\nFour former screens fold into this plus the Overview list: the simulations list, the simulation overview, its tabs, and the technical results page.",
       "page": "page-1"
@@ -365,7 +381,7 @@
     {
       "id": "n-chscen",
       "x": 1560,
-      "y": 3380,
+      "y": 3840,
       "w": 640,
       "text": "3 · CHANGE FINANCIAL CASE\n\nThe mirror: three ReveNew cases with NPV, IRR and payback.\n\nThis is what \"Scenarios\" became. ReveNew's Forecast, Energy, Revenue, DevEx, CapEx, OpEx and Financial Model scenarios are what BUILD these cases — the Suite shows the case and its result, not the machinery that produced it.",
       "page": "page-1"
@@ -373,7 +389,7 @@
     {
       "id": "n-techdet",
       "x": 3120,
-      "y": 3380,
+      "y": 3840,
       "w": 640,
       "text": "4 · TECHNICAL DETAILS\n\nProgressive disclosure instead of a Technical Results page. Configuration, operation, degradation and the dispatch chart — read-only, one level down from the KPIs that prompted the question.\n\nThe rule this drawer encodes: the Suite shows enough to understand why you might open StoreBrid. It does not try to be StoreBrid.",
       "page": "page-1"
@@ -381,7 +397,7 @@
     {
       "id": "n-findet",
       "x": 0,
-      "y": 6510,
+      "y": 6970,
       "w": 640,
       "text": "5 · FINANCIAL BREAKDOWN\n\nThe financial counterpart: Forecast, Energy, Revenue, Costs and Financial Model in one read-only drawer.\n\nThis is where ReveNew's internal structure is allowed to appear — as supporting detail explaining a number, never as navigation. Nothing here is editable; the only action is Open in ReveNew.",
       "page": "page-1"
@@ -389,7 +405,7 @@
     {
       "id": "n-createac",
       "x": 1560,
-      "y": 6510,
+      "y": 6970,
       "w": 640,
       "text": "8 · CREATE ALTERNATIVE\n\nA name and two selectors. The summary is read live from both products.\n\nAn analysis case is the only object the Suite owns, and it is deliberately thin — no wizard, no CRUD module, no navigation section. It is a saved combination, nothing more.",
       "page": "page-1"
@@ -397,7 +413,7 @@
     {
       "id": "n-explained",
       "x": 3120,
-      "y": 6510,
+      "y": 6970,
       "w": 640,
       "text": "10 · EXPLAIN A DIFFERENCE\n\nA state of Compare, reached from a selected cell. Both dimensions moved between the baseline and this case, so the two combinations that isolate one change each were added from the matrix — nothing was calculated to do it.\n\nThe contribution panel shows both controlled orders and names the residual, because the split depends on which dimension moves first. The Suite reports the difference associated with each step; it never claims a cause.\n\nENTRY POINTS. Reached from a selected matrix cell or from a single delta block in Compare. Either way it opens with the comparison already assembled and the baseline preserved — the controlled intermediates are added from combinations that already exist, and they are never saved as analysis cases. Their use is explanatory; they leave when the explanation does.",
       "page": "page-1"
@@ -405,7 +421,7 @@
     {
       "id": "n-stale",
       "x": 0,
-      "y": 12360,
+      "y": 12820,
       "w": 640,
       "text": "6 · OUT OF SYNC\n\nThe state that two engines make necessary. The simulation was re-run 12 minutes ago; the financial case was last calculated 4 hours ago, so the figures below are the earlier calculation.\n\nIt names what changed, which side is behind, and where to fix it. The rest of the page still renders — hiding the numbers would be worse than labelling them.",
       "page": "page-1"
@@ -413,7 +429,7 @@
     {
       "id": "n-details",
       "x": 1560,
-      "y": 12360,
+      "y": 12820,
       "w": 640,
       "text": "11 · PROJECT DETAILS\n\nName, technology, capacity, currency, COD and location — the shared context both products read, so the Suite edits it directly.\n\nOne project. Not a StoreBrid project plus a ReveNew project plus a Suite project.",
       "page": "page-1"
@@ -421,7 +437,7 @@
     {
       "id": "n-login",
       "x": 0,
-      "y": 15580,
+      "y": 16040,
       "w": 640,
       "text": "SIGN IN\n\nNEW. The set had no entry point of its own — StoreBrid has one, the Suite did not, so the first screen a user met was a product they had not chosen.\n\nIt authenticates, and it does one more job: it says which layer is opening. The provenance dots carry that here exactly as they carry it on every figure elsewhere — teal for the Suite, blue and magenta for the two engines it reads from.\n\nThe copy is explicit that StoreBrid and ReveNew keep their own sign-in, and that nothing is modelled in the Suite. The boundary is stated before the user is inside it.",
       "page": "page-2"
@@ -429,7 +445,7 @@
     {
       "id": "n-attn",
       "x": 1560,
-      "y": 15580,
+      "y": 16040,
       "w": 640,
       "text": "NEEDS ATTENTION — portfolio scale\n\nNEW. Every screen could already say a result was outdated; none of them could say it across projects. Someone with forty projects had no way to find the three that need recalculating except by opening all forty.\n\nIt is deliberately NOT a notification centre. Staleness is a persistent condition, not an event: it does not clear because someone looked at it, and it comes back the moment a simulation is re-run. So there is no read/unread, no dismiss, and no history — a case leaves the list when both sides are back in step, and the panel says so.\n\nEach row carries only what is needed to decide whether to act: whose project, which analysis case, which side fell behind, and the deep link that fixes it. It does not restate the case's figures, because deciding from inside a notification panel is exactly what it should not invite.\n\nThe same panel opens from the sidebar indicator and from the Home counter — one destination, not two.",
       "page": "page-2"
@@ -437,7 +453,7 @@
     {
       "id": "n-home",
       "x": 0,
-      "y": 18230,
+      "y": 18690,
       "w": 640,
       "text": "HOME\n\nCHANGED. ReveNew is no longer represented through scenarios. The KPI row now counts the objects people actually work with — portfolios, simulations, financial models — alongside the two output figures.\n\n\"Portfolio\" was the word this page used for the whole organisation. That word now belongs to a real entity, so the panel is Workspace and RECENT PORTFOLIOS sits under Recent projects. Both levels of work, on the page you land on\n\nCHANGED. One portfolio-level freshness counter, inside the Analysis cases figure rather than beside it: the same amber badge the matrix cell and the Compare row use, reading \"3 need recalculation\", with a link to the filtered list. No project names here — a count and a way in, so the landing page does not turn into a work queue\n\nCHANGED. Home was a KPI dashboard: five inventory counts at equal weight, and the observations that actually need a decision tucked into a bottom corner. The counts now step back and NEEDS YOUR ATTENTION sits directly under Workspace, full width.\n\nEach card is an observation, the two figures that support it, and what it may mean — one technical number read against one financial number. Nothing is generated or recommended; they are subtractions over data that already exists. Conditions that need watching but no decision stay below as Portfolio conditions.",
       "page": "page-2"
@@ -445,7 +461,7 @@
     {
       "id": "n-projects",
       "x": 1560,
-      "y": 18230,
+      "y": 18690,
       "w": 640,
       "text": "PROJECTS\n\nOne registry. The column is CAPABILITIES, never connection status.",
       "page": "page-2"
@@ -453,7 +469,7 @@
     {
       "id": "n-create",
       "x": 3120,
-      "y": 18230,
+      "y": 18690,
       "w": 640,
       "text": "CREATE PROJECT\n\nThe Suite owns the shared context — name, type, currency, coordinates. The map is drawn, not tiled; an artboard has no network.",
       "page": "page-2"
@@ -461,7 +477,7 @@
     {
       "id": "n-analytics",
       "x": 0,
-      "y": 20880,
+      "y": 21340,
       "w": 640,
       "text": "ANALYTICS — portfolio level\n\nAcross projects, where Cases work within one. The scatter neither product can draw, and the monthly view of when moving energy actually earns.\n\nCHANGED. The bubbles were all one colour, which stops being readable somewhere around fifteen projects — and a real portfolio has more. The field is now neutral and the Combined accent is spent only on the two or three assets Performance insights is actually reading out beside the chart. Colour stopped being decoration and became the pointer; the same rule now governs the compared-cases scatter.\n\nCHANGED. A portfolio-scale freshness notice sits under the KPI row, in the same component Compare and the case matrix use. It says how many analysis cases are outdated and that they are excluded from the figures above — which matters, because a portfolio average quietly computed over stale results is the failure this whole vocabulary exists to prevent.",
       "page": "page-2"
@@ -469,7 +485,7 @@
     {
       "id": "n-files",
       "x": 1560,
-      "y": 20880,
+      "y": 21340,
       "w": 640,
       "text": "FILES — Suite-owned\n\nThe shared library both products read from.\n\nCHANGED. Every row now says what reads it — \"Related to Base market · High spread\", \"Related to Base case 2027 and its 2 variants\" — which is the field that makes a shared library worth having. \"Used by\" still records which PRODUCT reads a file; Replace keeps its type, project and everything pointing at it.",
       "page": "page-2"
@@ -477,7 +493,7 @@
     {
       "id": "n-activity",
       "x": 3120,
-      "y": 20880,
+      "y": 21340,
       "w": 640,
       "text": "ACTIVITY\n\nCHANGED. The undefined \"All sources\" dropdown became the filter §26 asked for: All, StoreBrid, ReveNew, Suite, with counts.\n\nThe entries were audited too. A financial scenario is no longer named like a technical simulation, and \"Revenue case Base case 2026 recalculated\" became what actually happens in this product — three cases recalculated, named.",
       "page": "page-2"
@@ -485,7 +501,7 @@
     {
       "id": "n-settings",
       "x": 0,
-      "y": 23810,
+      "y": 24270,
       "w": 640,
       "text": "SETTINGS\n\nNEW. The sidebar had a Settings item that led nowhere.\n\nMinimal on purpose. Shared project context, the units and currency the Suite displays in, and four ANALYSIS DEFAULTS: the technical simulation and financial scenario Overview opens with, the baseline every delta is measured against, and the metric Compare opens with. Those four are genuinely Suite-owned — they are decisions about the pairing, which is the only thing the Suite owns.\n\nThe last row of cards is the boundary in plain sight: everything else is configured in StoreBrid or in ReveNew, and the card says which.",
       "page": "page-2"
@@ -493,7 +509,7 @@
     {
       "id": "n-actdec",
       "x": 1560,
-      "y": 23810,
+      "y": 24270,
       "w": 640,
       "text": "ACTIVITY — ANALYSIS & DECISIONS\n\nThe same screen with a second filter axis. Provenance answers WHICH PRODUCT did it; this one answers WHAT KIND of thing happened — and the kind people come looking for is the decision.\n\nWhere the current analysis changed, the row keeps the figures each pairing produced at that moment: what was active, what replaced it, what each was worth. That answers \"what was active before, what replaced it, when, and who changed it\" without turning Activity into an audit screen.\n\nThis is why there is no Decision History page. With these two filters, one would be the same events under a second name.",
       "page": "page-2"
@@ -501,7 +517,7 @@
     {
       "id": "n-proj-sb",
       "x": 0,
-      "y": 26350,
+      "y": 26810,
       "w": 640,
       "text": "PROJECT — engineering licence\n\nThe same project as page 1. What changed is the viewer. Note the ANALYSIS group is absent: combining needs both sides.",
       "page": "page-3"
@@ -509,7 +525,7 @@
     {
       "id": "n-proj-rv",
       "x": 1560,
-      "y": 26350,
+      "y": 26810,
       "w": 640,
       "text": "PROJECT — financial licence\n\nIdentical project, identical header, entirely different page.",
       "page": "page-3"
@@ -517,7 +533,7 @@
     {
       "id": "n-projnew",
       "x": 3120,
-      "y": 26350,
+      "y": 26810,
       "w": 640,
       "text": "NEW PROJECT\n\nNothing is missing from the project; the domains have not been configured yet.",
       "page": "page-3"
@@ -525,7 +541,7 @@
     {
       "id": "n-states",
       "x": 0,
-      "y": 28460,
+      "y": 28920,
       "w": 640,
       "text": "EMPTY AND UNAVAILABLE\n\nThe project is always whole. What varies is whether a domain's work has started, or whether the viewer holds that licence.",
       "page": "page-3"
@@ -533,7 +549,7 @@
     {
       "id": "n-admin",
       "x": 1560,
-      "y": 28460,
+      "y": 28920,
       "w": 640,
       "text": "ADMINISTRATION & LICENCES\n\nEntitlement visibility. The organisation holds both products; individual members do not.",
       "page": "page-3"
@@ -541,7 +557,7 @@
     {
       "id": "n-attrib",
       "x": 3120,
-      "y": 28460,
+      "y": 28920,
       "w": 640,
       "text": "PATTERNS\n\nThe source chip and the cross-product context line. The boundary rule at the bottom still governs every screen.",
       "page": "page-3"
@@ -549,7 +565,7 @@
     {
       "id": "n-flows",
       "x": 0,
-      "y": 30600,
+      "y": 31060,
       "w": 640,
       "text": "END-TO-END FLOWS\n\nRewritten for the simplified architecture. Blue steps happen in StoreBrid, magenta in ReveNew, teal in the Suite.\n\nThe shape of the product is visible in the colour: the Suite is where the two meet, and every deep edit leaves for the product that owns it.",
       "page": "page-3"

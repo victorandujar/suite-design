@@ -27,6 +27,8 @@ export const NAV = {
   "Project details": "EditProjectDetails",
   "Compare": "CompareAlternatives",
   "Compare all": "CompareAllMetrics",
+  "Save decision brief": "DecisionBrief",
+  "Export brief": "DecisionBrief",
   "Robustness": "CaseMatrixRobustness",
   "Performance": "CaseMatrix",
   "Compare analysis cases": "CompareAlternatives",
