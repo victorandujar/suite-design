@@ -10,6 +10,9 @@ export/jpg/
 export/_shot.png
 export/_s1.html
 export/_me.html
+export/_*.png
+export/_*.html
+export/live/
 
 # Node
 node_modules/
