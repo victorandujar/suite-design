@@ -1,0 +1,494 @@
+[
+ {
+  "img": "export/img/01-cover.png",
+  "w": 1440,
+  "h": 810,
+  "key": "01-cover"
+ },
+ {
+  "img": "export/img/02-value.png",
+  "w": 1440,
+  "h": 810,
+  "key": "02-value"
+ },
+ {
+  "img": "export/img/03-model.png",
+  "w": 1440,
+  "h": 810,
+  "key": "03-model"
+ },
+ {
+  "img": "export/img/99-close.png",
+  "w": 1440,
+  "h": 810,
+  "key": "99-close"
+ },
+ {
+  "img": "export/img/ProjectOverview-1.png",
+  "w": 1440,
+  "h": 912,
+  "key": "ProjectOverview-1",
+  "stem": "ProjectOverview",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/ProjectOverview-2.png",
+  "w": 1204,
+  "h": 1188,
+  "key": "ProjectOverview-2",
+  "stem": "ProjectOverview",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/CaseMatrix-1.png",
+  "w": 1440,
+  "h": 1058,
+  "key": "CaseMatrix-1",
+  "stem": "CaseMatrix",
+  "part": 1,
+  "of": 3
+ },
+ {
+  "img": "export/img/CaseMatrix-2.png",
+  "w": 1204,
+  "h": 577,
+  "key": "CaseMatrix-2",
+  "stem": "CaseMatrix",
+  "part": 2,
+  "of": 3
+ },
+ {
+  "img": "export/img/CaseMatrix-3.png",
+  "w": 1204,
+  "h": 615,
+  "key": "CaseMatrix-3",
+  "stem": "CaseMatrix",
+  "part": 3,
+  "of": 3
+ },
+ {
+  "img": "export/img/CompareAlternatives-1.png",
+  "w": 1440,
+  "h": 753,
+  "key": "CompareAlternatives-1",
+  "stem": "CompareAlternatives",
+  "part": 1,
+  "of": 4
+ },
+ {
+  "img": "export/img/CompareAlternatives-2.png",
+  "w": 1204,
+  "h": 565,
+  "key": "CompareAlternatives-2",
+  "stem": "CompareAlternatives",
+  "part": 2,
+  "of": 4
+ },
+ {
+  "img": "export/img/CompareAlternatives-3.png",
+  "w": 1204,
+  "h": 813,
+  "key": "CompareAlternatives-3",
+  "stem": "CompareAlternatives",
+  "part": 3,
+  "of": 4
+ },
+ {
+  "img": "export/img/CompareAlternatives-4.png",
+  "w": 1204,
+  "h": 869,
+  "key": "CompareAlternatives-4",
+  "stem": "CompareAlternatives",
+  "part": 4,
+  "of": 4
+ },
+ {
+  "img": "export/img/OverviewChangeSim-1.png",
+  "w": 1440,
+  "h": 912,
+  "key": "OverviewChangeSim-1",
+  "stem": "OverviewChangeSim",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/OverviewChangeSim-2.png",
+  "w": 1204,
+  "h": 1188,
+  "key": "OverviewChangeSim-2",
+  "stem": "OverviewChangeSim",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/OverviewChangeScenario-1.png",
+  "w": 1440,
+  "h": 912,
+  "key": "OverviewChangeScenario-1",
+  "stem": "OverviewChangeScenario",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/OverviewChangeScenario-2.png",
+  "w": 1204,
+  "h": 1188,
+  "key": "OverviewChangeScenario-2",
+  "stem": "OverviewChangeScenario",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/OverviewTechnical-1.png",
+  "w": 1440,
+  "h": 912,
+  "key": "OverviewTechnical-1",
+  "stem": "OverviewTechnical",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/OverviewTechnical-2.png",
+  "w": 1204,
+  "h": 1188,
+  "key": "OverviewTechnical-2",
+  "stem": "OverviewTechnical",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/FinancialDetails-1.png",
+  "w": 1440,
+  "h": 478,
+  "key": "FinancialDetails-1",
+  "stem": "FinancialDetails",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/FinancialDetails-2.png",
+  "w": 1204,
+  "h": 682,
+  "key": "FinancialDetails-2",
+  "stem": "FinancialDetails",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/CreateAnalysisCase-1.png",
+  "w": 1440,
+  "h": 753,
+  "key": "CreateAnalysisCase-1",
+  "stem": "CreateAnalysisCase",
+  "part": 1,
+  "of": 4
+ },
+ {
+  "img": "export/img/CreateAnalysisCase-2.png",
+  "w": 1204,
+  "h": 565,
+  "key": "CreateAnalysisCase-2",
+  "stem": "CreateAnalysisCase",
+  "part": 2,
+  "of": 4
+ },
+ {
+  "img": "export/img/CreateAnalysisCase-3.png",
+  "w": 1204,
+  "h": 813,
+  "key": "CreateAnalysisCase-3",
+  "stem": "CreateAnalysisCase",
+  "part": 3,
+  "of": 4
+ },
+ {
+  "img": "export/img/CreateAnalysisCase-4.png",
+  "w": 1204,
+  "h": 869,
+  "key": "CreateAnalysisCase-4",
+  "stem": "CreateAnalysisCase",
+  "part": 4,
+  "of": 4
+ },
+ {
+  "img": "export/img/CompareExplained-1.png",
+  "w": 1440,
+  "h": 699,
+  "key": "CompareExplained-1",
+  "stem": "CompareExplained",
+  "part": 1,
+  "of": 5
+ },
+ {
+  "img": "export/img/CompareExplained-2.png",
+  "w": 1204,
+  "h": 886,
+  "key": "CompareExplained-2",
+  "stem": "CompareExplained",
+  "part": 2,
+  "of": 5
+ },
+ {
+  "img": "export/img/CompareExplained-3.png",
+  "w": 1204,
+  "h": 1021,
+  "key": "CompareExplained-3",
+  "stem": "CompareExplained",
+  "part": 3,
+  "of": 5
+ },
+ {
+  "img": "export/img/CompareExplained-4.png",
+  "w": 1204,
+  "h": 1080,
+  "key": "CompareExplained-4",
+  "stem": "CompareExplained",
+  "part": 4,
+  "of": 5
+ },
+ {
+  "img": "export/img/CompareExplained-5.png",
+  "w": 1204,
+  "h": 1134,
+  "key": "CompareExplained-5",
+  "stem": "CompareExplained",
+  "part": 5,
+  "of": 5
+ },
+ {
+  "img": "export/img/OverviewStale-1.png",
+  "w": 1440,
+  "h": 1000,
+  "key": "OverviewStale-1",
+  "stem": "OverviewStale",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/OverviewStale-2.png",
+  "w": 1204,
+  "h": 1190,
+  "key": "OverviewStale-2",
+  "stem": "OverviewStale",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/EditProjectDetails-1.png",
+  "w": 1440,
+  "h": 912,
+  "key": "EditProjectDetails-1",
+  "stem": "EditProjectDetails",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/EditProjectDetails-2.png",
+  "w": 1204,
+  "h": 1188,
+  "key": "EditProjectDetails-2",
+  "stem": "EditProjectDetails",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/Main-1.png",
+  "w": 1440,
+  "h": 885,
+  "key": "Main-1",
+  "stem": "Main",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/Main-2.png",
+  "w": 1204,
+  "h": 525,
+  "key": "Main-2",
+  "stem": "Main",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/Projects-1.png",
+  "w": 1440,
+  "h": 800,
+  "key": "Projects-1",
+  "stem": "Projects",
+  "part": 1,
+  "of": 1
+ },
+ {
+  "img": "export/img/CreateProject-1.png",
+  "w": 1440,
+  "h": 1061,
+  "key": "CreateProject-1",
+  "stem": "CreateProject",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/CreateProject-2.png",
+  "w": 1204,
+  "h": 319,
+  "key": "CreateProject-2",
+  "stem": "CreateProject",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/Analytics-1.png",
+  "w": 1440,
+  "h": 980,
+  "key": "Analytics-1",
+  "stem": "Analytics",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/Analytics-2.png",
+  "w": 1204,
+  "h": 930,
+  "key": "Analytics-2",
+  "stem": "Analytics",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/Files-1.png",
+  "w": 1440,
+  "h": 870,
+  "key": "Files-1",
+  "stem": "Files",
+  "part": 1,
+  "of": 1
+ },
+ {
+  "img": "export/img/Activity-1.png",
+  "w": 1440,
+  "h": 946,
+  "key": "Activity-1",
+  "stem": "Activity",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/Activity-2.png",
+  "w": 1204,
+  "h": 334,
+  "key": "Activity-2",
+  "stem": "Activity",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/Settings-1.png",
+  "w": 1440,
+  "h": 884,
+  "key": "Settings-1",
+  "stem": "Settings",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/Settings-2.png",
+  "w": 1204,
+  "h": 716,
+  "key": "Settings-2",
+  "stem": "Settings",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/ProjectStoreBrid-1.png",
+  "w": 1440,
+  "h": 816,
+  "key": "ProjectStoreBrid-1",
+  "stem": "ProjectStoreBrid",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/ProjectStoreBrid-2.png",
+  "w": 1204,
+  "h": 354,
+  "key": "ProjectStoreBrid-2",
+  "stem": "ProjectStoreBrid",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/ProjectReveNew-1.png",
+  "w": 1440,
+  "h": 782,
+  "key": "ProjectReveNew-1",
+  "stem": "ProjectReveNew",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/ProjectReveNew-2.png",
+  "w": 1204,
+  "h": 358,
+  "key": "ProjectReveNew-2",
+  "stem": "ProjectReveNew",
+  "part": 2,
+  "of": 2
+ },
+ {
+  "img": "export/img/ProjectNew-1.png",
+  "w": 1440,
+  "h": 1020,
+  "key": "ProjectNew-1",
+  "stem": "ProjectNew",
+  "part": 1,
+  "of": 1
+ },
+ {
+  "img": "export/img/States-1.png",
+  "w": 1440,
+  "h": 850,
+  "key": "States-1",
+  "stem": "States",
+  "part": 1,
+  "of": 1
+ },
+ {
+  "img": "export/img/Administration-1.png",
+  "w": 1440,
+  "h": 1200,
+  "key": "Administration-1",
+  "stem": "Administration",
+  "part": 1,
+  "of": 1
+ },
+ {
+  "img": "export/img/SourceAttribution-1.png",
+  "w": 860,
+  "h": 1130,
+  "key": "SourceAttribution-1",
+  "stem": "SourceAttribution",
+  "part": 1,
+  "of": 1
+ },
+ {
+  "img": "export/img/Flows-1.png",
+  "w": 1440,
+  "h": 958,
+  "key": "Flows-1",
+  "stem": "Flows",
+  "part": 1,
+  "of": 2
+ },
+ {
+  "img": "export/img/Flows-2.png",
+  "w": 1440,
+  "h": 622,
+  "key": "Flows-2",
+  "stem": "Flows",
+  "part": 2,
+  "of": 2
+ }
+]

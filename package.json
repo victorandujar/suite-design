@@ -1,0 +1,11 @@
+{
+  "name": "sunveon-suite-prototype",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Prototipo de diseño de la Suite Sunveon (StoreBrid + ReveNew)",
+  "scripts": {
+    "build": "node build-site.mjs",
+    "dev": "node build-site.mjs && npx --yes serve public"
+  }
+}

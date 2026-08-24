@@ -1,0 +1,878 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  /* StoreBrid's tokens, inherited verbatim from the StoreBrid UI Rework canvas */
+  --b400:#60A5FA; --b500:#3B82F6; --b600:#2563EB; --b700:#1D4ED8; --b800:#1E40AF;
+  --cy:#06B6D4; --cy600:#0891B2;
+  --ok:#10B981; --warn:#F59E0B; --bad:#DC2626; --run:#8B5CF6; --info:#3B82F6;
+  --s100:#F1F5F9; --s300:#CBD5E1; --s400:#5F6C82; --s500:#54617A; --s700:#334155; --s900:#0F172A;
+  --hair:rgba(30,58,138,.07);
+  --edge:rgba(255,255,255,.80); --edge-soft:rgba(255,255,255,.62); --lit:rgba(255,255,255,.92);
+  --sh-xs:0 1px 2px rgba(30,58,138,.05);
+  --sh-sm:0 2px 10px -4px rgba(30,58,138,.12);
+  --sh-md:0 14px 34px -18px rgba(30,58,138,.26),0 2px 8px -3px rgba(30,58,138,.07);
+  --sh-lg:0 26px 60px -28px rgba(30,58,138,.30),0 4px 14px -6px rgba(30,58,138,.08);
+  --sh-xl:0 40px 90px -40px rgba(30,58,138,.34),0 6px 18px -8px rgba(30,58,138,.09);
+  --sh-b:0 10px 28px -10px rgba(37,99,235,.50),0 2px 6px -1px rgba(37,99,235,.22);
+  --lume:0 40px 120px -52px rgba(37,99,235,.55);
+  --r-xs:10px; --r-sm:12px; --r-md:16px; --r-lg:20px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  /* ReveNew's dimension */
+  --rv:#AF47B2; --rv600:#9A3E9D; --rv400:#C74FC9; --rv-deep:#7B2D80;
+  --lume-rv:0 40px 120px -52px rgba(175,71,178,.34);
+  /* The Suite's own parent colour — the neutral bridge between them.
+     Aqua-teal, never green, and never used for Combined (§24). */
+  --su:#0E9DA8; --su600:#0C838D; --su700:#0A6E77;
+  --lume-su:0 40px 120px -52px rgba(14,157,168,.34);
+  /* Combined = both datasets participating. A restrained blend of the two. */
+  --cmb:#6D5AC6;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--s900);
+  font-size:14px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+h1,h2,h3,h4,p{margin:0}
+a{color:var(--b700);text-decoration:none}
+a:hover{color:var(--b800)}
+
+/* ── Level 0 · page atmosphere ───────────────────────────────────
+   StoreBrid's four fields, unchanged, plus one very faint violet
+   field on the financial side — the only place the Suite's parent
+   identity differs from StoreBrid's.                                */
+.atmos{
+  min-height:100%;
+  background:
+    radial-gradient(1700px 1180px at 10% -12%, rgba(105,200,208,.17), rgba(105,200,208,0) 78%),
+    radial-gradient(1900px 1300px at 95% -18%, rgba(125,180,215,.13), rgba(125,180,215,0) 76%),
+    radial-gradient(1500px 1250px at 84% 112%, rgba(110,195,203,.10), rgba(110,195,203,0) 78%),
+    radial-gradient(1400px 1150px at -14% 104%, rgba(130,180,210,.07), rgba(130,180,210,0) 76%),
+    radial-gradient(1250px 980px at 104% 46%, rgba(160,130,205,.055), rgba(160,130,205,0) 74%),
+    linear-gradient(168deg,#ECF5F7 0%,#F9FBFC 46%,#EEF4F8 100%);
+}
+/* Suite-owned screens sit in the parent's own light. Entering a product's
+   domain lets that product's colour come forward (§25) — same shell. */
+.focus{
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(74% 64% at 24% 20%, rgba(90,195,205,.115), rgba(90,195,205,0) 78%),
+    radial-gradient(60% 52% at 88% 84%, rgba(125,180,215,.06), rgba(125,180,215,0) 80%);
+}
+.focus.sb{
+  background:
+    radial-gradient(74% 64% at 24% 20%, rgba(105,160,228,.135), rgba(105,160,228,0) 78%),
+    radial-gradient(60% 52% at 88% 84%, rgba(95,195,205,.055), rgba(95,195,205,0) 80%);
+}
+.focus.rv{
+  background:
+    radial-gradient(74% 64% at 24% 20%, rgba(165,120,205,.10), rgba(165,120,205,0) 78%),
+    radial-gradient(60% 52% at 88% 84%, rgba(100,190,205,.055), rgba(100,190,205,0) 80%);
+}
+
+/* ── Level 1 · primary glass ─────────────────────────────────────
+   White edge with the blue filo as an outer ring, top specular line,
+   inset highlight above and a blue seam below. This is the recipe. */
+.panel{
+  position:relative;
+  background:linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%);
+  backdrop-filter:blur(16px) saturate(190%); -webkit-backdrop-filter:blur(16px) saturate(190%);
+  border:1px solid rgba(255,255,255,.95); border-radius:var(--r-md);
+  box-shadow:0 0 0 1px rgba(37,99,235,.09), var(--sh-md),
+             inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(37,99,235,.05);
+  transition:box-shadow .22s var(--ease), border-color .22s var(--ease);
+}
+.panel::before{
+  content:""; position:absolute; left:16px; right:16px; top:0; height:1px; pointer-events:none; z-index:2;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.98) 15%,rgba(255,255,255,.98) 85%,rgba(255,255,255,0));
+}
+/* the ONE protagonist surface per screen */
+.panel.lift{
+  background:linear-gradient(168deg,rgba(255,255,255,.66) 0%,rgba(255,255,255,.54) 46%,rgba(255,255,255,.46) 100%);
+  box-shadow:0 0 0 1px rgba(37,99,235,.17), var(--sh-lg), 0 44px 120px -56px rgba(37,99,235,.60),
+             inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(37,99,235,.09);
+}
+/* ── Level 2 · secondary surfaces ─────────────────────────────── */
+.glass-sm{
+  position:relative;
+  background:linear-gradient(168deg,rgba(255,255,255,.60),rgba(255,255,255,.42));
+  backdrop-filter:blur(12px) saturate(180%); -webkit-backdrop-filter:blur(12px) saturate(180%);
+  border:1px solid var(--edge); border-radius:var(--r-sm);
+  box-shadow:var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92);
+  transition:background .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+}
+a.glass-sm:hover{
+  background:linear-gradient(168deg,rgba(255,255,255,.84),rgba(255,255,255,.64));
+  box-shadow:var(--sh-lg), inset 0 1px 0 rgba(255,255,255,1); transform:translateY(-1px);
+}
+/* a recess of the panel it sits in — never another card */
+.wash{
+  background:linear-gradient(168deg,rgba(255,255,255,.44),rgba(255,255,255,.26));
+  border:1px solid rgba(255,255,255,.70); border-radius:var(--r-sm);
+}
+/* floating: modals, toasts */
+.raise{
+  background:linear-gradient(168deg,rgba(255,255,255,.86),rgba(255,255,255,.68));
+  backdrop-filter:blur(18px) saturate(180%); -webkit-backdrop-filter:blur(18px) saturate(180%);
+  border:1px solid rgba(255,255,255,.96); border-radius:var(--r-md);
+  box-shadow:0 0 0 1px rgba(37,99,235,.15), var(--sh-xl), inset 0 1px 0 rgba(255,255,255,1);
+}
+.hr{height:1px;background:var(--hair)}
+
+/* product atmosphere on a project card — extremely restrained */
+.tint-both{background:linear-gradient(168deg,rgba(37,99,235,.055),rgba(175,71,178,.05)),
+  linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%)}
+.tint-sb{background:linear-gradient(168deg,rgba(37,99,235,.07),rgba(37,99,235,0) 70%),
+  linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%)}
+.tint-rv{background:linear-gradient(168deg,rgba(175,71,178,.07),rgba(175,71,178,0) 70%),
+  linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%)}
+/* Combined = blue into violet. Restrained, never a rainbow. */
+.combined{background:linear-gradient(122deg,rgba(37,99,235,.10),rgba(175,71,178,.085));
+  border-radius:var(--r-sm); box-shadow:inset 0 0 0 1px rgba(37,99,235,.10)}
+
+/* Typography — Inter, seven roles */
+.t-page{font-size:30px;font-weight:700;line-height:1.14;letter-spacing:-.025em;color:var(--s900)}
+.t-sec {font-size:19px;font-weight:600;line-height:1.28;letter-spacing:-.015em;color:var(--s900)}
+.t-card{font-size:16px;font-weight:600;line-height:1.35;color:var(--s900)}
+.t-body{font-size:14px;font-weight:400;line-height:1.55;color:var(--s700)}
+.t-tbl {font-size:13px;font-weight:400;line-height:1.4;color:var(--s700)}
+.t-lab {font-size:12px;font-weight:500;line-height:1.3;color:var(--s500)}
+.t-meta{font-size:11px;font-weight:400;line-height:1.45;color:var(--s400)}
+.eyebrow{font-size:12px;font-weight:500;line-height:1.3;color:var(--s500);margin:0 0 8px}
+.band{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--s500)}
+
+/* Shell */
+.shell{display:flex;align-items:stretch;min-height:100%}
+.side{
+  width:236px;flex:none;position:relative;z-index:2;display:flex;flex-direction:column;padding:18px 12px 14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.56),rgba(255,255,255,.34));
+  backdrop-filter:blur(16px) saturate(180%); -webkit-backdrop-filter:blur(16px) saturate(180%);
+  border-right:1px solid rgba(255,255,255,.75);
+  box-shadow:1px 0 0 rgba(14,157,168,.07);
+}
+.main{position:relative;flex:1;min-width:0;overflow:hidden}
+.content{position:relative;z-index:1;padding:28px 36px 42px}
+
+.brand{display:flex;align-items:center;gap:9px;padding:2px 8px 0}
+.brand-name{font-size:14px;font-weight:700;letter-spacing:-.015em;color:var(--s900);line-height:1.1}
+.brand-sub{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--su700);line-height:1.1;margin-top:3px}
+
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;height:35px;padding:0 10px;border-radius:var(--r-xs);
+  font-size:13px;font-weight:500;color:var(--s500);transition:background .18s var(--ease),color .18s var(--ease)}
+.nav a svg{flex:none;opacity:.8}
+.nav a:hover{background:linear-gradient(168deg,rgba(255,255,255,.7),rgba(255,255,255,.5));color:var(--s900)}
+.nav a.on{
+  background:linear-gradient(168deg,rgba(255,255,255,.92),rgba(255,255,255,.7));
+  color:var(--su700);font-weight:600;
+  box-shadow:0 0 0 1px rgba(14,157,168,.16), 0 2px 10px -4px rgba(12,131,141,.22),
+             inset 0 1px 0 rgba(255,255,255,.96), inset 2px 0 0 var(--su);
+}
+.nav a.on svg{opacity:1}
+.grp{display:flex;align-items:center;justify-content:flex-start;gap:7px;padding:0 10px;margin:18px 0 7px;
+  font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--s400)}
+.rule{height:1px;background:var(--hair);margin:12px 6px}
+
+/* Buttons — blue stays the Suite's only primary. Never purple. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 15px;
+  border-radius:var(--r-xs);border:1px solid transparent;font-size:13px;font-weight:500;cursor:pointer;
+  white-space:nowrap;transition:box-shadow .2s var(--ease),background .2s var(--ease),transform .2s var(--ease)}
+.btn-primary{background:linear-gradient(140deg,#3B82F6,#2563EB);color:#fff;
+  box-shadow:var(--sh-b), inset 0 1px 0 rgba(255,255,255,.26)}
+.btn-primary:hover{box-shadow:0 16px 38px -12px rgba(37,99,235,.60),0 3px 8px -2px rgba(37,99,235,.28),
+  inset 0 1px 0 rgba(255,255,255,.28);transform:translateY(-1px)}
+.btn-secondary{color:var(--s900);border-color:rgba(255,255,255,.9);
+  background:linear-gradient(168deg,rgba(255,255,255,.66),rgba(255,255,255,.46));
+  box-shadow:0 0 0 1px rgba(37,99,235,.08), var(--sh-xs), inset 0 1px 0 rgba(255,255,255,.92)}
+.btn-secondary:hover{background:linear-gradient(168deg,rgba(255,255,255,.84),rgba(255,255,255,.64));
+  box-shadow:0 0 0 1px rgba(37,99,235,.10), var(--sh-md), inset 0 1px 0 rgba(255,255,255,1);transform:translateY(-1px)}
+.btn-ghost{color:var(--s500);background:transparent}
+.btn-ghost:hover{background:linear-gradient(168deg,rgba(255,255,255,.62),rgba(255,255,255,.42));color:var(--s900)}
+.btn-icon{width:38px;padding:0}
+
+/* Level 5 · attribution — visible, quiet */
+.src{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;color:var(--s400);white-space:nowrap}
+.src i{width:4px;height:4px;border-radius:50%;display:block;flex:none}
+.src .pair{display:inline-flex;width:10px;height:4px;position:relative;flex:none}
+.src .pair i{position:absolute;top:0}
+.src .pair i:first-child{left:0}
+.src .pair i:last-child{left:4px;box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
+
+.cov{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:7px;
+  font-size:10.5px;font-weight:500;color:var(--s500);
+  background:linear-gradient(168deg,rgba(255,255,255,.6),rgba(255,255,255,.4));
+  border:1px solid rgba(255,255,255,.8)}
+.cov i{width:4px;height:4px;border-radius:50%;display:block;flex:none}
+.cov.off{opacity:.3}
+
+.badge{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:7px;
+  font-size:11px;font-weight:500;white-space:nowrap}
+.badge i{width:5px;height:5px;border-radius:50%;display:block;flex:none}
+
+/* KPI row — divided, not boxed */
+.kpirow{display:flex;align-items:stretch;margin:0 -22px}
+.kpirow > *{flex:1;min-width:0;padding:4px 22px}
+.kpirow > * + *{border-left:1px solid var(--hair)}
+.kpi-lab{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--s500)}
+.kpi-val{font-size:29px;font-weight:700;letter-spacing:-.028em;color:var(--s900);line-height:1.12;margin-top:9px;font-variant-numeric:tabular-nums}
+.kpi-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:11px}
+.delta{font-size:10.5px;font-weight:500}
+.delta.up{color:#0E9469}.delta.down{color:var(--bad)}
+
+/* Level 3 · flat content */
+.rows > * + *{border-top:1px solid var(--hair)}
+
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{height:40px;padding:0 18px;text-align:left;font-size:12px;font-weight:500;color:var(--s500);white-space:nowrap}
+.tbl thead tr{background:linear-gradient(168deg,rgba(255,255,255,.44),rgba(255,255,255,.26))}
+.tbl tbody td{height:50px;padding:0 18px;border-top:1px solid var(--hair);font-size:13px;color:var(--s700);vertical-align:middle}
+.tbl tbody tr{transition:background .18s var(--ease),box-shadow .18s var(--ease)}
+.tbl tbody tr:hover{background:linear-gradient(168deg,rgba(255,255,255,.70),rgba(255,255,255,.52));
+  box-shadow:inset 3px 0 0 rgba(37,99,235,.55)}
+.tbl .anchor{font-size:14px;font-weight:500;color:var(--s900)}
+.tbl tbody tr:hover .anchor{color:var(--b700)}
+.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+.search{display:flex;align-items:center;gap:9px;height:38px;padding:0 15px;border-radius:19px;
+  background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.32));
+  border:1px solid rgba(255,255,255,.78);color:var(--s400);font-size:13px}
+
+.tabs{display:inline-flex;align-items:center;gap:3px;padding:3px;border-radius:var(--r-sm);
+  background:linear-gradient(168deg,rgba(255,255,255,.44),rgba(255,255,255,.26));
+  border:1px solid rgba(255,255,255,.7)}
+.tabs a{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 13px;border-radius:var(--r-xs);
+  font-size:13px;font-weight:500;color:var(--s500)}
+.tabs a.on{color:var(--s900);font-weight:600;
+  background:linear-gradient(168deg,rgba(255,255,255,.92),rgba(255,255,255,.72));
+  box-shadow:0 0 0 1px rgba(37,99,235,.08), var(--sh-sm), inset 0 1px 0 rgba(255,255,255,1)}
+.tabs .count{font-size:10.5px;font-weight:500;color:var(--s400)}
+.tabs a.on .count{color:var(--su700)}
+
+.crumb{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--s400);margin-bottom:14px}
+.crumb .sep{opacity:.5}
+.crumb b{font-weight:500;color:var(--s700)}
+.grid{display:grid;gap:20px}
+</style>
+</helmet>
+<div class="atmos" style="width:1440px;min-height:3000px;position:relative">
+  <div class="shell" style="min-height:3000px">
+    <aside class="side">
+
+<div class="brand">
+  
+<svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+  <defs><linearGradient id="sm" x1="4" y1="24" x2="24" y2="4" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#2ED3C6"/><stop offset=".5" stop-color="#0E9DA8"/><stop offset="1" stop-color="#1F6FD0"/>
+  </linearGradient></defs>
+  <rect x="1" y="1" width="26" height="26" rx="8" fill="url(#sm)"/>
+  <path d="M14 6.6 21.6 11 14 15.4 6.4 11z" fill="#fff" fill-opacity=".95"/>
+  <path d="m7.6 14.6 6.4 3.7 6.4-3.7" stroke="#fff" stroke-opacity=".7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m7.6 18.4 6.4 3.7 6.4-3.7" stroke="#fff" stroke-opacity=".45" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+  <div><div class="brand-name">Sunveon</div><div class="brand-sub">Suite</div></div>
+</div>
+<div class="rule" style="margin-top:16px"></div>
+<a href="#" style="display:flex;align-items:center;gap:8px;padding:0 10px;height:28px;
+   font-size:12px;font-weight:500;color:var(--s400)"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.4 10H4.2"/><path d="m8.8 5.4-4.6 4.6 4.6 4.6"/></svg>All projects</a>
+<div class="wash" style="padding:11px 12px;margin:8px 2px 4px">
+  <div style="font-size:14px;font-weight:600;letter-spacing:-.01em;color:var(--s900);line-height:1.25">Valencia BESS</div>
+  <div class="t-meta" style="margin-top:3px">Spain · BESS · 100 MW / 200 MWh</div>
+</div>
+<div style="height:10px"></div>
+<div class="grp">Analysis<i style="width:5px;height:5px;border-radius:50%;background:#0E9DA8;display:block" title="Suite"></i></div>
+<nav class="nav">
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/></svg>Overview</a>
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 3 6.8 3.6L10 10.2 3.2 6.6z"/><path d="m3.2 10.6 6.8 3.6 6.8-3.6"/></svg>Case matrix<span style="margin-left:auto;font-size:10.5px;color:var(--s400)">9</span></a>
+  <a href="#" class="on"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Compare<span style="margin-left:auto;font-size:10.5px;color:var(--s400)">3</span></a>
+</nav>
+<div class="grp">Open in</div>
+<nav class="nav">
+  <a href="#"><span style="width:17px;display:flex;justify-content:center"><i style="width:6px;height:6px;border-radius:50%;background:#2563EB;display:block"></i></span>StoreBrid<span style="margin-left:auto;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></span></a>
+  <a href="#"><span style="width:17px;display:flex;justify-content:center"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i></span>ReveNew<span style="margin-left:auto;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></span></a>
+</nav>
+<div class="grp">Project</div>
+<nav class="nav">
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.3 2.9H6.1a1.3 1.3 0 0 0-1.3 1.3v11.6a1.3 1.3 0 0 0 1.3 1.3h7.8a1.3 1.3 0 0 0 1.3-1.3V6.7z"/><path d="M11.3 2.9v3.8h3.9"/></svg>Files</a>
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M10 5.9V10l2.8 1.7"/></svg>Activity</a>
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="2.4"/><path d="M15.9 12.1a1.3 1.3 0 0 0 .3 1.5l.1.1a1.6 1.6 0 1 1-2.2 2.2l-.1-.1a1.3 1.3 0 0 0-1.5-.3 1.3 1.3 0 0 0-.8 1.2v.2a1.6 1.6 0 0 1-3.2 0v-.1a1.3 1.3 0 0 0-.9-1.2 1.3 1.3 0 0 0-1.5.3l-.1.1A1.6 1.6 0 1 1 3.8 13.7l.1-.1a1.3 1.3 0 0 0 .3-1.5 1.3 1.3 0 0 0-1.2-.8h-.2a1.6 1.6 0 1 1 0-3.2h.1a1.3 1.3 0 0 0 1.2-.9 1.3 1.3 0 0 0-.3-1.5l-.1-.1a1.6 1.6 0 1 1 2.2-2.2l.1.1a1.3 1.3 0 0 0 1.5.3h.1a1.3 1.3 0 0 0 .8-1.2v-.2a1.6 1.6 0 0 1 3.2 0v.1a1.3 1.3 0 0 0 .8 1.2 1.3 1.3 0 0 0 1.5-.3l.1-.1a1.6 1.6 0 1 1 2.2 2.2l-.1.1a1.3 1.3 0 0 0-.3 1.5v.1a1.3 1.3 0 0 0 1.2.8h.2a1.6 1.6 0 0 1 0 3.2h-.1a1.3 1.3 0 0 0-1.2.8z"/></svg>Settings</a>
+</nav>
+<div style="flex:1;min-height:14px"></div>
+<div class="rule"></div>
+
+<div style="display:flex;align-items:center;gap:9px;padding:9px 10px;margin-top:8px;border-radius:10px;
+            background:rgba(255,255,255,.5);border:1px solid var(--hair)">
+  <span style="width:26px;height:26px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;
+               background:linear-gradient(140deg,#0E9DA8,#2563EB);color:#fff;font-size:10px;font-weight:700">VA</span>
+  <span style="min-width:0">
+    <span style="display:block;font-size:12px;font-weight:600;color:var(--s900);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Victor Andújar</span>
+    <span style="display:block;font-size:10px;color:var(--s400);line-height:1.3;margin-top:1px">Sunveon Energy</span>
+  </span>
+  <span style="margin-left:auto;color:var(--s400);display:flex"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.2 8 4.8 4.6L14.8 8"/></svg></span>
+</div></aside>
+    <main class="main">
+      <div class="focus"></div>
+      <div class="content">
+
+<div class="crumb"><a href="#">Home</a><span class="sep"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span><a href="#">Projects</a><span class="sep"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span><a href="#">Valencia BESS</a><span class="sep"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span><b>Compare</b></div>
+<div style="display:flex;align-items:flex-start;gap:24px;padding-bottom:20px;border-bottom:1px solid var(--hair2);margin-bottom:24px">
+  <div style="flex:1;min-width:0">
+    <p class="eyebrow"><span style="display:inline-flex;align-items:center;gap:9px">Compare <span class="src"><i style="background:#0E9DA8"></i>Suite</span></span></p>
+    <h1 class="t-page">Compare</h1>
+    <div class="t-body" style="margin-top:9px;color:var(--s500)">Analysis cases side by side — the technical configuration and the financial result it produces.</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;flex:none;padding-top:12px"><button class="btn btn-primary"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4.6v10.8M4.6 10h10.8"/></svg>New analysis case</button></div>
+</div>
+
+<div class="tabs" style="margin-bottom:24px">
+  <a href="#" class="on">Analysis cases <span class="count">3</span></a>
+  <a href="#" class="">All combinations <span class="count">9</span></a>
+</div>
+
+<div style="display:flex;align-items:center;gap:12px;padding:14px 18px;margin-bottom:20px;border-radius:var(--r-sm);
+     background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 72%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.16)">
+  <span style="color:var(--su700);display:flex;flex:none"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 3 6.8 3.6L10 10.2 3.2 6.6z"/><path d="m3.2 10.6 6.8 3.6 6.8-3.6"/></svg></span>
+  <span style="flex:1;min-width:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:600;color:var(--s900)">4 h storage investment decision</span>
+    <span class="t-meta">saved 2 days ago · Victor Andújar</span>
+  </span>
+  <span style="display:flex;gap:8px;flex:none">
+    <button class="btn btn-ghost" style="height:32px;font-size:12px"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M10 5.9V10l2.8 1.7"/></svg>Saved comparisons<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.2 8 4.8 4.6L14.8 8"/></svg></button>
+    <button class="btn btn-secondary" style="height:32px;font-size:12px"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.3 2.9H6.1a1.3 1.3 0 0 0-1.3 1.3v11.6a1.3 1.3 0 0 0 1.3 1.3h7.8a1.3 1.3 0 0 0 1.3-1.3V6.7z"/><path d="M11.3 2.9v3.8h3.9"/></svg>Export brief</button>
+    <button class="btn btn-secondary" style="height:32px;font-size:12px"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.8 10.4 3.5 3.4 6.9-7.6"/></svg>Save</button>
+  </span>
+</div>
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap">
+  
+<span class="glass-sm" style="display:inline-flex;align-items:center;gap:11px;padding:10px 14px;
+      box-shadow:0 0 0 1px rgba(14,157,168,.3), var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.92)">
+  <span style="font-size:12.5px;font-weight:600;color:var(--s900)">Base case</span>
+  <span class="cov"><i style="background:#0E9DA8"></i>Current</span>
+  
+  <span style="display:inline-flex;align-items:center;gap:5px">
+    <i style="width:4px;height:4px;border-radius:50%;background:#2563EB;display:block"></i>
+    <span class="t-meta">Base 2 h</span>
+    <span style="font-size:10px;color:var(--s400)">+</span>
+    <i style="width:4px;height:4px;border-radius:50%;background:#AF47B2;display:block"></i>
+    <span class="t-meta">Base market</span>
+  </span>
+  <span style="color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5.4 5.4l9.2 9.2M14.6 5.4l-9.2 9.2"/></svg></span>
+</span>
+<span class="glass-sm" style="display:inline-flex;align-items:center;gap:11px;padding:10px 14px;
+      box-shadow:0 0 0 1px rgba(14,157,168,.3), var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.92)">
+  <span style="font-size:12.5px;font-weight:600;color:var(--s900)">High storage</span>
+  
+  
+  <span style="display:inline-flex;align-items:center;gap:5px">
+    <i style="width:4px;height:4px;border-radius:50%;background:#2563EB;display:block"></i>
+    <span class="t-meta">4 h variant</span>
+    <span style="font-size:10px;color:var(--s400)">+</span>
+    <i style="width:4px;height:4px;border-radius:50%;background:#AF47B2;display:block"></i>
+    <span class="t-meta">Base market</span>
+  </span>
+  <span style="color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5.4 5.4l9.2 9.2M14.6 5.4l-9.2 9.2"/></svg></span>
+</span>
+<span class="glass-sm" style="display:inline-flex;align-items:center;gap:11px;padding:10px 14px;
+      box-shadow:0 0 0 1px rgba(14,157,168,.3), var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.92)">
+  <span style="font-size:12.5px;font-weight:600;color:var(--s900)">Stress test</span>
+  
+  <span class="cov" style="background:linear-gradient(168deg,rgba(245,158,11,.14),rgba(245,158,11,.07));border-color:rgba(245,158,11,.3);color:#9A6208">
+     <i style="background:#9A6208"></i>Outdated</span>
+  <span style="display:inline-flex;align-items:center;gap:5px">
+    <i style="width:4px;height:4px;border-radius:50%;background:#2563EB;display:block"></i>
+    <span class="t-meta">4 h variant</span>
+    <span style="font-size:10px;color:var(--s400)">+</span>
+    <i style="width:4px;height:4px;border-radius:50%;background:#AF47B2;display:block"></i>
+    <span class="t-meta">Low spread</span>
+  </span>
+  <span style="color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5.4 5.4l9.2 9.2M14.6 5.4l-9.2 9.2"/></svg></span>
+</span>
+  <button class="btn btn-secondary" style="height:40px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4.6v10.8M4.6 10h10.8"/></svg>Add case</button>
+</div>
+
+
+<div style="display:flex;gap:14px">
+  
+    <div class="glass-sm" style="flex:1;min-width:0;padding:16px 18px">
+      <span class="band" style="font-size:10px">Best NPV</span>
+      <span style="display:block;font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">€11.3M</span>
+      <span class="t-meta" style="display:block;margin-top:7px">High storage</span>
+      
+    </div>
+  
+    <div class="glass-sm" style="flex:1;min-width:0;padding:16px 18px">
+      <span class="band" style="font-size:10px">Best IRR</span>
+      <span style="display:block;font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">13.2%</span>
+      <span class="t-meta" style="display:block;margin-top:7px">High storage</span>
+      
+    </div>
+  
+    <div class="glass-sm" style="flex:1;min-width:0;padding:16px 18px">
+      <span class="band" style="font-size:10px">Lowest CAPEX</span>
+      <span style="display:block;font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">€42.1M</span>
+      <span class="t-meta" style="display:block;margin-top:7px">Base case</span>
+      
+    </div>
+  
+    <div class="glass-sm" style="flex:1;min-width:0;padding:16px 18px">
+      <span class="band" style="font-size:10px">Shortest payback</span>
+      <span style="display:block;font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">6.2 yrs</span>
+      <span class="t-meta" style="display:block;margin-top:7px">High storage</span>
+      
+    </div>
+</div>
+<div style="display:flex;align-items:center;gap:11px;margin-top:12px;padding:12px 16px;border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(245,158,11,.07),rgba(255,255,255,0) 72%);box-shadow:inset 0 0 0 1px rgba(245,158,11,.18)">
+  <span style="color:#9A6208;display:flex;flex:none"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
+  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
+    1 analysis case is excluded from these conclusions — its financial result was calculated before the technical simulation changed.
+  </span>
+  <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12px"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Recalculate in ReveNew<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
+</div>
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px;padding:14px 18px;border-radius:var(--r-sm);
+     background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 74%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.16)">
+  <span style="color:var(--su700);display:flex;flex:none"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/></svg></span>
+  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
+    <b style="font-weight:600">High storage</b> is selected. Making it the current analysis takes it back to Overview, where every figure then reads from it.
+  </span>
+  <button class="btn btn-secondary" style="flex:none;height:34px;font-size:12.5px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/></svg>Use as current analysis</button>
+</div>
+<p class="t-meta" style="margin-top:12px;line-height:1.6;max-width:112ch">
+  Four objectives, three analysis cases, no single winner. The Suite names the trade-off; the choice is yours.
+</p>
+
+<section class="panel lift" style="padding:24px 26px;margin-top:26px">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:12px">
+    <div>
+      <div style="display:flex;align-items:center;gap:9px"><span class="band">Difference from Base case</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span></div>
+      <h2 class="t-sec" style="margin-top:8px">What each analysis case changes</h2>
+      <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.55;max-width:86ch">
+        Every bar is read from the base case and oriented by what it means: an improvement points right, a worse result points left.
+        The number keeps its real sign, so +€8.6M of CAPEX still reads as +€8.6M while sitting on the worse side.
+      </p>
+    </div>
+  </div>
+  
+<svg viewBox="0 0 1240 344" width="100%" style="display:block" role="img" aria-label="Difference from the base case, oriented so better is to the right">
+  <style>.mk{transition:opacity .12s} .mk:hover{opacity:.82}</style>
+  
+    <text x="416.5" y="16" text-anchor="middle" font-size="12" font-weight="600" fill="#0F172A">High storage</text>
+    <text x="416.5" y="31" text-anchor="middle" font-size="9.5" fill="#5F6C82">vs Base case</text>
+    <text x="224.6" y="46" text-anchor="start" font-size="9" fill="#9A6208">← worse</text>
+    <text x="608.4" y="46" text-anchor="end" font-size="9" fill="#0E9469">better →</text>
+    <text x="949.5" y="16" text-anchor="middle" font-size="12" font-weight="600" fill="#0F172A">Stress test</text>
+    <text x="949.5" y="31" text-anchor="middle" font-size="9.5" fill="#5F6C82">vs Base case · outdated</text>
+    <text x="757.6" y="46" text-anchor="start" font-size="9" fill="#9A6208">← worse</text>
+    <text x="1141.4" y="46" text-anchor="end" font-size="9" fill="#0E9469">better →</text>
+  
+    <text x="132" y="74" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">CAPEX</text>
+    <text x="132" y="88" text-anchor="end" font-size="9" fill="#5F6C82">what it costs to build</text>
+    
+      <line x1="416.5" y1="58" x2="416.5" y2="94" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M256.6 85L256.6 68Q256.6 65 259.6 65L413.5 65Q416.5 65 416.5 68L416.5 85Z"
+        fill="#2563EB" fill-opacity=".42"><title>High storage — CAPEX +€8.6M</title></path>
+      <text x="247.6" y="80" text-anchor="end"
+        font-size="11.5" font-weight="700" fill="#C22222">+€8.6M</text>
+      <line x1="949.5" y1="58" x2="949.5" y2="94" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M789.6 85L789.6 68Q789.6 65 792.6 65L946.5 65Q949.5 65 949.5 68L949.5 85Z"
+        fill="#2563EB" fill-opacity=".3"><title>Stress test — CAPEX +€8.6M</title></path>
+      <text x="780.6" y="80" text-anchor="end"
+        font-size="11.5" font-weight="700" fill="#5F6C82">+€8.6M</text>
+    <text x="132" y="130" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">Revenue / yr</text>
+    <text x="132" y="144" text-anchor="end" font-size="9" fill="#5F6C82">what it earns</text>
+    
+      <line x1="416.5" y1="114" x2="416.5" y2="150" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M416.5 141L416.5 124Q416.5 121 419.5 121L573.4 121Q576.4 121 576.4 124L576.4 141Z"
+        fill="#AF47B2" fill-opacity=".8"><title>High storage — Revenue / yr +€1.93M</title></path>
+      <text x="585.4" y="136" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#0E9469">+€1.93M</text>
+      <line x1="949.5" y1="114" x2="949.5" y2="150" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M949.5 141L949.5 124Q949.5 121 952.5 121L953.1279792746114 121Q956.1279792746114 121 956.1279792746114 124L956.1279792746114 141Z"
+        fill="#AF47B2" fill-opacity=".3"><title>Stress test — Revenue / yr +€0.08M</title></path>
+      <text x="965.1" y="136" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#5F6C82">+€0.08M</text>
+    <text x="132" y="186" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">NPV</text>
+    <text x="132" y="200" text-anchor="end" font-size="9" fill="#5F6C82">value created</text>
+    
+      <line x1="416.5" y1="170" x2="416.5" y2="206" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M416.5 197L416.5 180Q416.5 177 419.5 177L482.7739686657523 177Q485.7739686657523 177 485.7739686657523 180L485.7739686657523 197Z"
+        fill="#AF47B2" fill-opacity=".8"><title>High storage — NPV +€3.0M</title></path>
+      <text x="494.8" y="192" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#0E9469">+€3.0M</text>
+      <line x1="949.5" y1="170" x2="949.5" y2="206" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M789.6 197L789.6 180Q789.6 177 792.6 177L946.5 177Q949.5 177 949.5 180L949.5 197Z"
+        fill="#AF47B2" fill-opacity=".3"><title>Stress test — NPV −€6.9M</title></path>
+      <text x="780.6" y="192" text-anchor="end"
+        font-size="11.5" font-weight="700" fill="#5F6C82">−€6.9M</text>
+    <text x="132" y="242" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">IRR</text>
+    <text x="132" y="256" text-anchor="end" font-size="9" fill="#5F6C82">rate of return</text>
+    
+      <line x1="416.5" y1="226" x2="416.5" y2="262" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M416.5 253L416.5 236Q416.5 233 419.5 233L436.34285714285704 233Q439.34285714285704 233 439.34285714285704 236L439.34285714285704 253Z"
+        fill="#6D5AC6" fill-opacity=".8"><title>High storage — IRR +0.4 pp</title></path>
+      <text x="448.3" y="248" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#0E9469">+0.4 pp</text>
+      <line x1="949.5" y1="226" x2="949.5" y2="262" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M789.6 253L789.6 236Q789.6 233 792.6 233L946.5 233Q949.5 233 949.5 236L949.5 253Z"
+        fill="#6D5AC6" fill-opacity=".3"><title>Stress test — IRR −2.8 pp</title></path>
+      <text x="780.6" y="248" text-anchor="end"
+        font-size="11.5" font-weight="700" fill="#5F6C82">−2.8 pp</text>
+    <text x="132" y="298" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">Payback</text>
+    <text x="132" y="312" text-anchor="end" font-size="9" fill="#5F6C82">years to break even</text>
+    
+      <line x1="416.5" y1="282" x2="416.5" y2="318" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M416.5 309L416.5 292Q416.5 289 419.5 289L433.2948439336978 289Q436.2948439336978 289 436.2948439336978 292L436.2948439336978 309Z"
+        fill="#AF47B2" fill-opacity=".8"><title>High storage — Payback −0.1 y</title></path>
+      <text x="445.3" y="304" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#0E9469">−0.1 y</text>
+      <line x1="949.5" y1="282" x2="949.5" y2="318" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M789.6 309L789.6 292Q789.6 289 792.6 289L946.5 289Q949.5 289 949.5 292L949.5 309Z"
+        fill="#AF47B2" fill-opacity=".3"><title>Stress test — Payback +1.1 y</title></path>
+      <text x="780.6" y="304" text-anchor="end"
+        font-size="11.5" font-weight="700" fill="#5F6C82">+1.1 y</text>
+</svg>
+</section>
+
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:28px 0 14px">
+  <div style="min-width:0">
+    
+    <div style="display:flex;align-items:center;gap:10px">
+      <h2 class="t-sec">What the design change buys</h2><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+    </div>
+    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">Each step below moves one dimension, so the financial consequence can be read against the technical one.</p>
+  </div>
+  
+</div>
+<div style="display:flex;flex-direction:column;gap:18px">
+  
+<section class="panel" style="padding:24px 26px">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+    <span class="t-card" style="font-size:16px">High storage</span>
+    <span class="t-meta">vs Base case</span>
+    <span class="cov"><i style="background:#2563EB"></i>Technical only</span>
+  </div>
+  <div style="display:flex;gap:16px;align-items:stretch">
+    
+  <div style="flex:1;min-width:0;padding:18px 20px;border-radius:var(--r-sm);
+       background:linear-gradient(168deg,rgba(37,99,235,.05),rgba(255,255,255,0) 70%);
+       box-shadow:inset 0 0 0 1px rgba(37,99,235,.14)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span class="band" style="font-size:10px;color:var(--b700)">Technical change</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+    </div>
+    
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">Storage capacity</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">200 MWh</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">400 MWh</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:var(--s700)">+200 MWh</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">Duration</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">2.0 h</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">4.0 h</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:var(--s700)">+2.0 h</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">Energy discharged</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">65.2 GWh</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">92.4 GWh</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:var(--s700)">+27.2 GWh</span>
+  </div>
+  </div>
+    
+  <div style="flex:1;min-width:0;padding:18px 20px;border-radius:var(--r-sm);
+       background:linear-gradient(168deg,rgba(175,71,178,.05),rgba(255,255,255,0) 70%);
+       box-shadow:inset 0 0 0 1px rgba(175,71,178,.14)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span class="band" style="font-size:10px;color:var(--rv600)">Financial impact</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+    </div>
+    
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">CAPEX</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">€42.1M</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€50.7M</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:#C22222">+€8.6M</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">Revenue</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">€8.42M</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€10.35M</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:#0E9469">+€1.93M/yr</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">NPV</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">€8.3M</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€11.3M</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:#0E9469">+€3.0M</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">IRR</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">12.8%</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">13.2%</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:#0E9469">+0.4 pp</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">Payback</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">6.3 y</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">6.2 y</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:#0E9469">−0.1 y</span>
+  </div>
+  </div>
+  </div>
+</section>
+  
+<section class="panel" style="padding:24px 26px">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+    <span class="t-card" style="font-size:16px">Stress test</span>
+    <span class="t-meta">vs High storage</span>
+    <span class="cov"><i style="background:#AF47B2"></i>Financial only</span>
+  </div>
+  <div style="display:flex;gap:16px;align-items:stretch">
+    
+  <div style="flex:1;min-width:0;padding:18px 20px;border-radius:var(--r-sm);
+       background:linear-gradient(168deg,rgba(37,99,235,.05),rgba(255,255,255,0) 70%);
+       box-shadow:inset 0 0 0 1px rgba(37,99,235,.14)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span class="band" style="font-size:10px;color:var(--b700)">Technical change</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+    </div>
+    <div style="margin-top:13px;font-size:13.5px;font-weight:600;color:var(--s400)">None</div>
+         <div class="t-meta" style="margin-top:7px;line-height:1.55">Same StoreBrid simulation — 100 MW / 400 MWh, 92.4 GWh discharged. Nothing was rebuilt to earn the difference.</div>
+  </div>
+    
+  <div style="flex:1;min-width:0;padding:18px 20px;border-radius:var(--r-sm);
+       background:linear-gradient(168deg,rgba(175,71,178,.05),rgba(255,255,255,0) 70%);
+       box-shadow:inset 0 0 0 1px rgba(175,71,178,.14)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span class="band" style="font-size:10px;color:var(--rv600)">Financial impact</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+    </div>
+    
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">CAPEX</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">€50.7M</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€50.7M</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:#0E9469">+€0.0M</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">Revenue</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">€10.35M</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€8.50M</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:#C22222">−€1.85M/yr</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">NPV</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">€11.3M</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€1.5M</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:#C22222">−€9.8M</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">IRR</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">13.2%</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">10.0%</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:#C22222">−3.2 pp</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)">
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s500)">Payback</span>
+    <span style="flex:none;font-size:12.5px;color:var(--s400);font-variant-numeric:tabular-nums">6.2 y</span>
+    <span style="flex:none;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+    <span style="flex:none;width:82px;text-align:right;font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">7.4 y</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:#C22222">+1.2 y</span>
+  </div>
+  </div>
+  </div>
+</section>
+</div>
+<p class="t-meta" style="margin-top:16px;line-height:1.6;max-width:112ch">
+  Doubling storage costs €8.6M and returns €1.93M a year, lifting NPV by €3.0M. The stress test then holds that asset and
+  drops the market to Low spread: nothing is rebuilt, and €9.8M of NPV disappears. That is the risk the extra storage carries.
+</p>
+
+<div style="display:flex;align-items:center;gap:14px;margin:26px 0 16px">
+  <span class="hr" style="flex:1"></span>
+  <button class="btn btn-secondary">Show all metrics<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.2 8 4.8 4.6L14.8 8"/></svg></button>
+  <span class="hr" style="flex:1"></span>
+</div>
+<section class="panel" style="padding:14px 28px 24px">
+  <div style="display:flex;align-items:flex-end;gap:16px;padding:12px 0 14px">
+    <span style="width:230px;flex:none" class="t-meta">Analysis case</span>
+    <span style="flex:1;min-width:0;text-align:right">
+      <span style="display:block;font-size:13.5px;font-weight:600;color:var(--s900)">Base case</span>
+      <span class="t-meta" style="display:block;margin-top:3px">Base 2 h + Base market</span>
+    </span><span style="flex:1;min-width:0;text-align:right">
+      <span style="display:block;font-size:13.5px;font-weight:600;color:var(--s900)">High storage</span>
+      <span class="t-meta" style="display:block;margin-top:3px">4 h variant + Base market</span>
+    </span><span style="flex:1;min-width:0;text-align:right">
+      <span style="display:block;font-size:13.5px;font-weight:600;color:var(--s900)">Stress test</span>
+      <span class="t-meta" style="display:block;margin-top:3px">4 h variant + Low spread</span>
+    </span>
+  </div>
+  
+<div style="margin-top:26px">
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="band">Technical — StoreBrid</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+  </div>
+  <div style="margin-top:10px">
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">Installed power</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">100 MW</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">100 MW</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">100 MW</span>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">Storage capacity</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">200 MWh</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">400 MWh</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">400 MWh</span>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">Duration</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">2.0 h</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">4.0 h</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">4.0 h</span>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">Round-trip efficiency</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">88%</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">88%</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">88%</span>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">Energy discharged</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">65.2 GWh</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">92.4 GWh</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">92.4 GWh</span>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">Full cycles / year</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">326</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">231</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">231</span>
+</div></div>
+</div>
+  
+<div style="margin-top:26px">
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="band">Financial — ReveNew</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+  </div>
+  <div style="margin-top:10px">
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">CAPEX</span><span class="src" title="Costed in StoreBrid, consumed by the ReveNew financial model"><i style="background:#2563EB"></i>StoreBrid<span style="color:var(--s400);margin:0 2px">→</span><i style="background:#AF47B2"></i>ReveNew</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€42.1M</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€50.7M</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€50.7M</span>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">Revenue / year</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€8.42M</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€10.35M</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€8.50M</span>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">NPV</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€8.3M</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€11.3M</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€1.5M</span>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">IRR</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">12.8%</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">13.2%</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">10.0%</span>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">Payback</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">6.3 yrs</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">6.2 yrs</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">7.4 yrs</span>
+</div></div>
+</div>
+  
+<div style="margin-top:26px">
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="band">Combined — Suite</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+  </div>
+  <div style="margin-top:10px">
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">Revenue / MWh discharged</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€129.1</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€112.0</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€92.0</span>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--hair)">
+  <span style="width:230px;flex:none;display:flex;align-items:center;gap:8px">
+    <span style="font-size:12.5px;color:var(--s500)">NPV / MW installed</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+  </span>
+  <span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€83k</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€113k</span><span style="flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums;
+      font-size:14px;font-weight:500;color:var(--s700)">€15k</span>
+</div></div>
+</div>
+</section>
+
+</div>
+    </main>
+  </div>
+  
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":3000}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

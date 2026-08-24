@@ -1,0 +1,482 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  /* StoreBrid's tokens, inherited verbatim from the StoreBrid UI Rework canvas */
+  --b400:#60A5FA; --b500:#3B82F6; --b600:#2563EB; --b700:#1D4ED8; --b800:#1E40AF;
+  --cy:#06B6D4; --cy600:#0891B2;
+  --ok:#10B981; --warn:#F59E0B; --bad:#DC2626; --run:#8B5CF6; --info:#3B82F6;
+  --s100:#F1F5F9; --s300:#CBD5E1; --s400:#5F6C82; --s500:#54617A; --s700:#334155; --s900:#0F172A;
+  --hair:rgba(30,58,138,.07);
+  --edge:rgba(255,255,255,.80); --edge-soft:rgba(255,255,255,.62); --lit:rgba(255,255,255,.92);
+  --sh-xs:0 1px 2px rgba(30,58,138,.05);
+  --sh-sm:0 2px 10px -4px rgba(30,58,138,.12);
+  --sh-md:0 14px 34px -18px rgba(30,58,138,.26),0 2px 8px -3px rgba(30,58,138,.07);
+  --sh-lg:0 26px 60px -28px rgba(30,58,138,.30),0 4px 14px -6px rgba(30,58,138,.08);
+  --sh-xl:0 40px 90px -40px rgba(30,58,138,.34),0 6px 18px -8px rgba(30,58,138,.09);
+  --sh-b:0 10px 28px -10px rgba(37,99,235,.50),0 2px 6px -1px rgba(37,99,235,.22);
+  --lume:0 40px 120px -52px rgba(37,99,235,.55);
+  --r-xs:10px; --r-sm:12px; --r-md:16px; --r-lg:20px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  /* ReveNew's dimension */
+  --rv:#AF47B2; --rv600:#9A3E9D; --rv400:#C74FC9; --rv-deep:#7B2D80;
+  --lume-rv:0 40px 120px -52px rgba(175,71,178,.34);
+  /* The Suite's own parent colour — the neutral bridge between them.
+     Aqua-teal, never green, and never used for Combined (§24). */
+  --su:#0E9DA8; --su600:#0C838D; --su700:#0A6E77;
+  --lume-su:0 40px 120px -52px rgba(14,157,168,.34);
+  /* Combined = both datasets participating. A restrained blend of the two. */
+  --cmb:#6D5AC6;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--s900);
+  font-size:14px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+h1,h2,h3,h4,p{margin:0}
+a{color:var(--b700);text-decoration:none}
+a:hover{color:var(--b800)}
+
+/* ── Level 0 · page atmosphere ───────────────────────────────────
+   StoreBrid's four fields, unchanged, plus one very faint violet
+   field on the financial side — the only place the Suite's parent
+   identity differs from StoreBrid's.                                */
+.atmos{
+  min-height:100%;
+  background:
+    radial-gradient(1700px 1180px at 10% -12%, rgba(105,200,208,.17), rgba(105,200,208,0) 78%),
+    radial-gradient(1900px 1300px at 95% -18%, rgba(125,180,215,.13), rgba(125,180,215,0) 76%),
+    radial-gradient(1500px 1250px at 84% 112%, rgba(110,195,203,.10), rgba(110,195,203,0) 78%),
+    radial-gradient(1400px 1150px at -14% 104%, rgba(130,180,210,.07), rgba(130,180,210,0) 76%),
+    radial-gradient(1250px 980px at 104% 46%, rgba(160,130,205,.055), rgba(160,130,205,0) 74%),
+    linear-gradient(168deg,#ECF5F7 0%,#F9FBFC 46%,#EEF4F8 100%);
+}
+/* Suite-owned screens sit in the parent's own light. Entering a product's
+   domain lets that product's colour come forward (§25) — same shell. */
+.focus{
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(74% 64% at 24% 20%, rgba(90,195,205,.115), rgba(90,195,205,0) 78%),
+    radial-gradient(60% 52% at 88% 84%, rgba(125,180,215,.06), rgba(125,180,215,0) 80%);
+}
+.focus.sb{
+  background:
+    radial-gradient(74% 64% at 24% 20%, rgba(105,160,228,.135), rgba(105,160,228,0) 78%),
+    radial-gradient(60% 52% at 88% 84%, rgba(95,195,205,.055), rgba(95,195,205,0) 80%);
+}
+.focus.rv{
+  background:
+    radial-gradient(74% 64% at 24% 20%, rgba(165,120,205,.10), rgba(165,120,205,0) 78%),
+    radial-gradient(60% 52% at 88% 84%, rgba(100,190,205,.055), rgba(100,190,205,0) 80%);
+}
+
+/* ── Level 1 · primary glass ─────────────────────────────────────
+   White edge with the blue filo as an outer ring, top specular line,
+   inset highlight above and a blue seam below. This is the recipe. */
+.panel{
+  position:relative;
+  background:linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%);
+  backdrop-filter:blur(16px) saturate(190%); -webkit-backdrop-filter:blur(16px) saturate(190%);
+  border:1px solid rgba(255,255,255,.95); border-radius:var(--r-md);
+  box-shadow:0 0 0 1px rgba(37,99,235,.09), var(--sh-md),
+             inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(37,99,235,.05);
+  transition:box-shadow .22s var(--ease), border-color .22s var(--ease);
+}
+.panel::before{
+  content:""; position:absolute; left:16px; right:16px; top:0; height:1px; pointer-events:none; z-index:2;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.98) 15%,rgba(255,255,255,.98) 85%,rgba(255,255,255,0));
+}
+/* the ONE protagonist surface per screen */
+.panel.lift{
+  background:linear-gradient(168deg,rgba(255,255,255,.66) 0%,rgba(255,255,255,.54) 46%,rgba(255,255,255,.46) 100%);
+  box-shadow:0 0 0 1px rgba(37,99,235,.17), var(--sh-lg), 0 44px 120px -56px rgba(37,99,235,.60),
+             inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(37,99,235,.09);
+}
+/* ── Level 2 · secondary surfaces ─────────────────────────────── */
+.glass-sm{
+  position:relative;
+  background:linear-gradient(168deg,rgba(255,255,255,.60),rgba(255,255,255,.42));
+  backdrop-filter:blur(12px) saturate(180%); -webkit-backdrop-filter:blur(12px) saturate(180%);
+  border:1px solid var(--edge); border-radius:var(--r-sm);
+  box-shadow:var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92);
+  transition:background .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+}
+a.glass-sm:hover{
+  background:linear-gradient(168deg,rgba(255,255,255,.84),rgba(255,255,255,.64));
+  box-shadow:var(--sh-lg), inset 0 1px 0 rgba(255,255,255,1); transform:translateY(-1px);
+}
+/* a recess of the panel it sits in — never another card */
+.wash{
+  background:linear-gradient(168deg,rgba(255,255,255,.44),rgba(255,255,255,.26));
+  border:1px solid rgba(255,255,255,.70); border-radius:var(--r-sm);
+}
+/* floating: modals, toasts */
+.raise{
+  background:linear-gradient(168deg,rgba(255,255,255,.86),rgba(255,255,255,.68));
+  backdrop-filter:blur(18px) saturate(180%); -webkit-backdrop-filter:blur(18px) saturate(180%);
+  border:1px solid rgba(255,255,255,.96); border-radius:var(--r-md);
+  box-shadow:0 0 0 1px rgba(37,99,235,.15), var(--sh-xl), inset 0 1px 0 rgba(255,255,255,1);
+}
+.hr{height:1px;background:var(--hair)}
+
+/* product atmosphere on a project card — extremely restrained */
+.tint-both{background:linear-gradient(168deg,rgba(37,99,235,.055),rgba(175,71,178,.05)),
+  linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%)}
+.tint-sb{background:linear-gradient(168deg,rgba(37,99,235,.07),rgba(37,99,235,0) 70%),
+  linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%)}
+.tint-rv{background:linear-gradient(168deg,rgba(175,71,178,.07),rgba(175,71,178,0) 70%),
+  linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%)}
+/* Combined = blue into violet. Restrained, never a rainbow. */
+.combined{background:linear-gradient(122deg,rgba(37,99,235,.10),rgba(175,71,178,.085));
+  border-radius:var(--r-sm); box-shadow:inset 0 0 0 1px rgba(37,99,235,.10)}
+
+/* Typography — Inter, seven roles */
+.t-page{font-size:30px;font-weight:700;line-height:1.14;letter-spacing:-.025em;color:var(--s900)}
+.t-sec {font-size:19px;font-weight:600;line-height:1.28;letter-spacing:-.015em;color:var(--s900)}
+.t-card{font-size:16px;font-weight:600;line-height:1.35;color:var(--s900)}
+.t-body{font-size:14px;font-weight:400;line-height:1.55;color:var(--s700)}
+.t-tbl {font-size:13px;font-weight:400;line-height:1.4;color:var(--s700)}
+.t-lab {font-size:12px;font-weight:500;line-height:1.3;color:var(--s500)}
+.t-meta{font-size:11px;font-weight:400;line-height:1.45;color:var(--s400)}
+.eyebrow{font-size:12px;font-weight:500;line-height:1.3;color:var(--s500);margin:0 0 8px}
+.band{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--s500)}
+
+/* Shell */
+.shell{display:flex;align-items:stretch;min-height:100%}
+.side{
+  width:236px;flex:none;position:relative;z-index:2;display:flex;flex-direction:column;padding:18px 12px 14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.56),rgba(255,255,255,.34));
+  backdrop-filter:blur(16px) saturate(180%); -webkit-backdrop-filter:blur(16px) saturate(180%);
+  border-right:1px solid rgba(255,255,255,.75);
+  box-shadow:1px 0 0 rgba(14,157,168,.07);
+}
+.main{position:relative;flex:1;min-width:0;overflow:hidden}
+.content{position:relative;z-index:1;padding:28px 36px 42px}
+
+.brand{display:flex;align-items:center;gap:9px;padding:2px 8px 0}
+.brand-name{font-size:14px;font-weight:700;letter-spacing:-.015em;color:var(--s900);line-height:1.1}
+.brand-sub{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--su700);line-height:1.1;margin-top:3px}
+
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;height:35px;padding:0 10px;border-radius:var(--r-xs);
+  font-size:13px;font-weight:500;color:var(--s500);transition:background .18s var(--ease),color .18s var(--ease)}
+.nav a svg{flex:none;opacity:.8}
+.nav a:hover{background:linear-gradient(168deg,rgba(255,255,255,.7),rgba(255,255,255,.5));color:var(--s900)}
+.nav a.on{
+  background:linear-gradient(168deg,rgba(255,255,255,.92),rgba(255,255,255,.7));
+  color:var(--su700);font-weight:600;
+  box-shadow:0 0 0 1px rgba(14,157,168,.16), 0 2px 10px -4px rgba(12,131,141,.22),
+             inset 0 1px 0 rgba(255,255,255,.96), inset 2px 0 0 var(--su);
+}
+.nav a.on svg{opacity:1}
+.grp{display:flex;align-items:center;justify-content:flex-start;gap:7px;padding:0 10px;margin:18px 0 7px;
+  font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--s400)}
+.rule{height:1px;background:var(--hair);margin:12px 6px}
+
+/* Buttons — blue stays the Suite's only primary. Never purple. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 15px;
+  border-radius:var(--r-xs);border:1px solid transparent;font-size:13px;font-weight:500;cursor:pointer;
+  white-space:nowrap;transition:box-shadow .2s var(--ease),background .2s var(--ease),transform .2s var(--ease)}
+.btn-primary{background:linear-gradient(140deg,#3B82F6,#2563EB);color:#fff;
+  box-shadow:var(--sh-b), inset 0 1px 0 rgba(255,255,255,.26)}
+.btn-primary:hover{box-shadow:0 16px 38px -12px rgba(37,99,235,.60),0 3px 8px -2px rgba(37,99,235,.28),
+  inset 0 1px 0 rgba(255,255,255,.28);transform:translateY(-1px)}
+.btn-secondary{color:var(--s900);border-color:rgba(255,255,255,.9);
+  background:linear-gradient(168deg,rgba(255,255,255,.66),rgba(255,255,255,.46));
+  box-shadow:0 0 0 1px rgba(37,99,235,.08), var(--sh-xs), inset 0 1px 0 rgba(255,255,255,.92)}
+.btn-secondary:hover{background:linear-gradient(168deg,rgba(255,255,255,.84),rgba(255,255,255,.64));
+  box-shadow:0 0 0 1px rgba(37,99,235,.10), var(--sh-md), inset 0 1px 0 rgba(255,255,255,1);transform:translateY(-1px)}
+.btn-ghost{color:var(--s500);background:transparent}
+.btn-ghost:hover{background:linear-gradient(168deg,rgba(255,255,255,.62),rgba(255,255,255,.42));color:var(--s900)}
+.btn-icon{width:38px;padding:0}
+
+/* Level 5 · attribution — visible, quiet */
+.src{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;color:var(--s400);white-space:nowrap}
+.src i{width:4px;height:4px;border-radius:50%;display:block;flex:none}
+.src .pair{display:inline-flex;width:10px;height:4px;position:relative;flex:none}
+.src .pair i{position:absolute;top:0}
+.src .pair i:first-child{left:0}
+.src .pair i:last-child{left:4px;box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
+
+.cov{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:7px;
+  font-size:10.5px;font-weight:500;color:var(--s500);
+  background:linear-gradient(168deg,rgba(255,255,255,.6),rgba(255,255,255,.4));
+  border:1px solid rgba(255,255,255,.8)}
+.cov i{width:4px;height:4px;border-radius:50%;display:block;flex:none}
+.cov.off{opacity:.3}
+
+.badge{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:7px;
+  font-size:11px;font-weight:500;white-space:nowrap}
+.badge i{width:5px;height:5px;border-radius:50%;display:block;flex:none}
+
+/* KPI row — divided, not boxed */
+.kpirow{display:flex;align-items:stretch;margin:0 -22px}
+.kpirow > *{flex:1;min-width:0;padding:4px 22px}
+.kpirow > * + *{border-left:1px solid var(--hair)}
+.kpi-lab{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--s500)}
+.kpi-val{font-size:29px;font-weight:700;letter-spacing:-.028em;color:var(--s900);line-height:1.12;margin-top:9px;font-variant-numeric:tabular-nums}
+.kpi-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:11px}
+.delta{font-size:10.5px;font-weight:500}
+.delta.up{color:#0E9469}.delta.down{color:var(--bad)}
+
+/* Level 3 · flat content */
+.rows > * + *{border-top:1px solid var(--hair)}
+
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{height:40px;padding:0 18px;text-align:left;font-size:12px;font-weight:500;color:var(--s500);white-space:nowrap}
+.tbl thead tr{background:linear-gradient(168deg,rgba(255,255,255,.44),rgba(255,255,255,.26))}
+.tbl tbody td{height:50px;padding:0 18px;border-top:1px solid var(--hair);font-size:13px;color:var(--s700);vertical-align:middle}
+.tbl tbody tr{transition:background .18s var(--ease),box-shadow .18s var(--ease)}
+.tbl tbody tr:hover{background:linear-gradient(168deg,rgba(255,255,255,.70),rgba(255,255,255,.52));
+  box-shadow:inset 3px 0 0 rgba(37,99,235,.55)}
+.tbl .anchor{font-size:14px;font-weight:500;color:var(--s900)}
+.tbl tbody tr:hover .anchor{color:var(--b700)}
+.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+.search{display:flex;align-items:center;gap:9px;height:38px;padding:0 15px;border-radius:19px;
+  background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.32));
+  border:1px solid rgba(255,255,255,.78);color:var(--s400);font-size:13px}
+
+.tabs{display:inline-flex;align-items:center;gap:3px;padding:3px;border-radius:var(--r-sm);
+  background:linear-gradient(168deg,rgba(255,255,255,.44),rgba(255,255,255,.26));
+  border:1px solid rgba(255,255,255,.7)}
+.tabs a{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 13px;border-radius:var(--r-xs);
+  font-size:13px;font-weight:500;color:var(--s500)}
+.tabs a.on{color:var(--s900);font-weight:600;
+  background:linear-gradient(168deg,rgba(255,255,255,.92),rgba(255,255,255,.72));
+  box-shadow:0 0 0 1px rgba(37,99,235,.08), var(--sh-sm), inset 0 1px 0 rgba(255,255,255,1)}
+.tabs .count{font-size:10.5px;font-weight:500;color:var(--s400)}
+.tabs a.on .count{color:var(--su700)}
+
+.crumb{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--s400);margin-bottom:14px}
+.crumb .sep{opacity:.5}
+.crumb b{font-weight:500;color:var(--s700)}
+.grid{display:grid;gap:20px}
+</style>
+</helmet>
+<div class="atmos" style="width:1440px;min-height:1140px;position:relative">
+  <div class="shell" style="min-height:1140px">
+    <aside class="side">
+
+<div class="brand">
+  
+<svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+  <defs><linearGradient id="sm" x1="4" y1="24" x2="24" y2="4" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#2ED3C6"/><stop offset=".5" stop-color="#0E9DA8"/><stop offset="1" stop-color="#1F6FD0"/>
+  </linearGradient></defs>
+  <rect x="1" y="1" width="26" height="26" rx="8" fill="url(#sm)"/>
+  <path d="M14 6.6 21.6 11 14 15.4 6.4 11z" fill="#fff" fill-opacity=".95"/>
+  <path d="m7.6 14.6 6.4 3.7 6.4-3.7" stroke="#fff" stroke-opacity=".7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m7.6 18.4 6.4 3.7 6.4-3.7" stroke="#fff" stroke-opacity=".45" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+  <div><div class="brand-name">Sunveon</div><div class="brand-sub">Suite</div></div>
+</div>
+<div class="rule" style="margin-top:16px"></div>
+<a href="#" style="display:flex;align-items:center;gap:8px;padding:0 10px;height:28px;
+   font-size:12px;font-weight:500;color:var(--s400)"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.4 10H4.2"/><path d="m8.8 5.4-4.6 4.6 4.6 4.6"/></svg>All projects</a>
+<div class="wash" style="padding:11px 12px;margin:8px 2px 4px">
+  <div style="font-size:14px;font-weight:600;letter-spacing:-.01em;color:var(--s900);line-height:1.25">Valencia BESS</div>
+  <div class="t-meta" style="margin-top:3px">Spain · BESS · 100 MW / 200 MWh</div>
+</div>
+<div style="height:10px"></div>
+<div class="grp">Analysis<i style="width:5px;height:5px;border-radius:50%;background:#0E9DA8;display:block" title="Suite"></i></div>
+<nav class="nav">
+  <a href="#" class="on"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/></svg>Overview</a>
+  
+  
+</nav>
+<div class="grp">Open in</div>
+<nav class="nav">
+  
+  <a href="#"><span style="width:17px;display:flex;justify-content:center"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i></span>ReveNew<span style="margin-left:auto;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></span></a>
+</nav>
+<div class="grp">Project</div>
+<nav class="nav">
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.3 2.9H6.1a1.3 1.3 0 0 0-1.3 1.3v11.6a1.3 1.3 0 0 0 1.3 1.3h7.8a1.3 1.3 0 0 0 1.3-1.3V6.7z"/><path d="M11.3 2.9v3.8h3.9"/></svg>Files</a>
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M10 5.9V10l2.8 1.7"/></svg>Activity</a>
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="2.4"/><path d="M15.9 12.1a1.3 1.3 0 0 0 .3 1.5l.1.1a1.6 1.6 0 1 1-2.2 2.2l-.1-.1a1.3 1.3 0 0 0-1.5-.3 1.3 1.3 0 0 0-.8 1.2v.2a1.6 1.6 0 0 1-3.2 0v-.1a1.3 1.3 0 0 0-.9-1.2 1.3 1.3 0 0 0-1.5.3l-.1.1A1.6 1.6 0 1 1 3.8 13.7l.1-.1a1.3 1.3 0 0 0 .3-1.5 1.3 1.3 0 0 0-1.2-.8h-.2a1.6 1.6 0 1 1 0-3.2h.1a1.3 1.3 0 0 0 1.2-.9 1.3 1.3 0 0 0-.3-1.5l-.1-.1a1.6 1.6 0 1 1 2.2-2.2l.1.1a1.3 1.3 0 0 0 1.5.3h.1a1.3 1.3 0 0 0 .8-1.2v-.2a1.6 1.6 0 0 1 3.2 0v.1a1.3 1.3 0 0 0 .8 1.2 1.3 1.3 0 0 0 1.5-.3l.1-.1a1.6 1.6 0 1 1 2.2 2.2l-.1.1a1.3 1.3 0 0 0-.3 1.5v.1a1.3 1.3 0 0 0 1.2.8h.2a1.6 1.6 0 0 1 0 3.2h-.1a1.3 1.3 0 0 0-1.2.8z"/></svg>Settings</a>
+</nav>
+<div style="flex:1;min-height:14px"></div>
+<div class="rule"></div>
+
+<div style="display:flex;align-items:center;gap:9px;padding:9px 10px;margin-top:8px;border-radius:10px;
+            background:rgba(255,255,255,.5);border:1px solid var(--hair)">
+  <span style="width:26px;height:26px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;
+               background:linear-gradient(140deg,#0E9DA8,#2563EB);color:#fff;font-size:10px;font-weight:700">VA</span>
+  <span style="min-width:0">
+    <span style="display:block;font-size:12px;font-weight:600;color:var(--s900);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Victor Andújar</span>
+    <span style="display:block;font-size:10px;color:var(--s400);line-height:1.3;margin-top:1px">Sunveon Energy</span>
+  </span>
+  <span style="margin-left:auto;color:var(--s400);display:flex"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.2 8 4.8 4.6L14.8 8"/></svg></span>
+</div></aside>
+    <main class="main">
+      <div class="focus rv"></div>
+      <div class="content">
+
+<div class="crumb"><a href="#">Home</a><span class="sep"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span><a href="#">Projects</a><span class="sep"><svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span><b>Valencia BESS</b></div>
+<div style="display:flex;align-items:flex-start;gap:24px;padding-bottom:20px;border-bottom:1px solid var(--hair2);margin-bottom:24px">
+  <div style="flex:1;min-width:0">
+    <p class="eyebrow">Suite project</p>
+    <h1 class="t-page">Valencia BESS</h1>
+    <div class="t-body" style="margin-top:9px;color:var(--s500)"><span style="display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap">
+           <span>Spain · BESS · 100 MW / 200 MWh · COD 2027</span><span class="badge" style="background:rgba(16,185,129,.11);color:#0E9469"><i style="background:#0E9469"></i>Active</span></span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;flex:none;padding-top:12px"><button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Open in ReveNew<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
+            <button class="btn btn-ghost btn-icon"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="4.6" r="1.15" fill="currentColor" stroke="none"/><circle cx="10" cy="10" r="1.15" fill="currentColor" stroke="none"/><circle cx="10" cy="15.4" r="1.15" fill="currentColor" stroke="none"/></svg></button></div>
+</div>
+<div class="kpirow">
+<div style="">
+  <div class="kpi-lab">IRR</div>
+  <div class="kpi-val">12.8%</div>
+  
+  <div class="kpi-foot"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span><span class="delta up">+0.4 pt</span></div>
+  
+</div>
+<div style="">
+  <div class="kpi-lab">Annual revenue</div>
+  <div class="kpi-val">€8.42M</div>
+  
+  <div class="kpi-foot"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span><span class="delta up">+3.1%</span></div>
+  
+</div>
+<div style="">
+  <div class="kpi-lab">CAPEX</div>
+  <div class="kpi-val">€42.1M</div>
+  
+  <div class="kpi-foot"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></div>
+  
+</div>
+<div style="">
+  <div class="kpi-lab">Capture price</div>
+  <div class="kpi-val">€118.4</div>
+  
+  <div class="kpi-foot"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span><span class="delta up">+2.6%</span></div>
+  
+</div></div>
+<section class="panel lift" style="padding:26px 28px;margin-top:28px">
+<div style="display:flex;align-items:flex-start;gap:32px;padding:20px 22px;border-radius:var(--r-sm);
+     background:linear-gradient(168deg,rgba(175,71,178,.05),rgba(255,255,255,0) 62%)">
+  <div style="flex:1.95;min-width:0">
+    <div class="band" style="color:var(--rv600)">Financial performance</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+      <h3 class="t-card" style="font-size:17px">What it earns</h3><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+      
+    </div>
+    <p class="t-meta" style="margin-top:5px;font-size:12px">Base case. The dashed line is the same asset with no PPA, recomputed hour by hour at market price.</p>
+    <div style="margin-top:14px">
+<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+  
+    <span style="display:inline-flex;align-items:center;gap:7px">
+      <i style="width:9px;height:9px;border-radius:3px;background:#7B2D80;display:block;flex:none"></i>
+      <span style="font-size:11.5px;font-weight:500;color:var(--s500)">Contracted (PPA)</span>
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:7px">
+      <i style="width:9px;height:9px;border-radius:3px;background:#C74FC9;display:block;flex:none"></i>
+      <span style="font-size:11.5px;font-weight:500;color:var(--s500)">Merchant</span>
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:7px">
+      <svg width="14" height="9" aria-hidden="true"><line x1="0" y1="4.5" x2="14" y2="4.5" stroke="#54617A" stroke-width="1.8" stroke-dasharray="3 2.5"/></svg>
+      <span style="font-size:11.5px;font-weight:500;color:var(--s500)">Without PPA</span>
+    </span>
+</div></div>
+    <div style="margin-top:6px">
+<svg viewBox="0 0 700 236" width="100%" style="display:block" role="img" aria-label="Revenue by year split into contracted and merchant, against a no-PPA counterfactual">
+  <style>.mk{transition:opacity .12s} .mk:hover{opacity:.82}</style><line x1="46" y1="18.0" x2="688" y2="18.0" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
+     <text x="37" y="21.4" text-anchor="end" font-size="9.5" fill="#5F6C82">€10M</text><line x1="46" y1="115.0" x2="688" y2="115.0" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
+     <text x="37" y="118.4" text-anchor="end" font-size="9.5" fill="#5F6C82">€5M</text><line x1="46" y1="212.0" x2="688" y2="212.0" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+     <text x="37" y="215.4" text-anchor="end" font-size="9.5" fill="#5F6C82">0</text><path class="mk" d="M63.1 212L63.1 111.11999999999999Q63.1 111.11999999999999 63.1 111.11999999999999L93.1 111.11999999999999Q93.1 111.11999999999999 93.1 111.11999999999999L93.1 212Z" fill="#7B2D80"><title>2026 — contracted (PPA) €5.2M</title></path><path class="mk" d="M63.1 109.11999999999999L63.1 53.03999999999999Q63.1 49.03999999999999 67.1 49.03999999999999L89.1 49.03999999999999Q93.1 49.03999999999999 93.1 53.03999999999999L93.1 109.11999999999999Z" fill="#C74FC9"><title>2026 — merchant €3.2M</title></path><path class="mk" d="M127.30000000000001 212L127.30000000000001 111.11999999999999Q127.30000000000001 111.11999999999999 127.30000000000001 111.11999999999999L157.3 111.11999999999999Q157.3 111.11999999999999 157.3 111.11999999999999L157.3 212Z" fill="#7B2D80"><title>2027 — contracted (PPA) €5.2M</title></path><path class="mk" d="M127.30000000000001 109.11999999999999L127.30000000000001 45.27999999999997Q127.30000000000001 41.27999999999997 131.3 41.27999999999997L153.3 41.27999999999997Q157.3 41.27999999999997 157.3 45.27999999999997L157.3 109.11999999999999Z" fill="#C74FC9"><title>2027 — merchant €3.6M</title></path><path class="mk" d="M191.5 212L191.5 111.11999999999999Q191.5 111.11999999999999 191.5 111.11999999999999L221.5 111.11999999999999Q221.5 111.11999999999999 221.5 111.11999999999999L221.5 212Z" fill="#7B2D80"><title>2028 — contracted (PPA) €5.2M</title></path><path class="mk" d="M191.5 109.11999999999999L191.5 39.46000000000001Q191.5 35.46000000000001 195.5 35.46000000000001L217.5 35.46000000000001Q221.5 35.46000000000001 221.5 39.46000000000001L221.5 109.11999999999999Z" fill="#C74FC9"><title>2028 — merchant €3.9M</title></path><path class="mk" d="M255.70000000000002 212L255.70000000000002 111.11999999999999Q255.70000000000002 111.11999999999999 255.70000000000002 111.11999999999999L285.70000000000005 111.11999999999999Q285.70000000000005 111.11999999999999 285.70000000000005 111.11999999999999L285.70000000000005 212Z" fill="#7B2D80"><title>2029 — contracted (PPA) €5.2M</title></path><path class="mk" d="M255.70000000000002 109.11999999999999L255.70000000000002 43.34Q255.70000000000002 39.34 259.70000000000005 39.34L281.70000000000005 39.34Q285.70000000000005 39.34 285.70000000000005 43.34L285.70000000000005 109.11999999999999Z" fill="#C74FC9"><title>2029 — merchant €3.7M</title></path><path class="mk" d="M319.90000000000003 212L319.90000000000003 111.11999999999999Q319.90000000000003 111.11999999999999 319.90000000000003 111.11999999999999L349.90000000000003 111.11999999999999Q349.90000000000003 111.11999999999999 349.90000000000003 111.11999999999999L349.90000000000003 212Z" fill="#7B2D80"><title>2030 — contracted (PPA) €5.2M</title></path><path class="mk" d="M319.90000000000003 109.11999999999999L319.90000000000003 33.639999999999986Q319.90000000000003 29.639999999999986 323.90000000000003 29.639999999999986L345.90000000000003 29.639999999999986Q349.90000000000003 29.639999999999986 349.90000000000003 33.639999999999986L349.90000000000003 109.11999999999999Z" fill="#C74FC9"><title>2030 — merchant €4.2M</title></path><path class="mk" d="M384.1 212L384.1 161.56Q384.1 161.56 384.1 161.56L414.1 161.56Q414.1 161.56 414.1 161.56L414.1 212Z" fill="#7B2D80"><title>2031 — contracted (PPA) €2.6M</title></path><path class="mk" d="M384.1 159.56L384.1 43.34Q384.1 39.34 388.1 39.34L410.1 39.34Q414.1 39.34 414.1 43.34L414.1 159.56Z" fill="#C74FC9"><title>2031 — merchant €6.3M</title></path><path class="mk" d="M448.30000000000007 212L448.30000000000007 49.16Q448.30000000000007 45.16 452.30000000000007 45.16L474.30000000000007 45.16Q478.30000000000007 45.16 478.30000000000007 49.16L478.30000000000007 212Z" fill="#C74FC9"><title>2032 — merchant €8.6M</title></path><path class="mk" d="M512.5 212L512.5 54.97999999999999Q512.5 50.97999999999999 516.5 50.97999999999999L538.5 50.97999999999999Q542.5 50.97999999999999 542.5 54.97999999999999L542.5 212Z" fill="#C74FC9"><title>2033 — merchant €8.3M</title></path><path class="mk" d="M576.7 212L576.7 60.79999999999998Q576.7 56.79999999999998 580.7 56.79999999999998L602.7 56.79999999999998Q606.7 56.79999999999998 606.7 60.79999999999998L606.7 212Z" fill="#C74FC9"><title>2034 — merchant €8.0M</title></path><path class="mk" d="M640.9000000000001 212L640.9000000000001 68.56Q640.9000000000001 64.56 644.9000000000001 64.56L666.9000000000001 64.56Q670.9000000000001 64.56 670.9000000000001 68.56L670.9000000000001 212Z" fill="#C74FC9"><title>2035 — merchant €7.6M</title></path>
+  <path d="M78.1 62.6L142.3 58.7L206.5 52.9L270.7 54.9L334.9 45.2L399.1 47.1L463.3 45.2L527.5 51.0L591.7 56.8L655.9 64.6" fill="none" stroke="#54617A" stroke-width="1.6" stroke-dasharray="4 3" stroke-linejoin="round"/>
+  <text x="78.1" y="41.0" text-anchor="middle" font-size="10" font-weight="600" fill="#0F172A">€8.4M</text>
+  <text x="405.5" y="62.1" text-anchor="middle" font-size="9.5" font-weight="500" fill="#5F6C82">PPA ends</text>
+  <text x="78.1" y="230" text-anchor="middle" font-size="9.5" fill="#5F6C82">’26</text><text x="142.3" y="230" text-anchor="middle" font-size="9.5" fill="#5F6C82">’27</text><text x="206.5" y="230" text-anchor="middle" font-size="9.5" fill="#5F6C82">’28</text><text x="270.7" y="230" text-anchor="middle" font-size="9.5" fill="#5F6C82">’29</text><text x="334.9" y="230" text-anchor="middle" font-size="9.5" fill="#5F6C82">’30</text><text x="399.1" y="230" text-anchor="middle" font-size="9.5" fill="#5F6C82">’31</text><text x="463.3" y="230" text-anchor="middle" font-size="9.5" fill="#5F6C82">’32</text><text x="527.5" y="230" text-anchor="middle" font-size="9.5" fill="#5F6C82">’33</text><text x="591.7" y="230" text-anchor="middle" font-size="9.5" fill="#5F6C82">’34</text><text x="655.9" y="230" text-anchor="middle" font-size="9.5" fill="#5F6C82">’35</text>
+</svg></div>
+  </div>
+  <div style="flex:1;min-width:0;padding-top:26px">
+    
+<div class="rows" style="min-width:0">
+  
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:11px 0">
+      <span style="font-size:12.5px;color:var(--s500)">Contracted (PPA)</span>
+      <span style="font-size:15px;font-weight:600;color:var(--s900);white-space:nowrap;font-variant-numeric:tabular-nums">€5.2<span style="font-size:11px;font-weight:500;color:var(--s400);margin-left:3px">M / yr</span></span>
+    </div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:11px 0">
+      <span style="font-size:12.5px;color:var(--s500)">Merchant</span>
+      <span style="font-size:15px;font-weight:600;color:var(--s900);white-space:nowrap;font-variant-numeric:tabular-nums">€3.2<span style="font-size:11px;font-weight:500;color:var(--s400);margin-left:3px">M / yr</span></span>
+    </div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:11px 0">
+      <span style="font-size:12.5px;color:var(--s500)">Capture price</span>
+      <span style="font-size:15px;font-weight:600;color:var(--s900);white-space:nowrap;font-variant-numeric:tabular-nums">118.4<span style="font-size:11px;font-weight:500;color:var(--s400);margin-left:3px">€/MWh</span></span>
+    </div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:11px 0">
+      <span style="font-size:12.5px;color:var(--s500)">Spot average</span>
+      <span style="font-size:15px;font-weight:600;color:var(--s900);white-space:nowrap;font-variant-numeric:tabular-nums">71.4<span style="font-size:11px;font-weight:500;color:var(--s400);margin-left:3px">€/MWh</span></span>
+    </div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:11px 0">
+      <span style="font-size:12.5px;color:var(--s500)">Capture rate</span>
+      <span style="font-size:15px;font-weight:600;color:var(--s900);white-space:nowrap;font-variant-numeric:tabular-nums">166<span style="font-size:11px;font-weight:500;color:var(--s400);margin-left:3px">%</span></span>
+    </div>
+</div>
+    
+    
+  </div>
+</div></section>
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:28px 0 14px">
+  <div style="min-width:0">
+    
+    <div style="display:flex;align-items:center;gap:10px">
+      <h2 class="t-sec">Project activity</h2>
+    </div>
+    
+  </div>
+  <div style="flex:none"><a href="#" style="font-size:13px;font-weight:500">View all</a></div>
+</div>
+<div class="rows">
+<div style="display:flex;align-items:center;gap:14px;height:52px">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">PPA contract “Iberdrola 2026–31” changed</span>
+  <a href="#" style="width:160px;flex:none;font-size:13px;font-weight:500">Victor Andújar</a>
+  <span style="width:96px;flex:none"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">3h ago</span>
+</div>
+<div style="display:flex;align-items:center;gap:14px;height:52px">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Financial scenario “High spread” updated</span>
+  <a href="#" style="width:160px;flex:none;font-size:13px;font-weight:500">Victor Andújar</a>
+  <span style="width:96px;flex:none"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">5h ago</span>
+</div>
+<div style="display:flex;align-items:center;gap:14px;height:52px">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Financial model recalculated</span>
+  <a href="#" style="width:160px;flex:none;font-size:13px;font-weight:500">System</a>
+  <span style="width:96px;flex:none"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">Yesterday</span>
+</div>
+<div style="display:flex;align-items:center;gap:14px;height:52px">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Financial scenario “Merchant upside” created</span>
+  <a href="#" style="width:160px;flex:none;font-size:13px;font-weight:500">Marta Gil</a>
+  <span style="width:96px;flex:none"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">4d ago</span>
+</div>
+<div style="display:flex;align-items:center;gap:14px;height:52px">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Project created</span>
+  <a href="#" style="width:160px;flex:none;font-size:13px;font-weight:500">Victor Andújar</a>
+  <span style="width:96px;flex:none"><span class="src"><i style="background:#0E9DA8"></i>Suite</span></span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">8mo ago</span>
+</div></div></div>
+    </main>
+  </div>
+  
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":1140}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

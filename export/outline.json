@@ -1,0 +1,345 @@
+{
+ "ProjectOverview-1": [
+  "Project",
+  "Valencia BESS",
+  "Current analysis",
+  "Analysis case",
+  "Technical simulation",
+  "Financial case",
+  "Result",
+  "Technical performance",
+  "What the asset does",
+  "Financial performance",
+  "What it earns"
+ ],
+ "ProjectOverview-2": [
+  "What the combination produces",
+  "What each case invests, and what it returns",
+  "What this project has to combine",
+  "Technical simulations",
+  "Financial cases",
+  "Saved analysis cases"
+ ],
+ "CaseMatrix-1": [
+  "Analysis Suite",
+  "Case matrix",
+  "Showing",
+  "IRRper cent",
+  "Highest return",
+  "Best return on the baseline investment",
+  "Weakest return"
+ ],
+ "CaseMatrix-2": [
+  "Selected case"
+ ],
+ "CaseMatrix-3": [
+  "The trade-off behind irr",
+  "Return against investment"
+ ],
+ "CompareAlternatives-1": [
+  "Compare Suite",
+  "Compare",
+  "Best NPV",
+  "Best IRR",
+  "Lowest CAPEX",
+  "Shortest payback"
+ ],
+ "CompareAlternatives-2": [
+  "Difference from Base case",
+  "What each analysis case changes",
+  "What the design change buys"
+ ],
+ "CompareAlternatives-3": [
+  "High storage",
+  "Technical change",
+  "Financial impact",
+  "Stress test",
+  "Technical change",
+  "Financial impact"
+ ],
+ "CompareAlternatives-4": [
+  "Technical — StoreBrid",
+  "Financial — ReveNew",
+  "Combined — Suite"
+ ],
+ "OverviewChangeSim-1": [
+  "Project",
+  "Valencia BESS",
+  "Current analysis",
+  "Analysis case",
+  "Technical simulation",
+  "Financial case",
+  "Result",
+  "Technical performance",
+  "What the asset does",
+  "Financial performance",
+  "What it earns"
+ ],
+ "OverviewChangeSim-2": [
+  "What the combination produces",
+  "What each case invests, and what it returns",
+  "What this project has to combine",
+  "Technical simulations",
+  "Financial cases",
+  "Saved analysis cases"
+ ],
+ "OverviewChangeScenario-1": [
+  "Project",
+  "Valencia BESS",
+  "Current analysis",
+  "Analysis case",
+  "Technical simulation",
+  "Financial case",
+  "Result",
+  "Technical performance",
+  "What the asset does",
+  "Financial performance",
+  "What it earns"
+ ],
+ "OverviewChangeScenario-2": [
+  "What the combination produces",
+  "What each case invests, and what it returns",
+  "What this project has to combine",
+  "Technical simulations",
+  "Financial cases",
+  "Saved analysis cases"
+ ],
+ "OverviewTechnical-1": [
+  "Project",
+  "Valencia BESS",
+  "Current analysis",
+  "Analysis case",
+  "Technical simulation",
+  "Financial case",
+  "Result",
+  "Technical performance",
+  "What the asset does",
+  "Financial performance",
+  "What it earns"
+ ],
+ "OverviewTechnical-2": [
+  "What the combination produces",
+  "What each case invests, and what it returns",
+  "What this project has to combine",
+  "Technical simulations",
+  "Financial cases",
+  "Saved analysis cases"
+ ],
+ "FinancialDetails-1": [
+  "Financials ReveNew",
+  "Financials"
+ ],
+ "FinancialDetails-2": [
+  "Case composition",
+  "What Base market is made of",
+  "Cumulative cash flow",
+  "When it pays itself back"
+ ],
+ "CreateAnalysisCase-1": [
+  "Compare Suite",
+  "Compare",
+  "Best NPV",
+  "Best IRR",
+  "Lowest CAPEX",
+  "Shortest payback"
+ ],
+ "CreateAnalysisCase-2": [
+  "Difference from Base case",
+  "What each analysis case changes",
+  "What the design change buys"
+ ],
+ "CreateAnalysisCase-3": [
+  "High storage",
+  "Technical change",
+  "Financial impact",
+  "Stress test",
+  "Technical change",
+  "Financial impact"
+ ],
+ "CreateAnalysisCase-4": [
+  "Technical — StoreBrid",
+  "Financial — ReveNew",
+  "Combined — Suite"
+ ],
+ "CompareExplained-1": [
+  "Analysis Suite",
+  "Compare cases",
+  "Decision summary",
+  "Key changes vs baseline"
+ ],
+ "CompareExplained-2": [
+  "Technical change",
+  "Financial change",
+  "Outcome",
+  "Technical change",
+  "Financial change",
+  "Outcome"
+ ],
+ "CompareExplained-3": [
+  "Technical change",
+  "Financial change",
+  "Outcome",
+  "Contribution along the comparison path",
+  "IRR — both dimensions moved",
+  "Incremental economics",
+  "What the extra duration costs and returns"
+ ],
+ "CompareExplained-4": [
+  "Technical vs financial",
+  "Does working the asset harder pay for itself?",
+  "Metric comparison",
+  "IRR"
+ ],
+ "CompareExplained-5": [
+  "Technical — StoreBrid",
+  "Financial — ReveNew",
+  "Combined — Suite"
+ ],
+ "OverviewStale-1": [
+  "Project",
+  "Valencia BESS",
+  "Current analysis",
+  "Analysis case",
+  "Technical simulation",
+  "Financial case",
+  "Result",
+  "Technical performance",
+  "What the asset does",
+  "Financial performance",
+  "What it earns"
+ ],
+ "OverviewStale-2": [
+  "What the combination produces",
+  "What each case invests, and what it returns",
+  "What this project has to combine",
+  "Technical simulations",
+  "Financial cases",
+  "Saved analysis cases"
+ ],
+ "EditProjectDetails-1": [
+  "Project",
+  "Valencia BESS",
+  "Current analysis",
+  "Analysis case",
+  "Technical simulation",
+  "Financial case",
+  "Result",
+  "Technical performance",
+  "What the asset does",
+  "Financial performance",
+  "What it earns"
+ ],
+ "EditProjectDetails-2": [
+  "What the combination produces",
+  "What each case invests, and what it returns",
+  "What this project has to combine",
+  "Technical simulations",
+  "Financial cases",
+  "Saved analysis cases"
+ ],
+ "Main-1": [
+  "Friday, 21 August · Sunveon Energy",
+  "Good morning, Victor",
+  "Workspace",
+  "Recent projects",
+  "Valencia BESS",
+  "Madrid Hybrid",
+  "Porto PV",
+  "Portfolio performance"
+ ],
+ "Main-2": [
+  "Recent activity",
+  "Portfolio insights"
+ ],
+ "Projects-1": [
+  "24 Suite projects · 11 with both engineering and financial capabilities",
+  "Projects"
+ ],
+ "CreateProject-1": [
+  "Shared project context · used across your Sunveon products",
+  "Create project",
+  "Project details",
+  "Project location"
+ ],
+ "CreateProject-2": [
+  "Available capabilities"
+ ],
+ "Analytics-1": [
+  "11 projects with both capabilities · 1.24 GW · 2.48 GWh",
+  "Analytics",
+  "Technical vs financial",
+  "Utilisation against return",
+  "Performance insights",
+  "Where the two disagree"
+ ],
+ "Analytics-2": [
+  "Over time",
+  "When moving energy actually earns",
+  "Project comparison"
+ ],
+ "Files-1": [
+  "Project library Suite",
+  "Files"
+ ],
+ "Activity-1": [
+  "Project timeline Suite",
+  "Activity",
+  "Today",
+  "Yesterday"
+ ],
+ "Activity-2": [
+  "19 August 2026"
+ ],
+ "Settings-1": [
+  "Project Suite",
+  "Settings",
+  "Project details",
+  "Units, currency and financial basis",
+  "Analysis defaults"
+ ],
+ "Settings-2": [
+  "Where the rest is configured",
+  "StoreBrid",
+  "ReveNew",
+  "Suite"
+ ],
+ "ProjectStoreBrid-1": [
+  "Suite project",
+  "Valencia BESS",
+  "Technical performance",
+  "What the asset does",
+  "Project activity"
+ ],
+ "ProjectStoreBrid-2": [],
+ "ProjectReveNew-1": [
+  "Suite project",
+  "Valencia BESS",
+  "Financial performance",
+  "What it earns",
+  "Project activity"
+ ],
+ "ProjectReveNew-2": [],
+ "ProjectNew-1": [
+  "Suite project · created 2 minutes ago",
+  "Andalucía Solar + BESS",
+  "Start configuring your project",
+  "Engineering",
+  "Financial",
+  "Shared project context",
+  "Project activity"
+ ],
+ "States-1": [],
+ "Administration-1": [
+  "Sunveon Energy · 14 members",
+  "Administration",
+  "Products & licences",
+  "StoreBrid",
+  "ReveNew",
+  "Suite",
+  "Member access",
+  "Project capabilities"
+ ],
+ "SourceAttribution-1": [],
+ "Flows-1": [],
+ "Flows-2": []
+}

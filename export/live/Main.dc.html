@@ -1,0 +1,650 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  /* StoreBrid's tokens, inherited verbatim from the StoreBrid UI Rework canvas */
+  --b400:#60A5FA; --b500:#3B82F6; --b600:#2563EB; --b700:#1D4ED8; --b800:#1E40AF;
+  --cy:#06B6D4; --cy600:#0891B2;
+  --ok:#10B981; --warn:#F59E0B; --bad:#DC2626; --run:#8B5CF6; --info:#3B82F6;
+  --s100:#F1F5F9; --s300:#CBD5E1; --s400:#5F6C82; --s500:#54617A; --s700:#334155; --s900:#0F172A;
+  --hair:rgba(30,58,138,.07);
+  --edge:rgba(255,255,255,.80); --edge-soft:rgba(255,255,255,.62); --lit:rgba(255,255,255,.92);
+  --sh-xs:0 1px 2px rgba(30,58,138,.05);
+  --sh-sm:0 2px 10px -4px rgba(30,58,138,.12);
+  --sh-md:0 14px 34px -18px rgba(30,58,138,.26),0 2px 8px -3px rgba(30,58,138,.07);
+  --sh-lg:0 26px 60px -28px rgba(30,58,138,.30),0 4px 14px -6px rgba(30,58,138,.08);
+  --sh-xl:0 40px 90px -40px rgba(30,58,138,.34),0 6px 18px -8px rgba(30,58,138,.09);
+  --sh-b:0 10px 28px -10px rgba(37,99,235,.50),0 2px 6px -1px rgba(37,99,235,.22);
+  --lume:0 40px 120px -52px rgba(37,99,235,.55);
+  --r-xs:10px; --r-sm:12px; --r-md:16px; --r-lg:20px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  /* ReveNew's dimension */
+  --rv:#AF47B2; --rv600:#9A3E9D; --rv400:#C74FC9; --rv-deep:#7B2D80;
+  --lume-rv:0 40px 120px -52px rgba(175,71,178,.34);
+  /* The Suite's own parent colour — the neutral bridge between them.
+     Aqua-teal, never green, and never used for Combined (§24). */
+  --su:#0E9DA8; --su600:#0C838D; --su700:#0A6E77;
+  --lume-su:0 40px 120px -52px rgba(14,157,168,.34);
+  /* Combined = both datasets participating. A restrained blend of the two. */
+  --cmb:#6D5AC6;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--s900);
+  font-size:14px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+h1,h2,h3,h4,p{margin:0}
+a{color:var(--b700);text-decoration:none}
+a:hover{color:var(--b800)}
+
+/* ── Level 0 · page atmosphere ───────────────────────────────────
+   StoreBrid's four fields, unchanged, plus one very faint violet
+   field on the financial side — the only place the Suite's parent
+   identity differs from StoreBrid's.                                */
+.atmos{
+  min-height:100%;
+  background:
+    radial-gradient(1700px 1180px at 10% -12%, rgba(105,200,208,.17), rgba(105,200,208,0) 78%),
+    radial-gradient(1900px 1300px at 95% -18%, rgba(125,180,215,.13), rgba(125,180,215,0) 76%),
+    radial-gradient(1500px 1250px at 84% 112%, rgba(110,195,203,.10), rgba(110,195,203,0) 78%),
+    radial-gradient(1400px 1150px at -14% 104%, rgba(130,180,210,.07), rgba(130,180,210,0) 76%),
+    radial-gradient(1250px 980px at 104% 46%, rgba(160,130,205,.055), rgba(160,130,205,0) 74%),
+    linear-gradient(168deg,#ECF5F7 0%,#F9FBFC 46%,#EEF4F8 100%);
+}
+/* Suite-owned screens sit in the parent's own light. Entering a product's
+   domain lets that product's colour come forward (§25) — same shell. */
+.focus{
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(74% 64% at 24% 20%, rgba(90,195,205,.115), rgba(90,195,205,0) 78%),
+    radial-gradient(60% 52% at 88% 84%, rgba(125,180,215,.06), rgba(125,180,215,0) 80%);
+}
+.focus.sb{
+  background:
+    radial-gradient(74% 64% at 24% 20%, rgba(105,160,228,.135), rgba(105,160,228,0) 78%),
+    radial-gradient(60% 52% at 88% 84%, rgba(95,195,205,.055), rgba(95,195,205,0) 80%);
+}
+.focus.rv{
+  background:
+    radial-gradient(74% 64% at 24% 20%, rgba(165,120,205,.10), rgba(165,120,205,0) 78%),
+    radial-gradient(60% 52% at 88% 84%, rgba(100,190,205,.055), rgba(100,190,205,0) 80%);
+}
+
+/* ── Level 1 · primary glass ─────────────────────────────────────
+   White edge with the blue filo as an outer ring, top specular line,
+   inset highlight above and a blue seam below. This is the recipe. */
+.panel{
+  position:relative;
+  background:linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%);
+  backdrop-filter:blur(16px) saturate(190%); -webkit-backdrop-filter:blur(16px) saturate(190%);
+  border:1px solid rgba(255,255,255,.95); border-radius:var(--r-md);
+  box-shadow:0 0 0 1px rgba(37,99,235,.09), var(--sh-md),
+             inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(37,99,235,.05);
+  transition:box-shadow .22s var(--ease), border-color .22s var(--ease);
+}
+.panel::before{
+  content:""; position:absolute; left:16px; right:16px; top:0; height:1px; pointer-events:none; z-index:2;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.98) 15%,rgba(255,255,255,.98) 85%,rgba(255,255,255,0));
+}
+/* the ONE protagonist surface per screen */
+.panel.lift{
+  background:linear-gradient(168deg,rgba(255,255,255,.66) 0%,rgba(255,255,255,.54) 46%,rgba(255,255,255,.46) 100%);
+  box-shadow:0 0 0 1px rgba(37,99,235,.17), var(--sh-lg), 0 44px 120px -56px rgba(37,99,235,.60),
+             inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(37,99,235,.09);
+}
+/* ── Level 2 · secondary surfaces ─────────────────────────────── */
+.glass-sm{
+  position:relative;
+  background:linear-gradient(168deg,rgba(255,255,255,.60),rgba(255,255,255,.42));
+  backdrop-filter:blur(12px) saturate(180%); -webkit-backdrop-filter:blur(12px) saturate(180%);
+  border:1px solid var(--edge); border-radius:var(--r-sm);
+  box-shadow:var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92);
+  transition:background .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+}
+a.glass-sm:hover{
+  background:linear-gradient(168deg,rgba(255,255,255,.84),rgba(255,255,255,.64));
+  box-shadow:var(--sh-lg), inset 0 1px 0 rgba(255,255,255,1); transform:translateY(-1px);
+}
+/* a recess of the panel it sits in — never another card */
+.wash{
+  background:linear-gradient(168deg,rgba(255,255,255,.44),rgba(255,255,255,.26));
+  border:1px solid rgba(255,255,255,.70); border-radius:var(--r-sm);
+}
+/* floating: modals, toasts */
+.raise{
+  background:linear-gradient(168deg,rgba(255,255,255,.86),rgba(255,255,255,.68));
+  backdrop-filter:blur(18px) saturate(180%); -webkit-backdrop-filter:blur(18px) saturate(180%);
+  border:1px solid rgba(255,255,255,.96); border-radius:var(--r-md);
+  box-shadow:0 0 0 1px rgba(37,99,235,.15), var(--sh-xl), inset 0 1px 0 rgba(255,255,255,1);
+}
+.hr{height:1px;background:var(--hair)}
+
+/* product atmosphere on a project card — extremely restrained */
+.tint-both{background:linear-gradient(168deg,rgba(37,99,235,.055),rgba(175,71,178,.05)),
+  linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%)}
+.tint-sb{background:linear-gradient(168deg,rgba(37,99,235,.07),rgba(37,99,235,0) 70%),
+  linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%)}
+.tint-rv{background:linear-gradient(168deg,rgba(175,71,178,.07),rgba(175,71,178,0) 70%),
+  linear-gradient(168deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.48) 46%,rgba(255,255,255,.40) 100%)}
+/* Combined = blue into violet. Restrained, never a rainbow. */
+.combined{background:linear-gradient(122deg,rgba(37,99,235,.10),rgba(175,71,178,.085));
+  border-radius:var(--r-sm); box-shadow:inset 0 0 0 1px rgba(37,99,235,.10)}
+
+/* Typography — Inter, seven roles */
+.t-page{font-size:30px;font-weight:700;line-height:1.14;letter-spacing:-.025em;color:var(--s900)}
+.t-sec {font-size:19px;font-weight:600;line-height:1.28;letter-spacing:-.015em;color:var(--s900)}
+.t-card{font-size:16px;font-weight:600;line-height:1.35;color:var(--s900)}
+.t-body{font-size:14px;font-weight:400;line-height:1.55;color:var(--s700)}
+.t-tbl {font-size:13px;font-weight:400;line-height:1.4;color:var(--s700)}
+.t-lab {font-size:12px;font-weight:500;line-height:1.3;color:var(--s500)}
+.t-meta{font-size:11px;font-weight:400;line-height:1.45;color:var(--s400)}
+.eyebrow{font-size:12px;font-weight:500;line-height:1.3;color:var(--s500);margin:0 0 8px}
+.band{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--s500)}
+
+/* Shell */
+.shell{display:flex;align-items:stretch;min-height:100%}
+.side{
+  width:236px;flex:none;position:relative;z-index:2;display:flex;flex-direction:column;padding:18px 12px 14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.56),rgba(255,255,255,.34));
+  backdrop-filter:blur(16px) saturate(180%); -webkit-backdrop-filter:blur(16px) saturate(180%);
+  border-right:1px solid rgba(255,255,255,.75);
+  box-shadow:1px 0 0 rgba(14,157,168,.07);
+}
+.main{position:relative;flex:1;min-width:0;overflow:hidden}
+.content{position:relative;z-index:1;padding:28px 36px 42px}
+
+.brand{display:flex;align-items:center;gap:9px;padding:2px 8px 0}
+.brand-name{font-size:14px;font-weight:700;letter-spacing:-.015em;color:var(--s900);line-height:1.1}
+.brand-sub{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--su700);line-height:1.1;margin-top:3px}
+
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;height:35px;padding:0 10px;border-radius:var(--r-xs);
+  font-size:13px;font-weight:500;color:var(--s500);transition:background .18s var(--ease),color .18s var(--ease)}
+.nav a svg{flex:none;opacity:.8}
+.nav a:hover{background:linear-gradient(168deg,rgba(255,255,255,.7),rgba(255,255,255,.5));color:var(--s900)}
+.nav a.on{
+  background:linear-gradient(168deg,rgba(255,255,255,.92),rgba(255,255,255,.7));
+  color:var(--su700);font-weight:600;
+  box-shadow:0 0 0 1px rgba(14,157,168,.16), 0 2px 10px -4px rgba(12,131,141,.22),
+             inset 0 1px 0 rgba(255,255,255,.96), inset 2px 0 0 var(--su);
+}
+.nav a.on svg{opacity:1}
+.grp{display:flex;align-items:center;justify-content:flex-start;gap:7px;padding:0 10px;margin:18px 0 7px;
+  font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--s400)}
+.rule{height:1px;background:var(--hair);margin:12px 6px}
+
+/* Buttons — blue stays the Suite's only primary. Never purple. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 15px;
+  border-radius:var(--r-xs);border:1px solid transparent;font-size:13px;font-weight:500;cursor:pointer;
+  white-space:nowrap;transition:box-shadow .2s var(--ease),background .2s var(--ease),transform .2s var(--ease)}
+.btn-primary{background:linear-gradient(140deg,#3B82F6,#2563EB);color:#fff;
+  box-shadow:var(--sh-b), inset 0 1px 0 rgba(255,255,255,.26)}
+.btn-primary:hover{box-shadow:0 16px 38px -12px rgba(37,99,235,.60),0 3px 8px -2px rgba(37,99,235,.28),
+  inset 0 1px 0 rgba(255,255,255,.28);transform:translateY(-1px)}
+.btn-secondary{color:var(--s900);border-color:rgba(255,255,255,.9);
+  background:linear-gradient(168deg,rgba(255,255,255,.66),rgba(255,255,255,.46));
+  box-shadow:0 0 0 1px rgba(37,99,235,.08), var(--sh-xs), inset 0 1px 0 rgba(255,255,255,.92)}
+.btn-secondary:hover{background:linear-gradient(168deg,rgba(255,255,255,.84),rgba(255,255,255,.64));
+  box-shadow:0 0 0 1px rgba(37,99,235,.10), var(--sh-md), inset 0 1px 0 rgba(255,255,255,1);transform:translateY(-1px)}
+.btn-ghost{color:var(--s500);background:transparent}
+.btn-ghost:hover{background:linear-gradient(168deg,rgba(255,255,255,.62),rgba(255,255,255,.42));color:var(--s900)}
+.btn-icon{width:38px;padding:0}
+
+/* Level 5 · attribution — visible, quiet */
+.src{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;color:var(--s400);white-space:nowrap}
+.src i{width:4px;height:4px;border-radius:50%;display:block;flex:none}
+.src .pair{display:inline-flex;width:10px;height:4px;position:relative;flex:none}
+.src .pair i{position:absolute;top:0}
+.src .pair i:first-child{left:0}
+.src .pair i:last-child{left:4px;box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
+
+.cov{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:7px;
+  font-size:10.5px;font-weight:500;color:var(--s500);
+  background:linear-gradient(168deg,rgba(255,255,255,.6),rgba(255,255,255,.4));
+  border:1px solid rgba(255,255,255,.8)}
+.cov i{width:4px;height:4px;border-radius:50%;display:block;flex:none}
+.cov.off{opacity:.3}
+
+.badge{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:7px;
+  font-size:11px;font-weight:500;white-space:nowrap}
+.badge i{width:5px;height:5px;border-radius:50%;display:block;flex:none}
+
+/* KPI row — divided, not boxed */
+.kpirow{display:flex;align-items:stretch;margin:0 -22px}
+.kpirow > *{flex:1;min-width:0;padding:4px 22px}
+.kpirow > * + *{border-left:1px solid var(--hair)}
+.kpi-lab{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--s500)}
+.kpi-val{font-size:29px;font-weight:700;letter-spacing:-.028em;color:var(--s900);line-height:1.12;margin-top:9px;font-variant-numeric:tabular-nums}
+.kpi-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:11px}
+.delta{font-size:10.5px;font-weight:500}
+.delta.up{color:#0E9469}.delta.down{color:var(--bad)}
+
+/* Level 3 · flat content */
+.rows > * + *{border-top:1px solid var(--hair)}
+
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{height:40px;padding:0 18px;text-align:left;font-size:12px;font-weight:500;color:var(--s500);white-space:nowrap}
+.tbl thead tr{background:linear-gradient(168deg,rgba(255,255,255,.44),rgba(255,255,255,.26))}
+.tbl tbody td{height:50px;padding:0 18px;border-top:1px solid var(--hair);font-size:13px;color:var(--s700);vertical-align:middle}
+.tbl tbody tr{transition:background .18s var(--ease),box-shadow .18s var(--ease)}
+.tbl tbody tr:hover{background:linear-gradient(168deg,rgba(255,255,255,.70),rgba(255,255,255,.52));
+  box-shadow:inset 3px 0 0 rgba(37,99,235,.55)}
+.tbl .anchor{font-size:14px;font-weight:500;color:var(--s900)}
+.tbl tbody tr:hover .anchor{color:var(--b700)}
+.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+.search{display:flex;align-items:center;gap:9px;height:38px;padding:0 15px;border-radius:19px;
+  background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.32));
+  border:1px solid rgba(255,255,255,.78);color:var(--s400);font-size:13px}
+
+.tabs{display:inline-flex;align-items:center;gap:3px;padding:3px;border-radius:var(--r-sm);
+  background:linear-gradient(168deg,rgba(255,255,255,.44),rgba(255,255,255,.26));
+  border:1px solid rgba(255,255,255,.7)}
+.tabs a{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 13px;border-radius:var(--r-xs);
+  font-size:13px;font-weight:500;color:var(--s500)}
+.tabs a.on{color:var(--s900);font-weight:600;
+  background:linear-gradient(168deg,rgba(255,255,255,.92),rgba(255,255,255,.72));
+  box-shadow:0 0 0 1px rgba(37,99,235,.08), var(--sh-sm), inset 0 1px 0 rgba(255,255,255,1)}
+.tabs .count{font-size:10.5px;font-weight:500;color:var(--s400)}
+.tabs a.on .count{color:var(--su700)}
+
+.crumb{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--s400);margin-bottom:14px}
+.crumb .sep{opacity:.5}
+.crumb b{font-weight:500;color:var(--s700)}
+.grid{display:grid;gap:20px}
+</style>
+</helmet>
+<div class="atmos" style="width:1440px;min-height:1410px;position:relative">
+  <div class="shell" style="min-height:1410px">
+    <aside class="side">
+
+<div class="brand">
+  
+<svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+  <defs><linearGradient id="sm" x1="4" y1="24" x2="24" y2="4" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#2ED3C6"/><stop offset=".5" stop-color="#0E9DA8"/><stop offset="1" stop-color="#1F6FD0"/>
+  </linearGradient></defs>
+  <rect x="1" y="1" width="26" height="26" rx="8" fill="url(#sm)"/>
+  <path d="M14 6.6 21.6 11 14 15.4 6.4 11z" fill="#fff" fill-opacity=".95"/>
+  <path d="m7.6 14.6 6.4 3.7 6.4-3.7" stroke="#fff" stroke-opacity=".7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m7.6 18.4 6.4 3.7 6.4-3.7" stroke="#fff" stroke-opacity=".45" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+  <div><div class="brand-name">Sunveon</div><div class="brand-sub">Suite</div></div>
+</div>
+<div class="rule" style="margin-top:16px"></div>
+<nav class="nav">
+  <a href="#" class="on"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.2 10 3.5l7 5.7"/><path d="M4.6 8.3V16a.9.9 0 0 0 .9.9h9a.9.9 0 0 0 .9-.9V8.3"/></svg>Home</a>
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="4.4" width="6.1" height="5.2" rx="1.2"/><rect x="11.1" y="4.4" width="6.1" height="5.2" rx="1.2"/><rect x="2.8" y="11.4" width="6.1" height="4.2" rx="1.2"/><rect x="11.1" y="11.4" width="6.1" height="4.2" rx="1.2"/></svg>Projects</a>
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Analytics</a>
+</nav>
+<div class="grp">Applications</div>
+<nav class="nav">
+  <a href="#"><span style="width:17px;display:flex;justify-content:center"><i style="width:6px;height:6px;border-radius:50%;background:#2563EB;display:block"></i></span>StoreBrid<span style="margin-left:auto;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></span></a>
+  <a href="#"><span style="width:17px;display:flex;justify-content:center"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i></span>ReveNew<span style="margin-left:auto;color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></span></a>
+</nav>
+<div style="flex:1"></div>
+<div class="rule"></div>
+<nav class="nav"><a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.4 16.2V11M4.4 7.8V3.8M10 16.2v-6.4M10 6.6V3.8M15.6 16.2v-3.8M15.6 9.2V3.8"/><path d="M2.4 11h4M8 6.6h4M13.6 12.4h4"/></svg>Administration</a></nav>
+
+<div style="display:flex;align-items:center;gap:9px;padding:9px 10px;margin-top:8px;border-radius:10px;
+            background:rgba(255,255,255,.5);border:1px solid var(--hair)">
+  <span style="width:26px;height:26px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;
+               background:linear-gradient(140deg,#0E9DA8,#2563EB);color:#fff;font-size:10px;font-weight:700">VA</span>
+  <span style="min-width:0">
+    <span style="display:block;font-size:12px;font-weight:600;color:var(--s900);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Victor Andújar</span>
+    <span style="display:block;font-size:10px;color:var(--s400);line-height:1.3;margin-top:1px">Sunveon Energy</span>
+  </span>
+  <span style="margin-left:auto;color:var(--s400);display:flex"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.2 8 4.8 4.6L14.8 8"/></svg></span>
+</div></aside>
+    <main class="main">
+      <div class="focus"></div>
+      <div class="content">
+
+
+<div style="display:flex;align-items:flex-start;gap:24px;padding-bottom:20px;border-bottom:1px solid var(--hair2);margin-bottom:24px">
+  <div style="flex:1;min-width:0">
+    <p class="eyebrow">Friday, 21 August · Sunveon Energy</p>
+    <h1 class="t-page">Good morning, Victor</h1>
+    
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;flex:none;padding-top:12px"><button class="btn btn-primary"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Compare projects</button>
+            <button class="btn btn-secondary"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4.6v10.8M4.6 10h10.8"/></svg>New project</button></div>
+</div>
+
+<section class="panel lift" style="padding:26px 30px">
+  <div class="band">Workspace</div>
+  <div style="display:flex;align-items:flex-start;gap:44px;margin-top:14px">
+    <div style="flex:1.35;min-width:0">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="font-size:42px;font-weight:700;letter-spacing:-.032em;color:var(--s900);line-height:1">24</span>
+        <span style="font-size:17px;font-weight:600;color:var(--s700)">Projects</span>
+        <span class="t-meta" style="margin-left:2px">16 with engineering · 19 with financial</span>
+      </div>
+      
+  <div style="display:flex;gap:2px;margin-top:16px">
+    <span style="flex:11;height:10px;background:linear-gradient(90deg,#2563EB,#AF47B2);display:block;
+      border-radius:5px 2px 2px 5px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.28)"></span>
+    <span style="flex:5;height:10px;background:#2563EB;display:block;
+      border-radius:2px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.28)"></span>
+    <span style="flex:8;height:10px;background:#AF47B2;display:block;
+      border-radius:2px 5px 5px 2px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.28)"></span>
+  </div>
+  <div style="display:flex;gap:22px;margin-top:12px;flex-wrap:wrap">
+    
+      <span style="display:inline-flex;align-items:center;gap:7px">
+        <i style="width:10px;height:5px;border-radius:3px;background:linear-gradient(90deg,#2563EB,#AF47B2);display:block;flex:none"></i>
+        <span style="font-size:12px;color:var(--s500)">Both products</span>
+        <b style="font-size:12px;font-weight:600;color:var(--s900)">11</b>
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:7px">
+        <i style="width:10px;height:5px;border-radius:3px;background:#2563EB;display:block;flex:none"></i>
+        <span style="font-size:12px;color:var(--s500)">Engineering only</span>
+        <b style="font-size:12px;font-weight:600;color:var(--s900)">5</b>
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:7px">
+        <i style="width:10px;height:5px;border-radius:3px;background:#AF47B2;display:block;flex:none"></i>
+        <span style="font-size:12px;color:var(--s500)">Financial only</span>
+        <b style="font-size:12px;font-weight:600;color:var(--s900)">8</b>
+      </span>
+  </div>
+    </div>
+    <div style="width:1px;align-self:stretch;background:var(--hair);flex:none"></div>
+    <div style="flex:1;min-width:0;padding-top:2px">
+      <div class="kpi-lab">Installed capacity</div>
+      <div style="font-size:26px;font-weight:700;letter-spacing:-.026em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">1.84 GW</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px">
+        <span class="t-meta">3.21 GWh storage</span><span class="src"><i style="background:#0E9DA8"></i>Suite</span>
+      </div>
+    </div>
+  </div>
+  <div class="hr" style="margin:24px 0 20px"></div>
+  <div class="kpirow">
+    
+<div style="">
+  <div class="kpi-lab">Financial cases</div>
+  <div class="kpi-val">21</div>
+  <div class="t-meta" style="margin-top:7px;font-size:10.5px;line-height:1.45">across 19 projects · 3 in draft</div>
+  <div class="kpi-foot"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></div>
+</div>
+    
+<div style="">
+  <div class="kpi-lab">Simulations</div>
+  <div class="kpi-val">68</div>
+  
+  <div class="kpi-foot"><span class="src"><i style="background:#2563EB"></i>StoreBrid</span><span class="delta up">+6 this week</span></div>
+</div>
+    
+<div style="">
+  <div class="kpi-lab">Analysis cases</div>
+  <div class="kpi-val">54</div>
+  <div class="t-meta" style="margin-top:7px;font-size:10.5px;line-height:1.45">simulation + financial case pairings</div>
+  <div class="kpi-foot"><span class="src"><i style="background:#0E9DA8"></i>Suite</span></div>
+</div>
+    
+<div style="">
+  <div class="kpi-lab">Energy discharged</div>
+  <div class="kpi-val">512 GWh</div>
+  
+  <div class="kpi-foot"><span class="src"><i style="background:#2563EB"></i>StoreBrid</span><span class="delta up">+6.2%</span></div>
+</div>
+    
+<div style="">
+  <div class="kpi-lab">Annual revenue</div>
+  <div class="kpi-val">€63.4M</div>
+  
+  <div class="kpi-foot"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span><span class="delta up">+4.1%</span></div>
+</div>
+  </div>
+</section>
+
+<div style="display:flex;gap:26px;margin-top:34px;align-items:flex-start">
+  <section style="flex:1;min-width:0">
+    
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:0px 0 14px">
+  <div style="min-width:0">
+    
+    <div style="display:flex;align-items:center;gap:10px">
+      <h2 class="t-sec">Recent projects</h2>
+    </div>
+    
+  </div>
+  <div style="flex:none"><a href="#" style="font-size:13px;font-weight:500">All projects</a></div>
+</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      
+<a href="#" class="panel tint-both" style="display:flex;align-items:center;gap:16px;padding:16px 18px;text-decoration:none">
+  <span class="wash" style="width:40px;height:40px;flex:none;display:flex;align-items:center;justify-content:center;
+        border-radius:var(--r-xs);color:var(--b700)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.6" y="6.6" width="12.2" height="6.8" rx="1.7"/><path d="M17.4 9.1v1.8"/><path d="M5.6 9.1v1.8M8.4 9.1v1.8"/></svg></span>
+  <span style="flex:1;min-width:0">
+    <span class="t-card" style="display:block;font-size:15px">Valencia BESS</span>
+    <span style="display:block;font-size:12px;color:var(--s500);margin-top:3px">Spain · BESS · 100 MW / 200 MWh · 3 simulations</span>
+    <span style="display:flex;align-items:center;gap:10px;margin-top:9px"><span style="display:inline-flex;gap:6px">
+     <span class="cov"><i style="background:#2563EB"></i>StoreBrid</span>
+     <span class="cov"><i style="background:#AF47B2"></i>ReveNew</span>
+   </span><span class="t-meta">2 hours ago</span></span>
+  </span>
+  <span style="flex:none;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--b700)">
+    Open<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg>
+  </span>
+</a>
+      
+<a href="#" class="panel tint-both" style="display:flex;align-items:center;gap:16px;padding:16px 18px;text-decoration:none">
+  <span class="wash" style="width:40px;height:40px;flex:none;display:flex;align-items:center;justify-content:center;
+        border-radius:var(--r-xs);color:var(--b700)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 3 6.8 3.6L10 10.2 3.2 6.6z"/><path d="m3.2 10.6 6.8 3.6 6.8-3.6"/></svg></span>
+  <span style="flex:1;min-width:0">
+    <span class="t-card" style="display:block;font-size:15px">Madrid Hybrid</span>
+    <span style="display:block;font-size:12px;color:var(--s500);margin-top:3px">Spain · PV + BESS · 80 MW / 120 MWh · 2 simulations</span>
+    <span style="display:flex;align-items:center;gap:10px;margin-top:9px"><span style="display:inline-flex;gap:6px">
+     <span class="cov"><i style="background:#2563EB"></i>StoreBrid</span>
+     <span class="cov"><i style="background:#AF47B2"></i>ReveNew</span>
+   </span><span class="t-meta">Yesterday</span></span>
+  </span>
+  <span style="flex:none;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--b700)">
+    Open<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg>
+  </span>
+</a>
+      
+<a href="#" class="panel tint-rv" style="display:flex;align-items:center;gap:16px;padding:16px 18px;text-decoration:none">
+  <span class="wash" style="width:40px;height:40px;flex:none;display:flex;align-items:center;justify-content:center;
+        border-radius:var(--r-xs);color:var(--b700)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 2.6v1.7M10 15.7v1.7M15.2 4.8l-1.2 1.2M6 14l-1.2 1.2m10.4 0L14 14M6 6 4.8 4.8M17.4 10h-1.7M4.3 10H2.6"/></svg></span>
+  <span style="flex:1;min-width:0">
+    <span class="t-card" style="display:block;font-size:15px">Porto PV</span>
+    <span style="display:block;font-size:12px;color:var(--s500);margin-top:3px">Portugal · PV · 45 MW · financial model only</span>
+    <span style="display:flex;align-items:center;gap:10px;margin-top:9px"><span style="display:inline-flex;gap:6px">
+     <span class="cov off"><i style="background:#2563EB"></i>StoreBrid</span>
+     <span class="cov"><i style="background:#AF47B2"></i>ReveNew</span>
+   </span><span class="t-meta">2 days ago</span></span>
+  </span>
+  <span style="flex:none;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--b700)">
+    Open<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg>
+  </span>
+</a>
+    </div>
+  </section>
+
+  <section style="flex:1.16;min-width:0">
+    
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:0px 0 14px">
+  <div style="min-width:0">
+    
+    <div style="display:flex;align-items:center;gap:10px">
+      <h2 class="t-sec">Portfolio performance</h2><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+    </div>
+    
+  </div>
+  <div style="flex:none"><span class="t-meta">Last 12 months</span></div>
+</div>
+    <div class="panel" style="padding:20px 22px">
+      <p class="t-meta" style="font-size:12px;line-height:1.55;margin-bottom:12px">
+        Energy discharged and revenue, both indexed to January. They track each other until spring —
+        then April and May move more energy for less money.
+      </p>
+      <div style="margin-bottom:10px">
+<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+  
+    <span style="display:inline-flex;align-items:center;gap:7px">
+      <i style="width:9px;height:9px;border-radius:3px;background:#2563EB;display:block;flex:none"></i>
+      <span style="font-size:11.5px;font-weight:500;color:var(--s500)">Energy discharged</span>
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:7px">
+      <i style="width:9px;height:9px;border-radius:3px;background:#AF47B2;display:block;flex:none"></i>
+      <span style="font-size:11.5px;font-weight:500;color:var(--s500)">Revenue</span>
+    </span>
+</div></div>
+      
+<svg viewBox="0 0 566 224" width="100%" style="display:block" role="img" aria-label="Energy discharged and revenue, both indexed to January">
+  <style>.mk{transition:opacity .12s} .mk:hover{opacity:.82}</style><line x1="34" y1="32.5" x2="522" y2="32.5" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
+     <text x="27" y="35.9" text-anchor="end" font-size="9.5" fill="#5F6C82">120</text><line x1="34" y1="98.7" x2="522" y2="98.7" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+     <text x="27" y="102.1" text-anchor="end" font-size="9.5" fill="#5F6C82">100</text><line x1="34" y1="164.9" x2="522" y2="164.9" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
+     <text x="27" y="168.3" text-anchor="end" font-size="9.5" fill="#5F6C82">80</text>
+  <rect x="167.1" y="16" width="44.4" height="182" fill="rgba(37,99,235,.05)"/>
+  <path d="M34.0 98.7L78.4 122.9L122.7 74.5L167.1 50.3L211.5 34.2L255.8 66.4L300.2 106.8L344.5 122.9L388.9 82.6L433.3 58.4L477.6 74.5L522.0 131.0" fill="none" stroke="#2563EB" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M34.0 98.7L78.4 138.5L122.7 126.0L167.1 165.8L211.5 177.4L255.8 134.9L300.2 99.8L344.5 91.8L388.9 112.8L433.3 109.5L477.6 87.4L522.0 107.2" fill="none" stroke="#AF47B2" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle class="mk" cx="34.0" cy="98.7" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>Jan — index 100</title></circle><circle class="mk" cx="78.4" cy="122.9" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>Feb — index 93</title></circle><circle class="mk" cx="122.7" cy="74.5" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>Mar — index 107</title></circle><circle class="mk" cx="167.1" cy="50.3" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>Apr — index 115</title></circle><circle class="mk" cx="211.5" cy="34.2" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>May — index 120</title></circle><circle class="mk" cx="255.8" cy="66.4" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>Jun — index 110</title></circle><circle class="mk" cx="300.2" cy="106.8" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>Jul — index 98</title></circle><circle class="mk" cx="344.5" cy="122.9" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>Aug — index 93</title></circle><circle class="mk" cx="388.9" cy="82.6" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>Sep — index 105</title></circle><circle class="mk" cx="433.3" cy="58.4" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>Oct — index 112</title></circle><circle class="mk" cx="477.6" cy="74.5" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>Nov — index 107</title></circle><circle class="mk" cx="522.0" cy="131.0" r="3.2" fill="#fff" stroke="#2563EB" stroke-width="1.8"><title>Dec — index 90</title></circle><circle class="mk" cx="34.0" cy="98.7" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>Jan — index 100</title></circle><circle class="mk" cx="78.4" cy="138.5" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>Feb — index 88</title></circle><circle class="mk" cx="122.7" cy="126.0" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>Mar — index 92</title></circle><circle class="mk" cx="167.1" cy="165.8" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>Apr — index 80</title></circle><circle class="mk" cx="211.5" cy="177.4" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>May — index 76</title></circle><circle class="mk" cx="255.8" cy="134.9" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>Jun — index 89</title></circle><circle class="mk" cx="300.2" cy="99.8" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>Jul — index 100</title></circle><circle class="mk" cx="344.5" cy="91.8" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>Aug — index 102</title></circle><circle class="mk" cx="388.9" cy="112.8" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>Sep — index 96</title></circle><circle class="mk" cx="433.3" cy="109.5" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>Oct — index 97</title></circle><circle class="mk" cx="477.6" cy="87.4" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>Nov — index 103</title></circle><circle class="mk" cx="522.0" cy="107.2" r="3.2" fill="#fff" stroke="#AF47B2" stroke-width="1.8"><title>Dec — index 97</title></circle>
+  <text x="529.0" y="134.6" font-size="10" font-weight="600" fill="#2563EB">Energy</text>
+  <text x="529.0" y="110.8" font-size="10" font-weight="600" fill="#AF47B2">Revenue</text>
+  <text x="27" y="20" text-anchor="end" font-size="9" fill="#5F6C82">idx</text>
+  <text x="34.0" y="218" text-anchor="middle" font-size="9.5" fill="#5F6C82">Jan</text><text x="167.1" y="218" text-anchor="middle" font-size="9.5" fill="#5F6C82">Apr</text><text x="300.2" y="218" text-anchor="middle" font-size="9.5" fill="#5F6C82">Jul</text><text x="433.3" y="218" text-anchor="middle" font-size="9.5" fill="#5F6C82">Oct</text><text x="522.0" y="218" text-anchor="middle" font-size="9.5" fill="#5F6C82">Dec</text>
+</svg>
+    </div>
+  </section>
+</div>
+
+<div style="display:flex;gap:26px;margin-top:34px;align-items:flex-start">
+  <section style="flex:1.16;min-width:0">
+    
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:0px 0 14px">
+  <div style="min-width:0">
+    
+    <div style="display:flex;align-items:center;gap:10px">
+      <h2 class="t-sec">Recent activity</h2>
+    </div>
+    
+  </div>
+  <div style="flex:none"><a href="#" style="font-size:13px;font-weight:500">View all</a></div>
+</div>
+    <div class="rows">
+      
+<div style="display:flex;align-items:center;gap:14px;height:52px">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Simulation “Base case 2027” completed</span>
+  <a href="#" style="width:160px;flex:none;font-size:13px;font-weight:500">Valencia BESS</a>
+  <span style="width:96px;flex:none"><span class="src"><i style="background:#2563EB"></i>StoreBrid</span></span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">2h ago</span>
+</div>
+      
+<div style="display:flex;align-items:center;gap:14px;height:52px">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Financial scenario “High spread” updated</span>
+  <a href="#" style="width:160px;flex:none;font-size:13px;font-weight:500">Valencia BESS</a>
+  <span style="width:96px;flex:none"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">4h ago</span>
+</div>
+      
+<div style="display:flex;align-items:center;gap:14px;height:52px">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Financial model recalculated</span>
+  <a href="#" style="width:160px;flex:none;font-size:13px;font-weight:500">Madrid Hybrid</a>
+  <span style="width:96px;flex:none"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">Yesterday</span>
+</div>
+      
+<div style="display:flex;align-items:center;gap:14px;height:52px">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">PPA contract “Iberdrola 2026–31” changed</span>
+  <a href="#" style="width:160px;flex:none;font-size:13px;font-weight:500">Valencia BESS</a>
+  <span style="width:96px;flex:none"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">Yesterday</span>
+</div>
+      
+<div style="display:flex;align-items:center;gap:14px;height:52px">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Plant configuration changed</span>
+  <a href="#" style="width:160px;flex:none;font-size:13px;font-weight:500">Sevilla Storage</a>
+  <span style="width:96px;flex:none"><span class="src"><i style="background:#2563EB"></i>StoreBrid</span></span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">2d ago</span>
+</div>
+      
+<div style="display:flex;align-items:center;gap:14px;height:52px">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Simulation “Low RTE 85%” ended in error</span>
+  <a href="#" style="width:160px;flex:none;font-size:13px;font-weight:500">Madrid Hybrid</a>
+  <span style="width:96px;flex:none"><span class="src"><i style="background:#2563EB"></i>StoreBrid</span></span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">2d ago</span>
+</div>
+    </div>
+  </section>
+
+  <section style="flex:1;min-width:0">
+    
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:0px 0 14px">
+  <div style="min-width:0">
+    
+    <div style="display:flex;align-items:center;gap:10px">
+      <h2 class="t-sec">Portfolio insights</h2>
+    </div>
+    
+  </div>
+  <div style="flex:none"><a href="#" style="font-size:13px;font-weight:500">View all</a></div>
+</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      
+<a href="#" class="glass-sm" style="display:block;padding:15px 17px;text-decoration:none">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <span style="display:inline-flex;align-items:center;gap:8px">
+      <i style="width:6px;height:6px;border-radius:50%;display:block;background:var(--warn)"></i>
+      <span style="font-size:12.5px;font-weight:600;color:var(--s900)">High utilisation · low return</span>
+    </span>
+    <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+  </div>
+  <p style="font-size:12.5px;color:var(--s500);line-height:1.55;margin-top:8px">Almería BESS cycles hardest in the portfolio at 81% utilisation, while its 9.4% IRR stays below median.</p>
+  <span style="display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12px;font-weight:500;color:var(--b700)">
+    Review project<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg>
+  </span>
+</a>
+      
+<a href="#" class="glass-sm" style="display:block;padding:15px 17px;text-decoration:none">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <span style="display:inline-flex;align-items:center;gap:8px">
+      <i style="width:6px;height:6px;border-radius:50%;display:block;background:var(--b500)"></i>
+      <span style="font-size:12.5px;font-weight:600;color:var(--s900)">Contracted share falling</span>
+    </span>
+    <span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+  </div>
+  <p style="font-size:12.5px;color:var(--s500);line-height:1.55;margin-top:8px">Across the portfolio, contracted revenue drops from 58% to 34% by 2031 as three PPAs reach their end date.</p>
+  <span style="display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12px;font-weight:500;color:var(--b700)">
+    Review contracts<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg>
+  </span>
+</a>
+      
+<a href="#" class="glass-sm" style="display:block;padding:15px 17px;text-decoration:none">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <span style="display:inline-flex;align-items:center;gap:8px">
+      <i style="width:6px;height:6px;border-radius:50%;display:block;background:var(--ok)"></i>
+      <span style="font-size:12.5px;font-weight:600;color:var(--s900)">Strong performance</span>
+    </span>
+    <span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+  </div>
+  <p style="font-size:12.5px;color:var(--s500);line-height:1.55;margin-top:8px">Porto PV sits above the portfolio median on both revenue and IRR for a third consecutive quarter.</p>
+  <span style="display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12px;font-weight:500;color:var(--b700)">
+    View details<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg>
+  </span>
+</a>
+    </div>
+  </section>
+</div></div>
+    </main>
+  </div>
+  
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":1410}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

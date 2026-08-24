@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Salida generada por build-site.mjs (Vercel la reconstruye en cada deploy)
+public/
+
+# Exportaciones pesadas (regenerables desde los .dc.html)
+export/img/
+export/jpg/
+export/_shot.png
+export/_s1.html
+export/_me.html
+
+# Node
+node_modules/
+.vercel/

@@ -1,0 +1,1518 @@
+// Sunveon Suite — design canvas artboards.
+// Builds the .dc.html artboards from one shared foundation so the design system
+// stays identical across screens (artboards share nothing at runtime).
+import { writeFileSync } from "node:fs";
+
+/* ─────────────────────────────────────────────────────────────
+   FOUNDATION — Premium Light Spatial Glass
+   Values lifted from the StoreBrid design-system sheets.
+   ───────────────────────────────────────────────────────────── */
+const CSS = `
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  /* 01 · Color — brand blue untouched, ink recalibrated */
+  --blue600:#2563EB; --blue700:#1D4ED8; --blue500:#3B82F6; --cyan:#06B6D4;
+  --emerald:#10B981; --amber:#F59E0B; --violet:#8B5CF6; --red:#DC2626;
+  --revenew:#AF47B2;
+  --s900:#0F172A; --s700:#334155; --s500:#54617A; --s400:#5F6C82;
+  --hair:rgba(30,58,138,.07);
+  /* 05 · Cold shadows, never grey — high radius, minimal displacement */
+  --sh-xs:0 1px 2px rgba(30,58,138,.05);
+  --sh-sm:0 2px 10px -4px rgba(30,58,138,.09);
+  --sh-md:0 10px 30px -14px rgba(30,58,138,.14), 0 2px 6px -3px rgba(30,58,138,.06);
+  --sh-lg:0 24px 64px -26px rgba(30,58,138,.22), 0 6px 16px -9px rgba(30,58,138,.10);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0; font-family:Inter,'Helvetica Neue',Arial,sans-serif; color:var(--s700);
+  font-size:14px; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+a{color:var(--blue700); text-decoration:none}
+a:hover{color:var(--blue600)}
+
+/* 03 · Atmósfera — the background you never look at */
+.atmos{
+  min-height:100%;
+  background:
+    radial-gradient(1700px 1180px at 6% -14%, rgba(120,165,225,.20), transparent 62%),
+    radial-gradient(1900px 1300px at 94% -8%,  rgba(125,180,205,.15), transparent 62%),
+    radial-gradient(1200px 900px  at 96% 108%, rgba(135,170,215,.09), transparent 60%),
+    radial-gradient(1100px 820px  at 4%  102%, rgba(130,180,210,.08), transparent 60%),
+    linear-gradient(158deg,#E4EBF7 0%,#EFF3FA 46%,#E6EDF8 100%);
+}
+/* one local focus per screen, inside the content area, behind the main object */
+.focus{
+  position:absolute; left:6%; top:4%; width:74%; height:64%; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(closest-side, rgba(59,130,246,.13), transparent 74%),
+    radial-gradient(closest-side at 76% 70%, rgba(6,182,212,.07), transparent 72%);
+}
+
+/* 04 · Superficies de cristal */
+.l1{
+  background:linear-gradient(158deg,rgba(255,255,255,.62),rgba(255,255,255,.48) 52%,rgba(255,255,255,.40));
+  backdrop-filter:blur(16px) saturate(190%); -webkit-backdrop-filter:blur(16px) saturate(190%);
+  border:1px solid rgba(37,99,235,.09); border-radius:16px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.62), var(--sh-md);
+}
+/* superficie protagonista — one per screen: --sh-lg, blue edge at 17%, own halo */
+.l1.hero{
+  border-color:rgba(37,99,235,.17);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.72), var(--sh-lg);
+}
+.l2{
+  background:linear-gradient(158deg,rgba(255,255,255,.86),rgba(255,255,255,.68));
+  backdrop-filter:blur(18px) saturate(190%); -webkit-backdrop-filter:blur(18px) saturate(190%);
+  border:1px solid rgba(37,99,235,.09); border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8), var(--sh-md);
+}
+/* a content group inside a card is not another card — it is a recess of the panel */
+.l3{
+  background:linear-gradient(158deg,rgba(255,255,255,.44),rgba(255,255,255,.26));
+  border:1px solid rgba(37,99,235,.07); border-radius:12px;
+}
+
+/* 02 · Tipografía — Inter, seven roles */
+.t-page{font-size:30px;font-weight:700;line-height:1.14;letter-spacing:-.025em;color:var(--s900);margin:0}
+.t-sec {font-size:20px;font-weight:700;line-height:1.25;letter-spacing:-.015em;color:var(--s900);margin:0}
+.t-card{font-size:16px;font-weight:600;line-height:1.35;color:var(--s900);margin:0}
+.t-body{font-size:14px;font-weight:400;line-height:1.55;color:var(--s700);margin:0}
+.t-tbl {font-size:13px;font-weight:400;line-height:1.4;color:var(--s700)}
+.t-lab {font-size:12px;font-weight:500;line-height:1.3;color:var(--s500)}
+.t-meta{font-size:11px;font-weight:400;line-height:1.4;color:var(--s400)}
+.eyebrow{font-size:12px;font-weight:500;line-height:1.3;color:var(--s500);margin:0 0 6px}
+
+/* Shell */
+.shell{display:flex;align-items:stretch;min-height:100%}
+.side{
+  width:232px;flex:none;position:relative;z-index:2;display:flex;flex-direction:column;
+  padding:18px 12px 14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.58),rgba(255,255,255,.40));
+  backdrop-filter:blur(16px) saturate(190%); -webkit-backdrop-filter:blur(16px) saturate(190%);
+  border-right:1px solid rgba(37,99,235,.09);
+}
+.main{position:relative;flex:1;min-width:0;overflow:hidden}
+.content{position:relative;z-index:1;padding:26px 32px 36px}
+
+.brand{display:flex;align-items:center;gap:9px;padding:2px 8px 0}
+.brand-name{font-size:14px;font-weight:700;letter-spacing:-.015em;color:var(--s900);line-height:1.1}
+.brand-sub{font-size:10px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--s400);line-height:1.1;margin-top:3px}
+
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:9px;
+  font-size:13px;font-weight:500;color:var(--s500);transition:background .15s,color .15s}
+.nav a svg{flex:none;opacity:.85}
+.nav a:hover{background:rgba(255,255,255,.55);color:var(--s900)}
+/* the active item is marked by elevation, never by a grey fill */
+.nav a.on{
+  background:linear-gradient(158deg,rgba(255,255,255,.9),rgba(255,255,255,.7));
+  color:var(--blue700);font-weight:600;
+  box-shadow:var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.85);
+}
+.nav a.on svg{opacity:1}
+.grp{display:flex;align-items:center;justify-content:flex-start;gap:7px;
+  padding:0 10px;margin:18px 0 7px;
+  font-size:10px;font-weight:600;letter-spacing:.085em;text-transform:uppercase;color:var(--s400)}
+.rule{height:1px;background:var(--hair);margin:12px 6px}
+
+/* Buttons — radius 10, height 38, one focus ring for the whole system */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 15px;
+  border-radius:10px;border:1px solid transparent;font-size:13px;font-weight:500;cursor:pointer;
+  white-space:nowrap;transition:box-shadow .15s,background .15s}
+.btn-primary{background:var(--blue600);color:#fff;
+  box-shadow:0 8px 18px -10px rgba(37,99,235,.65), inset 0 1px 0 rgba(255,255,255,.24)}
+.btn-primary:hover{background:#1E56D6}
+.btn-secondary{color:var(--s900);border-color:rgba(37,99,235,.13);
+  background:linear-gradient(158deg,rgba(255,255,255,.88),rgba(255,255,255,.7));
+  box-shadow:var(--sh-xs), inset 0 1px 0 rgba(255,255,255,.8)}
+.btn-secondary:hover{box-shadow:var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.85)}
+.btn-ghost{color:var(--s500);background:transparent}
+.btn-ghost:hover{background:rgba(255,255,255,.55);color:var(--s900)}
+.btn-icon{width:38px;padding:0}
+
+/* 10 · Source attribution — present, subtle, never dominant */
+.src{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--s400);white-space:nowrap}
+.src i{width:5px;height:5px;border-radius:50%;display:block;flex:none}
+.src .pair{display:inline-flex;width:12px;height:5px;position:relative;flex:none}
+.src .pair i{position:absolute;top:0}
+.src .pair i:first-child{left:0}
+.src .pair i:last-child{left:5px;box-shadow:0 0 0 1.5px rgba(255,255,255,.75)}
+
+/* product coverage pill */
+.cov{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 9px;border-radius:7px;
+  font-size:11px;font-weight:500;color:var(--s500);
+  background:rgba(255,255,255,.5);border:1px solid rgba(37,99,235,.08)}
+.cov i{width:5px;height:5px;border-radius:50%;display:block;flex:none}
+.cov.off{opacity:.34}
+
+/* status badge — colour dot so state never rests on hue alone */
+.badge{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:7px;
+  font-size:11px;font-weight:500;white-space:nowrap}
+.badge i{width:5px;height:5px;border-radius:50%;display:block;flex:none}
+
+/* Table — 48px rows, soft dividers, hover white/40 */
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{height:40px;padding:0 16px;text-align:left;
+  font-size:12px;font-weight:600;color:var(--s500);letter-spacing:.005em;white-space:nowrap}
+.tbl thead tr{background:linear-gradient(158deg,rgba(255,255,255,.44),rgba(255,255,255,.26))}
+.tbl tbody td{height:48px;padding:0 16px;border-top:1px solid var(--hair);font-size:13px;color:var(--s700);vertical-align:middle}
+.tbl tbody tr:hover{background:rgba(255,255,255,.4)}
+.tbl .anchor{font-size:14px;font-weight:500;color:var(--s900)}
+.tbl tbody tr:hover .anchor{color:var(--blue700)}
+
+/* Search — a pill, one field */
+.search{display:flex;align-items:center;gap:9px;height:40px;padding:0 14px;border-radius:20px;
+  background:linear-gradient(158deg,rgba(255,255,255,.5),rgba(255,255,255,.3));
+  border:1px solid rgba(37,99,235,.08);color:var(--s400);font-size:13px}
+
+/* Tabs — active marked by elevation, not grey */
+.tabs{display:inline-flex;align-items:center;gap:3px;padding:3px;border-radius:11px;
+  background:linear-gradient(158deg,rgba(255,255,255,.4),rgba(255,255,255,.24));
+  border:1px solid rgba(37,99,235,.07)}
+.tabs a{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 13px;border-radius:8px;
+  font-size:13px;font-weight:500;color:var(--s500)}
+.tabs a.on{color:var(--s900);font-weight:600;
+  background:linear-gradient(158deg,rgba(255,255,255,.92),rgba(255,255,255,.74));
+  box-shadow:var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.85)}
+.tabs .count{font-size:11px;font-weight:500;color:var(--s400)}
+.tabs a.on .count{color:var(--blue700)}
+
+/* KPI */
+.kpi{padding:16px 18px 14px;border-radius:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi-lab{font-size:12px;font-weight:500;color:var(--s500);letter-spacing:.005em}
+.kpi-val{font-size:28px;font-weight:700;letter-spacing:-.025em;color:var(--s900);line-height:1.15;margin-top:5px}
+.kpi-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px}
+.delta{font-size:11px;font-weight:500}
+.delta.up{color:#0E9469}.delta.down{color:var(--red)}
+
+.grid{display:grid;gap:20px}
+.row{display:flex;align-items:center}
+.crumb{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--s400);margin-bottom:12px}
+.crumb .sep{opacity:.5}
+.crumb b{font-weight:500;color:var(--s700)}
+`;
+
+/* ─────────────────────────────────────────────────────────────
+   ICONS — stroke-based, 16/18/20 grid, one style, currentColor
+   ───────────────────────────────────────────────────────────── */
+const P = {
+  home:     '<path d="M3 9.2 10 3.5l7 5.7"/><path d="M4.6 8.3V16a.9.9 0 0 0 .9.9h9a.9.9 0 0 0 .9-.9V8.3"/>',
+  projects: '<rect x="2.8" y="4.4" width="6.1" height="5.2" rx="1.2"/><rect x="11.1" y="4.4" width="6.1" height="5.2" rx="1.2"/><rect x="2.8" y="11.4" width="6.1" height="4.2" rx="1.2"/><rect x="11.1" y="11.4" width="6.1" height="4.2" rx="1.2"/>',
+  analytics:'<path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/>',
+  admin:    '<circle cx="10" cy="10" r="2.5"/><path d="M10 2.9v2M10 15.1v2M15 5l-1.4 1.4M6.4 13.6 5 15m10 0-1.4-1.4M6.4 6.4 5 5m12.1 5h-2M4.9 10h-2"/>',
+  zap:      '<path d="M11.1 2.7 4.4 11.2h4.3l-.8 6.1 6.7-8.5h-4.3z"/>',
+  trend:    '<path d="M2.9 13.9 7.6 9.1l3 3 6.5-6.6"/><path d="M12.9 5.5h4.2v4.2"/>',
+  plus:     '<path d="M10 4.6v10.8M4.6 10h10.8"/>',
+  search:   '<circle cx="9.1" cy="9.1" r="5.3"/><path d="m13.1 13.1 3.2 3.2"/>',
+  upRight:  '<path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/>',
+  right:    '<path d="m7.8 4.6 5.2 5.4-5.2 5.4"/>',
+  left:     '<path d="m12.2 4.6-5.2 5.4 5.2 5.4"/>',
+  down:     '<path d="m5.2 8 4.8 4.6L14.8 8"/>',
+  dots:     '<circle cx="10" cy="4.6" r="1.15" fill="currentColor" stroke="none"/><circle cx="10" cy="10" r="1.15" fill="currentColor" stroke="none"/><circle cx="10" cy="15.4" r="1.15" fill="currentColor" stroke="none"/>',
+  alert:    '<path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/>',
+  clock:    '<circle cx="10" cy="10" r="7"/><path d="M10 5.9V10l2.8 1.7"/>',
+  filter:   '<path d="M3.4 5h13.2l-5.2 6v4.6l-2.8 1.4V11z"/>',
+  back:     '<path d="M16.4 10H4.2"/><path d="m8.8 5.4-4.6 4.6 4.6 4.6"/>',
+  layers:   '<path d="m10 3 6.8 3.6L10 10.2 3.2 6.6z"/><path d="m3.2 10.6 6.8 3.6 6.8-3.6"/>',
+  file:     '<path d="M11.3 2.9H6.1a1.3 1.3 0 0 0-1.3 1.3v11.6a1.3 1.3 0 0 0 1.3 1.3h7.8a1.3 1.3 0 0 0 1.3-1.3V6.7z"/><path d="M11.3 2.9v3.8h3.9"/>',
+  activity: '<path d="M2.9 10h3.2l2.1-5.3 3.4 10.6 2.1-5.3h3.4"/>',
+  cog:      '<circle cx="10" cy="10" r="2.4"/><path d="M15.9 12.1a1.3 1.3 0 0 0 .3 1.5l.1.1a1.6 1.6 0 1 1-2.2 2.2l-.1-.1a1.3 1.3 0 0 0-1.5-.3 1.3 1.3 0 0 0-.8 1.2v.2a1.6 1.6 0 0 1-3.2 0v-.1a1.3 1.3 0 0 0-.9-1.2 1.3 1.3 0 0 0-1.5.3l-.1.1A1.6 1.6 0 1 1 3.8 13.7l.1-.1a1.3 1.3 0 0 0 .3-1.5 1.3 1.3 0 0 0-1.2-.8h-.2a1.6 1.6 0 1 1 0-3.2h.1a1.3 1.3 0 0 0 1.2-.9 1.3 1.3 0 0 0-.3-1.5l-.1-.1a1.6 1.6 0 1 1 2.2-2.2l.1.1a1.3 1.3 0 0 0 1.5.3h.1a1.3 1.3 0 0 0 .8-1.2v-.2a1.6 1.6 0 0 1 3.2 0v.1a1.3 1.3 0 0 0 .8 1.2 1.3 1.3 0 0 0 1.5-.3l.1-.1a1.6 1.6 0 1 1 2.2 2.2l-.1.1a1.3 1.3 0 0 0-.3 1.5v.1a1.3 1.3 0 0 0 1.2.8h.2a1.6 1.6 0 0 1 0 3.2h-.1a1.3 1.3 0 0 0-1.2.8z"/>',
+  sliders:  '<path d="M4.4 16.2V11M4.4 7.8V3.8M10 16.2v-6.4M10 6.6V3.8M15.6 16.2v-3.8M15.6 9.2V3.8"/><path d="M2.4 11h4M8 6.6h4M13.6 12.4h4"/>',
+  gauge:    '<path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/>',
+  euro:     '<path d="M14.2 5.4a5.4 5.4 0 1 0 0 9.2"/><path d="M3.9 8.9h6.6M3.9 11.4h6.6"/>',
+  battery:  '<rect x="2.6" y="6.6" width="12.2" height="6.8" rx="1.7"/><path d="M17.4 9.1v1.8"/><path d="M5.6 9.1v1.8M8.4 9.1v1.8"/>',
+  check:    '<path d="m4.8 10.4 3.5 3.4 6.9-7.6"/>',
+  link:     '<path d="M8.6 11.4a3 3 0 0 0 4.5.3l1.9-1.9a3 3 0 0 0-4.3-4.3l-1.1 1.1"/><path d="M11.4 8.6a3 3 0 0 0-4.5-.3L5 10.2a3 3 0 0 0 4.3 4.3l1.1-1.1"/>',
+};
+const ic = (n, s = 18, sw = 1.6) =>
+  `<svg width="${s}" height="${s}" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+
+/* Suite parent-brand mark — placeholder isotype (no Suite logo exists yet) */
+const suiteMark = (s = 26) => `
+<svg width="${s}" height="${s}" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+  <defs><linearGradient id="sm" x1="4" y1="24" x2="24" y2="4" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#06B6D4"/><stop offset=".55" stop-color="#2563EB"/><stop offset="1" stop-color="#1D4ED8"/>
+  </linearGradient></defs>
+  <rect x="1" y="1" width="26" height="26" rx="8" fill="url(#sm)"/>
+  <path d="M14 6.6 21.6 11 14 15.4 6.4 11z" fill="#fff" fill-opacity=".95"/>
+  <path d="m7.6 14.6 6.4 3.7 6.4-3.7" stroke="#fff" stroke-opacity=".7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m7.6 18.4 6.4 3.7 6.4-3.7" stroke="#fff" stroke-opacity=".45" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
+/* ── attribution + coverage helpers ─────────────────────────── */
+const SB = "#2563EB", RN = "#AF47B2", SU = "#06B6D4";
+const src = (which) => {
+  if (which === "storebrid") return `<span class="src"><i style="background:${SB}"></i>StoreBrid</span>`;
+  if (which === "revenew")   return `<span class="src"><i style="background:${RN}"></i>Revenew</span>`;
+  if (which === "suite")     return `<span class="src"><i style="background:${SU}"></i>Suite</span>`;
+  return `<span class="src"><span class="pair"><i style="background:${SB}"></i><i style="background:${RN}"></i></span>Combined</span>`;
+};
+const cov = (sb, rn) =>
+  `<span style="display:inline-flex;gap:6px">
+     <span class="cov${sb ? "" : " off"}"><i style="background:${SB}"></i>StoreBrid</span>
+     <span class="cov${rn ? "" : " off"}"><i style="background:${RN}"></i>Revenew</span>
+   </span>`;
+const badge = (text, color, tint) =>
+  `<span class="badge" style="background:${tint};color:${color}"><i style="background:${color}"></i>${text}</span>`;
+const ST = {
+  active:      badge("Active", "#0E9469", "rgba(16,185,129,.11)"),
+  development: badge("Development", "#9A6208", "rgba(245,158,11,.12)"),
+  draft:       badge("Draft", "#5B4BB5", "rgba(139,92,246,.12)"),
+};
+
+/* ─────────────────────────────────────────────────────────────
+   PAGE WRAPPER — one .dc.html per artboard
+   ───────────────────────────────────────────────────────────── */
+const doc = ({ w, h, side, body, overlay, extraCss }) => `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>${CSS}${extraCss || ""}</style>
+</helmet>
+<div class="atmos" style="width:${w}px;min-height:${h}px;position:relative">
+  <div class="shell" style="min-height:${h}px">
+    <aside class="side">${side}</aside>
+    <main class="main">
+      <div class="focus"></div>
+      <div class="content">${body}</div>
+    </main>
+  </div>
+  ${overlay || ""}
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":${w},"height":${h}}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>
+`;
+
+const brand = () => `
+<div class="brand">
+  ${suiteMark(26)}
+  <div>
+    <div class="brand-name">Sunveon</div>
+    <div class="brand-sub">Suite</div>
+  </div>
+</div>`;
+
+const userChip = () => `
+<div style="display:flex;align-items:center;gap:9px;padding:9px 10px;margin-top:8px;border-radius:10px;
+            background:rgba(255,255,255,.42);border:1px solid rgba(37,99,235,.07)">
+  <span style="width:26px;height:26px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;
+               background:linear-gradient(140deg,#2563EB,#06B6D4);color:#fff;font-size:10px;font-weight:700;letter-spacing:.02em">VA</span>
+  <span style="min-width:0">
+    <span style="display:block;font-size:12px;font-weight:600;color:var(--s900);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Victor Andújar</span>
+    <span style="display:block;font-size:10px;color:var(--s400);line-height:1.3;margin-top:1px">Sunveon Energy</span>
+  </span>
+  <span style="margin-left:auto;color:var(--s400);display:flex">${ic("down", 14, 1.7)}</span>
+</div>`;
+
+/* Suite-root navigation. The Workspace group (Engineering / Commercial) is
+   project-scoped — it appears in the project sidebar, not here, so a user with
+   no active project is never shown a group with nothing behind it (§39.7). */
+const rootSide = (active) => `
+${brand()}
+<div class="rule" style="margin-top:16px"></div>
+<nav class="nav">
+  <a href="#" class="${active === "home" ? "on" : ""}">${ic("home", 17)}Home</a>
+  <a href="#" class="${active === "projects" ? "on" : ""}">${ic("projects", 17)}Projects</a>
+  <a href="#" class="${active === "analytics" ? "on" : ""}">${ic("analytics", 17)}Analytics</a>
+</nav>
+<div class="grp">Applications</div>
+<nav class="nav">
+  <a href="#"><span style="width:17px;display:flex;justify-content:center"><i style="width:6px;height:6px;border-radius:50%;background:${SB};display:block"></i></span>StoreBrid<span style="margin-left:auto;color:var(--s400);display:flex">${ic("upRight", 13, 1.8)}</span></a>
+  <a href="#"><span style="width:17px;display:flex;justify-content:center"><i style="width:6px;height:6px;border-radius:50%;background:${RN};display:block"></i></span>Revenew<span style="margin-left:auto;color:var(--s400);display:flex">${ic("upRight", 13, 1.8)}</span></a>
+</nav>
+<div style="flex:1"></div>
+<div class="rule"></div>
+<nav class="nav">
+  <a href="#">${ic("sliders", 17)}Administration</a>
+</nav>
+${userChip()}`;
+
+/* Page header card — context label, title, actions right; breadcrumb outside */
+const header = ({ crumb, eyebrow, title, meta, actions, hero }) => `
+${crumb ? `<div class="crumb">${crumb}</div>` : ""}
+<section class="l1${hero ? " hero" : ""}" style="padding:20px 24px;display:flex;align-items:flex-start;gap:24px">
+  <div style="flex:1;min-width:0">
+    ${eyebrow ? `<p class="eyebrow">${eyebrow}</p>` : ""}
+    <h1 class="t-page">${title}</h1>
+    ${meta ? `<p class="t-body" style="margin-top:8px;color:var(--s500)">${meta}</p>` : ""}
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;flex:none;padding-top:${eyebrow ? "14" : "2"}px">${actions}</div>
+</section>`;
+
+P.sun = '<circle cx="10" cy="10" r="3.6"/><path d="M10 2.6v1.7M10 15.7v1.7M15.2 4.8l-1.2 1.2M6 14l-1.2 1.2m10.4 0L14 14M6 6 4.8 4.8M17.4 10h-1.7M4.3 10H2.6"/>';
+
+/* ═══════════════════════════════════════════════════════════════
+   SCREEN 1 — Suite Home · dual-licence
+   §13.2 — Home becomes a Suite-level portfolio summary
+   ═══════════════════════════════════════════════════════════════ */
+const coverageBar = () => {
+  const seg = (n, bg, first, last) =>
+    `<span style="flex:${n};height:10px;background:${bg};display:block;
+      border-radius:${first ? "5px 2px 2px 5px" : last ? "2px 5px 5px 2px" : "2px"}"></span>`;
+  return `
+  <div style="display:flex;gap:2px;margin-top:16px">
+    ${seg(11, `linear-gradient(90deg,${SB},${RN})`, true, false)}
+    ${seg(5, SB, false, false)}
+    ${seg(8, RN, false, true)}
+  </div>
+  <div style="display:flex;gap:18px;margin-top:11px;flex-wrap:wrap">
+    ${[
+      ["Connected", 11, `linear-gradient(90deg,${SB},${RN})`],
+      ["StoreBrid only", 5, SB],
+      ["Revenew only", 8, RN],
+    ].map(([l, n, bg]) => `
+      <span style="display:inline-flex;align-items:center;gap:7px">
+        <i style="width:9px;height:5px;border-radius:3px;background:${bg};display:block;flex:none"></i>
+        <span class="t-meta" style="font-size:12px;color:var(--s500)">${l}</span>
+        <b style="font-size:12px;font-weight:600;color:var(--s900)">${n}</b>
+      </span>`).join("")}
+  </div>`;
+};
+
+const miniTile = ({ label, value, sub, source, accent }) => `
+<div class="l3" style="padding:16px 18px 14px;flex:1;min-width:0">
+  <div style="display:flex;align-items:center;gap:7px">
+    <span style="width:14px;height:14px;flex:none;display:flex;color:${accent || "transparent"}">${ic("alert", 14, 1.7)}</span>
+    <span class="kpi-lab">${label}</span>
+  </div>
+  <div style="font-size:24px;font-weight:700;letter-spacing:-.025em;color:var(--s900);line-height:1.15;margin-top:5px">${value}</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px">
+    <span class="t-meta">${sub}</span>${source}
+  </div>
+</div>`;
+
+const projectCard = ({ name, place, spec, icon, sb, rn, when }) => `
+<a href="#" class="l1" style="padding:18px;display:flex;flex-direction:column;gap:0;text-decoration:none">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between">
+    <span class="l3" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+          border-radius:10px;color:var(--blue700)">${ic(icon, 18)}</span>
+    <span style="color:var(--s400);display:flex">${ic("upRight", 15, 1.8)}</span>
+  </div>
+  <div class="t-card" style="margin-top:14px">${name}</div>
+  <div class="t-body" style="color:var(--s500);font-size:13px;margin-top:4px">${place} · ${spec}</div>
+  <div style="height:1px;background:var(--hair);margin:14px 0 12px"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+    ${cov(sb, rn)}<span class="t-meta">${when}</span>
+  </div>
+</a>`;
+
+const activityRow = ({ what, project, source, when, last }) => `
+<div style="display:flex;align-items:center;gap:14px;height:52px;padding:0 20px;${last ? "" : "border-bottom:1px solid var(--hair)"}">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${what}</span>
+  <a href="#" style="width:150px;flex:none;font-size:13px;font-weight:500">${project}</a>
+  <span style="width:100px;flex:none">${source}</span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">${when}</span>
+</div>`;
+
+const perfRow = ({ label, value, source, tinted, formula }) => `
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:10px;
+     border:1px solid ${tinted ? "rgba(6,182,212,.2)" : "transparent"};
+     ${tinted ? "background:linear-gradient(158deg,rgba(6,182,212,.11),rgba(6,182,212,.05))" : ""}">
+  <span style="min-width:0">
+    <span style="display:block;font-size:13px;font-weight:500;color:var(--s700)">${label}</span>
+    ${formula ? `<span class="t-meta" style="display:block;margin-top:4px;font-size:10.5px">${formula}</span>` : ""}
+    <span style="display:block;margin-top:5px">${source}</span>
+  </span>
+  <b style="font-size:${tinted ? "20" : "18"}px;font-weight:700;letter-spacing:-.02em;color:var(--s900);white-space:nowrap">${value}</b>
+</div>`;
+
+const home = doc({
+  w: 1440, h: 1040, side: rootSide("home"),
+  body: `
+<section class="l1 hero" style="padding:24px 28px">
+  <div style="display:flex;align-items:flex-start;gap:24px">
+    <div style="flex:1;min-width:0">
+      <p class="eyebrow">Friday, 21 August · Sunveon Energy</p>
+      <h1 class="t-page">Good morning, Victor</h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex:none;padding-top:14px">
+      <button class="btn btn-secondary">${ic("analytics", 16)}Compare projects</button>
+      <button class="btn btn-primary">${ic("plus", 16, 1.9)}New project</button>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:stretch;gap:24px;margin-top:22px">
+    <div style="flex:1.45;min-width:0">
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <span style="font-size:40px;font-weight:700;letter-spacing:-.03em;color:var(--s900);line-height:1">24</span>
+        <span class="t-card" style="font-weight:600;color:var(--s700)">Projects</span>
+        <span class="t-meta" style="margin-left:2px">16 in StoreBrid · 19 in Revenew</span>
+      </div>
+      ${coverageBar()}
+    </div>
+    <div style="width:1px;background:var(--hair);flex:none"></div>
+    <div style="flex:1;display:flex;gap:14px;min-width:0">
+      ${miniTile({ label: "Portfolio capacity", value: "1.84 GW", sub: "3.21 GWh storage", source: src("suite") })}
+      ${miniTile({ label: "Needs attention", value: "3", sub: "projects", source: src("suite"), accent: "var(--amber)" })}
+    </div>
+  </div>
+</section>
+
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin:28px 0 14px">
+  <h2 class="t-sec">Continue working</h2>
+  <a href="#" style="font-size:13px;font-weight:500">All projects</a>
+</div>
+<div class="grid" style="grid-template-columns:repeat(3, minmax(0, 1fr))">
+  ${projectCard({ name: "Valencia BESS", place: "Spain", spec: "BESS · 100 MW / 200 MWh", icon: "battery", sb: 1, rn: 1, when: "2 hours ago" })}
+  ${projectCard({ name: "Madrid Hybrid", place: "Spain", spec: "PV + BESS · 80 MW / 120 MWh", icon: "layers", sb: 1, rn: 1, when: "Yesterday" })}
+  ${projectCard({ name: "Porto PV", place: "Portugal", spec: "PV · 45 MW", icon: "sun", sb: 0, rn: 1, when: "2 days ago" })}
+</div>
+
+<div style="display:flex;gap:20px;margin-top:28px;align-items:flex-start">
+  <section style="flex:1.55;min-width:0">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+      <h2 class="t-sec">Recent activity</h2>
+      <a href="#" style="font-size:13px;font-weight:500">View all</a>
+    </div>
+    <div class="l1" style="overflow:hidden">
+      ${activityRow({ what: "Simulation #24 completed", project: "Valencia BESS", source: src("storebrid"), when: "2h ago" })}
+      ${activityRow({ what: 'Forecast scenario "High spread 2027" updated', project: "Valencia BESS", source: src("revenew"), when: "4h ago" })}
+      ${activityRow({ what: "Financial model recalculated", project: "Madrid Hybrid", source: src("revenew"), when: "Yesterday" })}
+      ${activityRow({ what: "PPA contract changed", project: "Valencia BESS", source: src("revenew"), when: "Yesterday" })}
+      ${activityRow({ what: "Plant configuration changed", project: "Sevilla Storage", source: src("storebrid"), when: "2d ago" })}
+      ${activityRow({ what: "Simulation #23 completed (error)", project: "Madrid Hybrid", source: src("storebrid"), when: "2d ago", last: true })}
+    </div>
+  </section>
+
+  <section style="flex:1;min-width:0">
+    <div style="margin-bottom:14px"><h2 class="t-sec">Portfolio performance</h2></div>
+    <div class="l1" style="padding:8px">
+      ${perfRow({ label: "Portfolio IRR", value: "11.4%", source: src("revenew") })}
+      ${perfRow({ label: "Annual revenue · 2026", value: "€63.4M", source: src("revenew") })}
+      ${perfRow({ label: "Energy discharged · 2026", value: "512 GWh", source: src("storebrid") })}
+      <div style="height:1px;background:var(--hair);margin:6px 16px 10px"></div>
+      ${perfRow({ label: "Revenue / MWh discharged", value: "€123.8", source: src("combined"), tinted: true,
+                  formula: "€63.4M revenue ÷ 512 GWh discharged" })}
+    </div>
+  </section>
+</div>`,
+});
+writeFileSync("Main.dc.html", home);
+console.log("Main.dc.html", home.length);
+
+/* ═══════════════════════════════════════════════════════════════
+   SCREEN 2 — Unified Projects
+   §8 — a neutral project list; coverage is a column, not a launcher
+   ═══════════════════════════════════════════════════════════════ */
+const techPill = (label, color) =>
+  `<span class="cov"><i style="background:${color}"></i>${label}</span>`;
+
+const projectRow = ({ name, desc, country, tech, techColor, capacity, sb, rn, status, when }) => `
+<tr>
+  <td>
+    <a href="#" class="anchor">${name}</a>
+    <div class="t-meta" style="margin-top:2px">${desc}</div>
+  </td>
+  <td class="t-tbl">${country}</td>
+  <td class="t-tbl">${tech}</td>
+  <td class="t-tbl" style="white-space:nowrap">${capacity}</td>
+  <td>${cov(sb, rn)}</td>
+  <td>${status}</td>
+  <td class="t-meta" style="text-align:right;white-space:nowrap">${when}</td>
+</tr>`;
+
+const HYB = SB, ALONE = "#10B981";
+
+const projects = doc({
+  w: 1440, h: 940, side: rootSide("projects"),
+  body: `
+${header({
+  crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><b>Projects</b>`,
+  eyebrow: "24 projects across StoreBrid and Revenew · 11 connected to both",
+  title: "Projects",
+  actions: `<button class="btn btn-secondary">${ic("filter", 16)}Filters</button>
+            <button class="btn btn-primary">${ic("plus", 16, 1.9)}New project</button>`,
+})}
+
+<div style="display:flex;align-items:center;gap:14px;margin:20px 0 16px">
+  <div class="search" style="flex:1;max-width:360px">${ic("search", 16)}<span>Search projects…</span></div>
+  <div class="tabs">
+    <a href="#" class="on">All <span class="count">24</span></a>
+    <a href="#">Connected <span class="count">11</span></a>
+    <a href="#"><i style="width:5px;height:5px;border-radius:50%;background:${SB};display:block"></i>StoreBrid <span class="count">16</span></a>
+    <a href="#"><i style="width:5px;height:5px;border-radius:50%;background:${RN};display:block"></i>Revenew <span class="count">19</span></a>
+  </div>
+  <span style="margin-left:auto;display:flex;align-items:center;gap:7px" class="t-meta">
+    ${ic("clock", 14, 1.7)}Sorted by last activity
+  </span>
+</div>
+
+<section class="l1 hero" style="overflow:hidden">
+  <table class="tbl">
+    <thead><tr>
+      <th style="width:23%">Project</th>
+      <th style="width:10%">Location</th>
+      <th style="width:13%">Technology</th>
+      <th style="width:15%">Capacity</th>
+      <th style="width:18%">Products</th>
+      <th style="width:11%">Status</th>
+      <th style="width:10%;text-align:right">Last activity</th>
+    </tr></thead>
+    <tbody>
+      ${projectRow({ name: "Valencia BESS", desc: "Merchant + PPA · COD 2027", country: "Spain", tech: "BESS", capacity: "100 MW / 200 MWh", sb: 1, rn: 1, status: ST.active, when: "2h ago" })}
+      ${projectRow({ name: "Madrid Hybrid", desc: "PV + storage · COD 2027", country: "Spain", tech: "PV + BESS", capacity: "80 MW / 120 MWh", sb: 1, rn: 1, status: ST.active, when: "Yesterday" })}
+      ${projectRow({ name: "Sevilla Storage", desc: "Stand-alone BESS · COD 2028", country: "Spain", tech: "BESS", capacity: "50 MW / 100 MWh", sb: 1, rn: 0, status: ST.active, when: "2d ago" })}
+      ${projectRow({ name: "Porto PV", desc: "Merchant solar · COD 2027", country: "Portugal", tech: "PV", capacity: "45 MW", sb: 0, rn: 1, status: ST.active, when: "2d ago" })}
+            ${projectRow({ name: "Helios II", desc: "Late-stage development", country: "Spain", tech: "PV", capacity: "45 MW", sb: 0, rn: 1, status: ST.development, when: "3d ago" })}
+      ${projectRow({ name: "Almería BESS", desc: "Two-hour duration · COD 2028", country: "Spain", tech: "BESS", capacity: "60 MW / 120 MWh", sb: 1, rn: 1, status: ST.active, when: "4d ago" })}
+      ${projectRow({ name: "Zaragoza Wind + BESS", desc: "Co-located wind · COD 2029", country: "Spain", tech: "Wind + BESS", capacity: "120 MW / 90 MWh", sb: 1, rn: 0, status: ST.development, when: "1w ago" })}
+      ${projectRow({ name: "Lisboa Storage", desc: "Awaiting grid connection", country: "Portugal", tech: "BESS", capacity: "30 MW / 60 MWh", sb: 0, rn: 1, status: ST.draft, when: "2w ago" })}
+    </tbody>
+  </table>
+</section>
+
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px">
+  <span class="t-meta">Showing 8 of 24 projects</span>
+  <div style="display:flex;align-items:center;gap:6px">
+    <button class="btn btn-ghost" style="height:34px;padding:0 11px;gap:6px">${ic("left", 15, 1.9)}Previous</button>
+    <a href="#" style="width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+       font-size:13px;font-weight:600;color:#fff;background:${SB};box-shadow:0 6px 14px -8px rgba(37,99,235,.6)">1</a>
+    <a href="#" style="width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--s500)">2</a>
+    <a href="#" style="width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--s500)">3</a>
+    <button class="btn btn-ghost" style="height:34px;padding:0 11px;gap:6px">Next${ic("right", 15, 1.9)}</button>
+  </div>
+</div>`,
+});
+writeFileSync("Projects.dc.html", projects);
+console.log("Projects.dc.html", projects.length);
+
+/* ═══════════════════════════════════════════════════════════════
+   CHARTS — hand-drawn SVG. Palettes validated with the dataviz
+   validator (all six checks PASS, light mode).
+     dispatch : charge #0891B2 / discharge #1D4ED8
+     revenue  : contracted #AF47B2 / merchant #6366F1
+   ═══════════════════════════════════════════════════════════════ */
+const GRID = "rgba(30,58,138,.07)", AXIS = "#5F6C82";
+
+/* rounded 4px data-end anchored to the baseline */
+function bar(x, y, w, h, r, up) {
+  const rr = Math.min(r, h, w / 2);
+  if (h <= 0.4) return "";
+  return up
+    ? `M${x} ${y + h}L${x} ${y + rr}Q${x} ${y} ${x + rr} ${y}L${x + w - rr} ${y}Q${x + w} ${y} ${x + w} ${y + rr}L${x + w} ${y + h}Z`
+    : `M${x} ${y}L${x} ${y + h - rr}Q${x} ${y + h} ${x + rr} ${y + h}L${x + w - rr} ${y + h}Q${x + w} ${y + h} ${x + w} ${y + h - rr}L${x + w} ${y}Z`;
+}
+
+const legend = (items) => `
+<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+  ${items.map(([label, color]) => `
+    <span style="display:inline-flex;align-items:center;gap:7px">
+      <i style="width:9px;height:9px;border-radius:3px;background:${color};display:block;flex:none"></i>
+      <span style="font-size:12px;font-weight:500;color:var(--s500)">${label}</span>
+    </span>`).join("")}
+</div>`;
+
+function dispatchChart() {
+  const CHARGE = "#5B8DEF", DISCHARGE = "#1D4ED8";
+  const v = [-40,-55,-60,-50,-30,-10,0,25,60,45,15,-25,-70,-85,-80,-45,0,20,70,95,100,65,20,-15];
+  const W = 486, H = 208, L = 40, R = 8, T = 16, B = 24;
+  const pw = W - L - R, ph = H - T - B, mid = T + ph / 2, dom = 110;
+  const y = (val) => mid - (val / dom) * (ph / 2);
+  const band = pw / 24, bw = 12.5;
+
+  const grids = [100, 50, -50, -100].map((g) =>
+    `<line x1="${L}" y1="${y(g).toFixed(1)}" x2="${W - R}" y2="${y(g).toFixed(1)}" stroke="${GRID}" stroke-width="1"/>`).join("");
+  const ylabs = [[100, "100"], [0, "0"], [-100, "−100"]].map(([g, t]) =>
+    `<text x="${L - 8}" y="${(y(g) + 3.4).toFixed(1)}" text-anchor="end" font-size="9.5" fill="${AXIS}">${t}</text>`).join("");
+  const bars = v.map((val, i) => {
+    if (val === 0) return "";
+    const x = L + i * band + (band - bw) / 2, up = val > 0;
+    const h = Math.abs(y(val) - mid), top = up ? y(val) : mid;
+    return `<path class="mk" d="${bar(x, top, bw, h, 4, up)}" fill="${up ? DISCHARGE : CHARGE}"><title>${String(i).padStart(2,"0")}:00 — ${up ? "discharging" : "charging"} ${Math.abs(val)} MW</title></path>`;
+  }).join("");
+  const xlabs = [0, 6, 12, 18].map((i) =>
+    `<text x="${(L + i * band + band / 2).toFixed(1)}" y="${H - 7}" text-anchor="middle" font-size="9.5" fill="${AXIS}">${String(i).padStart(2,"0")}:00</text>`).join("");
+  const peak = L + 20 * band + band / 2;
+
+  return `
+<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block" role="img" aria-label="Hourly dispatch profile, charging and discharging power in MW">
+  <style>.mk{transition:opacity .12s} .mk:hover{opacity:.8}</style>
+  ${grids}${ylabs}
+  <line x1="${L}" y1="${mid}" x2="${W - R}" y2="${mid}" stroke="rgba(30,58,138,.17)" stroke-width="1"/>
+  ${bars}
+  <text x="${peak.toFixed(1)}" y="${(y(100) - 6).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="600" fill="#0F172A">100 MW</text>
+  ${xlabs}
+</svg>`;
+}
+
+function revenueChart() {
+  const CONTRACTED = "#7B2D80", MERCHANT = "#C74FC9";
+  const d = [[2026,5.2,3.2],[2027,5.2,3.6],[2028,5.2,3.9],[2029,5.2,3.7],[2030,5.2,4.2],
+             [2031,2.6,6.3],[2032,0,8.6],[2033,0,8.3],[2034,0,8.0],[2035,0,7.6]];
+  const W = 486, H = 208, L = 40, R = 8, T = 18, B = 24;
+  const pw = W - L - R, ph = H - T - B, dom = 10;
+  const y = (val) => T + ph - (val / dom) * ph;
+  const band = pw / d.length, bw = 25;
+
+  const grids = [10, 5, 0].map((g) =>
+    `<line x1="${L}" y1="${y(g).toFixed(1)}" x2="${W - R}" y2="${y(g).toFixed(1)}" stroke="${g === 0 ? "rgba(30,58,138,.17)" : GRID}" stroke-width="1"/>
+     <text x="${L - 8}" y="${(y(g) + 3.4).toFixed(1)}" text-anchor="end" font-size="9.5" fill="${AXIS}">${g === 0 ? "0" : "€" + g + "M"}</text>`).join("");
+
+  const bars = d.map(([yr, c, m], i) => {
+    const x = L + i * band + (band - bw) / 2;
+    const base = y(0);
+    const hc = base - y(c);
+    const topM = y(c + m), hm = y(c) - topM - (c > 0 ? 2 : 0); /* 2px surface gap between segments */
+    const cSeg = c > 0 ? `<path class="mk" d="${bar(x, base - hc, bw, hc, m > 0 ? 0 : 4, true)}" fill="${CONTRACTED}"><title>${yr} — contracted (PPA) €${c.toFixed(1)}M</title></path>` : "";
+    const mSeg = m > 0 ? `<path class="mk" d="${bar(x, topM, bw, hm, 4, true)}" fill="${MERCHANT}"><title>${yr} — merchant €${m.toFixed(1)}M</title></path>` : "";
+    return cSeg + mSeg;
+  }).join("");
+
+  const xlabs = d.map(([yr], i) =>
+    `<text x="${(L + i * band + band / 2).toFixed(1)}" y="${H - 7}" text-anchor="middle" font-size="9.5" fill="${AXIS}">’${String(yr).slice(2)}</text>`).join("");
+  const first = L + band / 2;
+
+  return `
+<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block" role="img" aria-label="Revenue forecast by year, contracted and merchant, in millions of euros">
+  <style>.mk{transition:opacity .12s} .mk:hover{opacity:.8}</style>
+  ${grids}${bars}
+  <text x="${first.toFixed(1)}" y="${(y(8.4) - 7).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="600" fill="#0F172A">€8.4M</text>
+  ${xlabs}
+</svg>`;
+}
+
+const chartWell = ({ title, note, source, legendItems, svg }) => `
+<div class="l3" style="padding:16px 18px 12px;flex:1;min-width:0">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+    <div style="min-width:0">
+      <div class="t-card" style="font-size:15px">${title}</div>
+      <div class="t-meta" style="margin-top:3px">${note}</div>
+    </div>
+    ${source}
+  </div>
+  <div style="margin-top:12px">${legend(legendItems)}</div>
+  <div style="margin-top:8px">${svg}</div>
+</div>`;
+
+/* ═══════════════════════════════════════════════════════════════
+   SCREEN 3 — Unified Project Overview  ·  the showcase screen
+   §9 §10 §11 — both products in one project experience
+   ═══════════════════════════════════════════════════════════════ */
+const projectSide = (active = "overview") => `
+${brand()}
+<div class="rule" style="margin-top:16px"></div>
+<a href="#" style="display:flex;align-items:center;gap:8px;padding:0 10px;height:28px;
+   font-size:12px;font-weight:500;color:var(--s400)">${ic("back", 14, 1.8)}All projects</a>
+<div class="l3" style="padding:11px 12px;margin:8px 2px 4px">
+  <div style="font-size:14px;font-weight:600;letter-spacing:-.01em;color:var(--s900);line-height:1.25">Valencia BESS</div>
+  <div class="t-meta" style="margin-top:3px">Spain · BESS · 100 MW / 200 MWh</div>
+</div>
+<div style="height:10px"></div>
+<nav class="nav">
+  <a href="#" class="${active === "overview" ? "on" : ""}">${ic("gauge", 17)}Overview</a>
+</nav>
+<div class="grp">Engineering<i style="width:5px;height:5px;border-radius:50%;background:${SB};display:block" title="StoreBrid"></i></div>
+<nav class="nav">
+  <a href="#" class="${active === "simulations" ? "on" : ""}">${ic("activity", 17)}Simulations</a>
+  <a href="#">${ic("sliders", 17)}Plant configuration</a>
+  <a href="#" class="${active === "dispatch" ? "on" : ""}">${ic("battery", 17)}Dispatch</a>
+  <a href="#">${ic("analytics", 17)}Results</a>
+</nav>
+<div class="grp">Commercial<i style="width:5px;height:5px;border-radius:50%;background:${RN};display:block" title="Revenew"></i></div>
+<nav class="nav">
+  <a href="#">${ic("trend", 17)}Forecasting</a>
+  <a href="#">${ic("zap", 17)}Energy</a>
+  <a href="#">${ic("euro", 17)}Revenue</a>
+  <a href="#">${ic("layers", 17)}Costs</a>
+  <a href="#">${ic("file", 17)}Financial model</a>
+</nav>
+<div class="grp">Project</div>
+<nav class="nav">
+  <a href="#">${ic("file", 17)}Files</a>
+  <a href="#">${ic("clock", 17)}Activity</a>
+  <a href="#">${ic("cog", 17)}Settings</a>
+</nav>
+<div style="flex:1;min-height:14px"></div>
+<div class="rule"></div>
+${userChip()}`;
+
+const kpi = ({ label, value, source, delta, combined, formula }) => `
+<div class="kpi ${combined ? "" : "l3"}" style="${combined
+  ? `background:linear-gradient(158deg,rgba(6,182,212,.11),rgba(6,182,212,.05));border:1px solid rgba(6,182,212,.2)`
+  : ""}">
+  <div class="kpi-lab">${label}</div>
+  <div class="kpi-val">${value}</div>
+  ${formula ? `<div class="t-meta" style="margin-top:6px;font-size:10.5px;line-height:1.35">${formula}</div>` : ""}
+  <div class="kpi-foot" style="margin-top:${formula ? "8" : "9"}px">
+    ${source}${delta ? `<span class="delta ${delta[0] === "−" ? "down" : "up"}">${delta}</span>` : ""}
+  </div>
+</div>`;
+
+const projActivityRow = ({ what, who, source, when, last }) => `
+<div style="display:flex;align-items:center;gap:14px;height:52px;padding:0 20px;${last ? "" : "border-bottom:1px solid var(--hair)"}">
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${what}</span>
+  <span class="t-meta" style="width:150px;flex:none">${who}</span>
+  <span style="width:100px;flex:none">${source}</span>
+  <span class="t-meta" style="width:74px;flex:none;text-align:right">${when}</span>
+  <span style="color:var(--s400);display:flex;flex:none">${ic("right", 14, 1.8)}</span>
+</div>`;
+
+const overview = doc({
+  w: 1440, h: 1280, side: projectSide(),
+  body: `
+${header({
+  crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Projects</a><span class="sep">${ic("right", 12, 2)}</span><b>Valencia BESS</b>`,
+  eyebrow: "Suite project · connected to both products",
+  title: "Valencia BESS",
+  meta: `<span style="display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap">
+           <span>Spain · BESS · 100 MW / 200 MWh · COD 2027</span>
+           ${ST.active}${cov(1, 1)}
+         </span>`,
+  actions: `<button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:${SB};display:block"></i>Open in StoreBrid${ic("upRight", 14, 1.8)}</button>
+            <button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:${RN};display:block"></i>Open in Revenew${ic("upRight", 14, 1.8)}</button>
+            <button class="btn btn-ghost btn-icon">${ic("dots", 18)}</button>`,
+})}
+
+<div class="grid" style="grid-template-columns:repeat(5, minmax(0, 1fr));margin-top:22px">
+  ${kpi({ label: "IRR", value: "12.8%", source: src("revenew"), delta: "+0.4 pt" })}
+  ${kpi({ label: "CAPEX", value: "€42.1M", source: src("revenew") })}
+  ${kpi({ label: "Annual revenue", value: "€8.42M", source: src("revenew"), delta: "+3.1%" })}
+  ${kpi({ label: "Cycles / year", value: "326", source: src("storebrid"), delta: "+12" })}
+  ${kpi({ label: "Revenue / MWh discharged", value: "€129.1", source: src("combined"),
+          combined: true, formula: "€8.42M revenue ÷ 65.2 GWh discharged" })}
+</div>
+
+<section class="l1 hero" style="padding:20px 22px;margin-top:24px">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:16px">
+    <h2 class="t-sec">Performance</h2>
+    <span class="t-meta">Base case · updated 2 hours ago</span>
+  </div>
+  <div style="display:flex;gap:18px;align-items:stretch">
+    ${chartWell({
+      title: "Dispatch profile",
+      note: "Highest-spread day · 21 August · MW",
+      source: src("storebrid"),
+      legendItems: [["Charging", "#5B8DEF"], ["Discharging", "#1D4ED8"]],
+      svg: dispatchChart(),
+    })}
+    ${chartWell({
+      title: "Revenue forecast",
+      note: "Base case · 2026–2035",
+      source: src("revenew"),
+      legendItems: [["Contracted (PPA)", "#7B2D80"], ["Merchant", "#C74FC9"]],
+      svg: revenueChart(),
+    })}
+  </div>
+</section>
+
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin:26px 0 14px">
+  <h2 class="t-sec">Project activity</h2>
+  <a href="#" style="font-size:13px;font-weight:500">View all</a>
+</div>
+<section class="l1" style="overflow:hidden">
+  ${projActivityRow({ what: "Simulation #24 completed", who: "Ana Ruiz", source: src("storebrid"), when: "2h ago" })}
+  ${projActivityRow({ what: 'PPA contract "Iberdrola 2026–31" changed', who: "Victor Andújar", source: src("revenew"), when: "Yesterday" })}
+  ${projActivityRow({ what: "Financial model recalculated", who: "Victor Andújar", source: src("revenew"), when: "Yesterday" })}
+  ${projActivityRow({ what: "Plant configuration changed — round-trip efficiency 87% → 88%", who: "Ana Ruiz", source: src("storebrid"), when: "3d ago" })}
+  ${projActivityRow({ what: "Revenue / MWh discharged recalculated", who: "System", source: src("combined"), when: "3d ago", last: true })}
+</section>`,
+});
+writeFileSync("ProjectOverview.dc.html", overview);
+console.log("ProjectOverview.dc.html", overview.length);
+
+/* ═══════════════════════════════════════════════════════════════
+   Pattern sheet — source attribution & product identity
+   §10 · §18.2 · §18.3 · §39.2
+   ═══════════════════════════════════════════════════════════════ */
+const sheet = ({ w, h, body, extraCss }) => `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>${CSS}${extraCss || ""}</style>
+</helmet>
+<div class="atmos" style="width:${w}px;min-height:${h}px;position:relative">
+  <div class="focus"></div>
+  <div style="position:relative;z-index:1;padding:30px 32px 36px">${body}</div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":${w},"height":${h}}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>
+`;
+
+const srcSpec = ({ chip, when, click }) => `
+<div style="display:flex;align-items:flex-start;gap:16px;padding:14px 16px;border-bottom:1px solid var(--hair)">
+  <span style="width:104px;flex:none;padding-top:1px">${chip}</span>
+  <span style="flex:1;min-width:0">
+    <span style="display:block;font-size:13px;color:var(--s700);line-height:1.5">${when}</span>
+    <span style="display:block;font-size:11px;color:var(--s400);margin-top:4px">On click → ${click}</span>
+  </span>
+</div>`;
+
+const swatch = (name, hex, role) => `
+<div class="l3" style="padding:12px 14px;flex:1;min-width:0">
+  <span style="display:block;width:100%;height:34px;border-radius:8px;background:${hex};
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.28)"></span>
+  <div style="font-size:13px;font-weight:600;color:var(--s900);margin-top:10px">${name}</div>
+  <div class="t-meta" style="margin-top:3px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace">${hex}</div>
+  <div class="t-meta" style="margin-top:5px">${role}</div>
+</div>`;
+
+const attribution = sheet({
+  w: 800, h: 860,
+  body: `
+<p class="eyebrow" style="color:var(--blue700);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:11px">Suite · Pattern</p>
+<h1 class="t-page" style="font-size:26px">Source attribution</h1>
+<p class="t-body" style="color:var(--s500);margin-top:8px;max-width:56ch">
+  Every KPI, chart and activity line carries the product that owns the calculation.
+  Present, never dominant: 11&nbsp;px, slate&nbsp;400, a 5&nbsp;px dot — it reads as metadata, not as a badge.
+</p>
+
+<section class="l1 hero" style="margin-top:22px;overflow:hidden">
+  <div style="padding:14px 16px 12px;background:linear-gradient(158deg,rgba(255,255,255,.44),rgba(255,255,255,.26))">
+    <span class="t-lab" style="font-weight:600;color:var(--s500)">The four sources</span>
+  </div>
+  ${srcSpec({ chip: src("suite"), when: "Neutral metadata the Suite owns — name, country, technology, capacity, status.", click: "stays in the Suite" })}
+  ${srcSpec({ chip: src("storebrid"), when: "Technical and engineering results — simulations, dispatch, cycles, throughput.", click: "deep-links into the StoreBrid workflow" })}
+  ${srcSpec({ chip: src("revenew"), when: "Commercial and financial results — forecasts, revenue, costs, IRR, NPV.", click: "deep-links into the Revenew workflow" })}
+  <div style="border-bottom:none">${srcSpec({ chip: src("combined"), when: "Only exists because the Suite understands both domains. Always shows how it is derived.", click: "opens the combined metric in Analytics" })}</div>
+</section>
+
+<h2 class="t-sec" style="font-size:16px;margin-top:24px">Product accents</h2>
+<p class="t-meta" style="margin-top:5px">Lifted from each product. The Suite is the parent brand; it does not flatten them.</p>
+<div style="display:flex;gap:14px;margin-top:12px">
+  ${swatch("StoreBrid", SB, "Engineering · technical")}
+  ${swatch("Revenew", RN, "Commercial · financial")}
+  ${swatch("Suite", SU, "Neutral · combined")}
+</div>
+
+<h2 class="t-sec" style="font-size:16px;margin-top:24px">Two badge families — never mixed</h2>
+<div style="display:flex;gap:14px;margin-top:12px">
+  <div class="l1" style="padding:16px;flex:1;min-width:0">
+    <div class="t-lab" style="font-weight:600;color:var(--s700)">Product coverage</div>
+    <div style="margin-top:11px">${cov(1, 0)}</div>
+    <p class="t-meta" style="margin-top:11px;line-height:1.5">
+      Which products are linked to this <b style="font-weight:600;color:var(--s500)">project</b>.
+      A dimmed pill means not linked — never a disabled control.
+    </p>
+  </div>
+  <div class="l1" style="padding:16px;flex:1;min-width:0">
+    <div class="t-lab" style="font-weight:600;color:var(--s700)">Status</div>
+    <div style="margin-top:11px;display:flex;gap:7px;flex-wrap:wrap">${ST.active}${ST.development}${ST.draft}</div>
+    <p class="t-meta" style="margin-top:11px;line-height:1.5">
+      What <b style="font-weight:600;color:var(--s500)">state</b> the thing is in. Rounder tint, always with a dot,
+      so state never rests on hue alone.
+    </p>
+  </div>
+</div>`,
+});
+writeFileSync("SourceAttribution.dc.html", attribution);
+console.log("SourceAttribution.dc.html", attribution.length);
+
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SCREEN 4 — Project workspace navigation
+   §11 §43 — navigation moves toward business capabilities.
+   The heading says "Engineering", not "StoreBrid"; the product
+   drops to an attribution dot.
+   ═══════════════════════════════════════════════════════════════ */
+const SIMSTATE = {
+  completed: badge("Completed", "#0E9469", "rgba(16,185,129,.11)"),
+  progress:  badge("In progress", "#9A6208", "rgba(245,158,11,.12)"),
+  running:   badge("Running…", "#1D4ED8", "rgba(37,99,235,.10)"),
+  waiting:   badge("Waiting", "#5B4BB5", "rgba(139,92,246,.12)"),
+  error:     badge("Completed (error)", "#C22222", "rgba(220,38,38,.10)"),
+};
+
+const simRow = ({ name, note, step, state, created, last }) => `
+<tr>
+  <td>
+    <a href="#" class="anchor">${name}</a>
+    <div class="t-meta" style="margin-top:2px">${note}</div>
+  </td>
+  <td class="t-tbl">${step}</td>
+  <td>${state}</td>
+  <td class="t-tbl" style="white-space:nowrap">${created}</td>
+  <td style="width:34px;text-align:right"><span style="color:var(--s400);display:inline-flex">${ic("right", 14, 1.8)}</span></td>
+</tr>`;
+
+const workspace = doc({
+  w: 1440, h: 1000, side: projectSide("simulations"),
+  body: `
+${header({
+  crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Projects</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Valencia BESS</a><span class="sep">${ic("right", 12, 2)}</span><b>Engineering</b>`,
+  eyebrow: `<span style="display:inline-flex;align-items:center;gap:9px">Engineering ${src("storebrid")}</span>`,
+  title: "Simulations",
+  meta: "12 simulations · last run 2 hours ago · Valencia BESS",
+  actions: `<button class="btn btn-secondary">${ic("analytics", 16)}Compare simulations</button>
+            <button class="btn btn-primary">${ic("plus", 16, 1.9)}New simulation</button>`,
+})}
+
+<div style="display:flex;align-items:center;gap:14px;margin:20px 0 16px">
+  <div class="search" style="flex:1;max-width:320px">${ic("search", 16)}<span>Search simulations…</span></div>
+  <div class="tabs">
+    <a href="#" class="on">All <span class="count">12</span></a>
+    <a href="#">Completed <span class="count">7</span></a>
+    <a href="#">Running <span class="count">3</span></a>
+    <a href="#">Failed <span class="count">1</span></a>
+  </div>
+  <span style="margin-left:auto;display:flex;align-items:center;gap:7px" class="t-meta">
+    ${ic("clock", 14, 1.7)}Newest first
+  </span>
+</div>
+
+<section class="l1 hero" style="overflow:hidden">
+  <table class="tbl">
+    <thead><tr>
+      <th style="width:42%">Simulation</th>
+      <th style="width:14%">Time-step</th>
+      <th style="width:20%">State</th>
+      <th style="width:18%">Created</th>
+      <th></th>
+    </tr></thead>
+    <tbody>
+      ${simRow({ name: "Base case 2027", note: "2 h duration · merchant only", step: "Hourly", state: SIMSTATE.completed, created: "21 Aug 2026" })}
+      ${simRow({ name: "High spread sensitivity", note: "+20% capture spread", step: "Hourly", state: SIMSTATE.running, created: "21 Aug 2026" })}
+      ${simRow({ name: "2.2 h duration upgrade", note: "220 MWh · same POI", step: "Hourly", state: SIMSTATE.completed, created: "19 Aug 2026" })}
+      ${simRow({ name: "aFRR co-optimisation", note: "Balancing + arbitrage", step: "15-min", state: SIMSTATE.progress, created: "19 Aug 2026" })}
+      ${simRow({ name: "Degradation stress 15 yr", note: "Accelerated ageing curve", step: "Hourly", state: SIMSTATE.completed, created: "14 Aug 2026" })}
+      ${simRow({ name: "Low spread downside", note: "−25% capture spread", step: "Hourly", state: SIMSTATE.error, created: "12 Aug 2026" })}
+      ${simRow({ name: "Grid constraint 80 MW", note: "Curtailed export limit", step: "Hourly", state: SIMSTATE.waiting, created: "11 Aug 2026" })}
+      ${simRow({ name: "Baseline no PPA", note: "Full merchant exposure", step: "Hourly", state: SIMSTATE.completed, created: "8 Aug 2026", last: true })}
+    </tbody>
+  </table>
+</section>
+
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px">
+  <span class="t-meta">Showing 8 of 12 simulations</span>
+  <div style="display:flex;align-items:center;gap:6px">
+    <button class="btn btn-ghost" style="height:34px;padding:0 11px;gap:6px">${ic("left", 15, 1.9)}Previous</button>
+    <a href="#" style="width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+       font-size:13px;font-weight:600;color:#fff;background:${SB};box-shadow:0 6px 14px -8px rgba(37,99,235,.6)">1</a>
+    <a href="#" style="width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--s500)">2</a>
+    <button class="btn btn-ghost" style="height:34px;padding:0 11px;gap:6px">Next${ic("right", 15, 1.9)}</button>
+  </div>
+</div>
+
+<a href="#" class="l1" style="display:flex;align-items:center;gap:16px;padding:18px 20px;margin-top:26px;text-decoration:none">
+  <span class="l3" style="width:38px;height:38px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:11px;color:var(--blue700)">${ic("link", 19)}</span>
+  <span style="flex:1;min-width:0">
+    <span class="t-card" style="display:block;font-size:15px">Continue in Commercial</span>
+    <span class="t-body" style="display:block;font-size:13px;color:var(--s500);margin-top:3px">
+      “Base case 2027” feeds 2 revenue cases and the financial model for this project.
+    </span>
+  </span>
+  <span style="flex:none">${src("revenew")}</span>
+  <span style="color:var(--s400);display:flex;flex:none">${ic("right", 16, 1.9)}</span>
+</a>`,
+});
+writeFileSync("Workspace.dc.html", workspace);
+console.log("Workspace.dc.html", workspace.length);
+
+/* ═══════════════════════════════════════════════════════════════
+   SCREEN 5 — Embedded cross-product workflow
+   §25 §26 §32 — the parent owns the modal, focus, close, fallback
+   and the post-save refresh; the product owns its content.
+   That split is drawn literally: Suite glass around a body rendered
+   in Revenew's own visual language (white, slate, DM Sans, 6px radii
+   — lifted from sunveon-revenew-frontend). §39.1: the words iframe,
+   embed and remote never reach the user.
+   ═══════════════════════════════════════════════════════════════ */
+const REVCSS = `
+.rev{font-family:'DM Sans',system-ui,sans-serif;background:#fff;color:#0f172a}
+.rev .lab{display:block;font-size:12px;font-weight:500;color:#475569;margin-bottom:6px}
+.rev .fld{display:flex;align-items:center;height:36px;padding:0 11px;border:1px solid #e2e8f0;border-radius:6px;
+  background:#fff;font-size:13px;color:#0f172a;gap:8px}
+.rev .fld .unit{margin-left:auto;padding-left:9px;border-left:1px solid #e2e8f0;color:#94a3b8;font-size:12px;align-self:stretch;display:flex;align-items:center}
+.rev .fld .chev{margin-left:auto;color:#94a3b8;display:flex}
+.rev .help{display:block;font-size:11px;color:#94a3b8;margin-top:5px}
+.rev .rbtn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:32px;padding:0 12px;
+  border-radius:6px;font-size:13px;font-weight:500;font-family:inherit;border:1px solid transparent;cursor:pointer}
+.rev .rbtn-sec{background:#fff;color:#0f172a;border-color:#e2e8f0}
+.rev .rbtn-ghost{background:transparent;color:#475569}
+.rev .rule{height:1px;background:#f1f5f9}
+`;
+
+function priceCurve() {
+  const v = [78, 74, 66, 58, 52, 61, 79, 84, 72, 68, 76, 88];
+  const M = ["J","F","M","A","M","J","J","A","S","O","N","D"];
+  const W = 660, H = 292, L = 40, R = 10, T = 16, B = 26;
+  const pw = W - L - R, ph = H - T - B, lo = 40, hi = 100;
+  const x = (i) => L + (i / (v.length - 1)) * pw;
+  const y = (val) => T + ph - ((val - lo) / (hi - lo)) * ph;
+
+  const grids = [100, 80, 60, 40].map((g) =>
+    `<line x1="${L}" y1="${y(g).toFixed(1)}" x2="${W - R}" y2="${y(g).toFixed(1)}" stroke="#f1f5f9" stroke-width="1"/>
+     <text x="${L - 8}" y="${(y(g) + 3.4).toFixed(1)}" text-anchor="end" font-size="9.5" fill="#94a3b8">${g}</text>`).join("");
+  const line = v.map((val, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(val).toFixed(1)}`).join("");
+  const area = `${line}L${x(v.length - 1).toFixed(1)} ${(T + ph).toFixed(1)}L${L} ${(T + ph).toFixed(1)}Z`;
+  /* markers double as the editor's drag handles */
+  const dots = v.map((val, i) =>
+    `<circle cx="${x(i).toFixed(1)}" cy="${y(val).toFixed(1)}" r="4" fill="#fff" stroke="#AF47B2" stroke-width="2"><title>${M[i]} — €${val}/MWh</title></circle>`).join("");
+  const labs = M.map((m, i) =>
+    `<text x="${x(i).toFixed(1)}" y="${H - 8}" text-anchor="middle" font-size="9.5" fill="#94a3b8">${m}</text>`).join("");
+
+  return `
+<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block" role="img" aria-label="Monthly capture price curve, euros per megawatt hour">
+  <defs><linearGradient id="pcf" x1="0" y1="${T}" x2="0" y2="${T + ph}" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#AF47B2" stop-opacity=".16"/><stop offset="1" stop-color="#AF47B2" stop-opacity="0"/>
+  </linearGradient></defs>
+  ${grids}
+  <path d="${area}" fill="url(#pcf)"/>
+  <path d="${line}" fill="none" stroke="#AF47B2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  ${dots}${labs}
+  <text x="${L - 8}" y="${T + 4}" text-anchor="end" font-size="9" fill="#94a3b8">€/MWh</text>
+</svg>`;
+}
+
+const revField = (label, value, { unit, chev, help } = {}) => `
+<div>
+  <span class="lab">${label}</span>
+  <div class="fld"><span>${value}</span>${unit ? `<span class="unit">${unit}</span>` : ""}${chev ? `<span class="chev">${ic("down", 15, 1.8)}</span>` : ""}</div>
+  ${help ? `<span class="help">${help}</span>` : ""}
+</div>`;
+
+const curveModal = () => `
+<div style="position:absolute;inset:0;background:rgba(23,42,86,.34);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:10"></div>
+<div class="l2" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:1040px;z-index:11;overflow:hidden;
+     box-shadow:0 44px 110px -34px rgba(30,58,138,.44), 0 14px 36px -18px rgba(30,58,138,.22), inset 0 1px 0 rgba(255,255,255,.85)">
+
+  <!-- parent chrome: title, context, fallback, close -->
+  <div style="display:flex;align-items:center;gap:16px;padding:15px 20px;border-bottom:1px solid var(--hair)">
+    <div style="flex:1;min-width:0">
+      <div class="t-card" style="font-size:16px">Edit forecast curve</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+        <span class="t-meta">Valencia BESS · Base case 2026</span>${src("revenew")}
+      </div>
+    </div>
+    <button class="btn btn-secondary" style="height:34px">Open in Revenew${ic("upRight", 14, 1.8)}</button>
+    <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5.4 5.4l9.2 9.2M14.6 5.4l-9.2 9.2"/></svg>
+    </button>
+  </div>
+
+  <!-- the product's own surface -->
+  <div class="rev" style="display:flex;align-items:stretch;gap:0">
+    <div style="width:290px;flex:none;padding:20px;border-right:1px solid #f1f5f9;display:flex;flex-direction:column;gap:15px">
+      ${revField("Scenario", "Base case 2026", { chev: true })}
+      ${revField("Market", "Spain (ES)", { chev: true })}
+      ${revField("Resolution", "Hourly", { chev: true })}
+      ${revField("Annual escalation", "2.0", { unit: "%/yr", help: "Applied from 2027 onwards" })}
+      <div class="rule" style="margin:3px 0"></div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">
+        8,760 points · shaped from the ES hourly profile.<br>Drag a monthly handle to reshape the curve.
+      </div>
+      <div style="flex:1"></div>
+      <button class="rbtn rbtn-sec" style="width:100%">Reset to market shape</button>
+    </div>
+    <div style="flex:1;min-width:0;padding:18px 20px 12px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#0f172a">Monthly capture price</div>
+          <div style="font-size:11px;color:#94a3b8;margin-top:3px">Base case 2026 · unsaved changes</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px">
+          <i style="width:9px;height:9px;border-radius:3px;background:#AF47B2;display:block"></i>
+          <span style="font-size:12px;font-weight:500;color:#64748b">Capture price</span>
+        </div>
+      </div>
+      <div style="margin-top:10px">${priceCurve()}</div>
+    </div>
+  </div>
+
+  <!-- parent chrome: the post-save contract, in the user's language -->
+  <div style="display:flex;align-items:center;gap:16px;padding:14px 20px;border-top:1px solid var(--hair);
+       background:linear-gradient(158deg,rgba(255,255,255,.5),rgba(255,255,255,.3))">
+    <span class="t-meta" style="flex:1;min-width:0;display:flex;align-items:center;gap:7px">
+      ${ic("link", 14, 1.7)}Saving updates Revenue and the financial model for Valencia BESS.
+    </span>
+    <button class="btn btn-secondary">Cancel</button>
+    <button class="btn btn-primary">${ic("check", 16, 1.9)}Save changes</button>
+  </div>
+</div>`;
+
+const inputTile = ({ label, value, source, action }) => `
+<div class="l3" style="padding:13px 15px;flex:1;min-width:0;display:flex;align-items:center;gap:12px">
+  <span style="flex:1;min-width:0">
+    <span class="kpi-lab" style="display:block">${label}</span>
+    <span style="display:block;font-size:14px;font-weight:500;color:var(--s900);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${value}</span>
+    <span style="display:block;margin-top:6px">${source}</span>
+  </span>
+  ${action ? `<button class="btn btn-secondary" style="height:32px;padding:0 12px;flex:none">${action}</button>` : ""}
+</div>`;
+
+const embedded = doc({
+  w: 1440, h: 1000, side: projectSide("dispatch"), extraCss: REVCSS,
+  overlay: curveModal(),
+  body: `
+${header({
+  crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Projects</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Valencia BESS</a><span class="sep">${ic("right", 12, 2)}</span><b>Engineering</b>`,
+  eyebrow: `<span style="display:inline-flex;align-items:center;gap:9px">Engineering ${src("storebrid")}</span>`,
+  title: "Dispatch",
+  meta: "Base case 2027 · hourly · 21 August",
+  actions: `<button class="btn btn-secondary">${ic("upRight", 16)}Export</button>
+            <button class="btn btn-primary">${ic("activity", 16)}Re-run simulation</button>`,
+})}
+
+<div style="display:flex;gap:16px;margin-top:20px">
+  ${inputTile({ label: "Simulation", value: "Base case 2027", source: src("storebrid") })}
+  ${inputTile({ label: "Price curve", value: "Base case 2026", source: src("revenew"), action: "Edit" })}
+  ${inputTile({ label: "Horizon", value: "2027 – 2042", source: src("suite") })}
+</div>
+
+<section class="l1 hero" style="padding:20px 22px;margin-top:22px">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:14px">
+    <h2 class="t-sec">Dispatch profile</h2>
+    <span class="t-meta">Highest-spread day · 21 August · MW</span>
+  </div>
+  <div style="margin-bottom:12px">${legend([["Charging", "#5B8DEF"], ["Discharging", "#1D4ED8"]])}</div>
+  ${dispatchChart()}
+</section>`,
+});
+writeFileSync("EmbeddedWorkflow.dc.html", embedded);
+console.log("EmbeddedWorkflow.dc.html", embedded.length);
+
+/* ═══════════════════════════════════════════════════════════════
+   SCREEN 5b — the states the modal has to have
+   §32 — loading, error/fallback, saved confirmation + return to context
+   ═══════════════════════════════════════════════════════════════ */
+const skel = (w, h = 10) =>
+  `<span style="display:block;width:${w};height:${h}px;border-radius:${h / 2}px;background:rgba(30,58,138,.09)"></span>`;
+
+const stateCol = ({ n, name, note, panel }) => `
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:baseline;gap:9px">
+    <span style="font-size:11px;font-weight:700;color:var(--blue700)">${n}</span>
+    <span class="t-card" style="font-size:15px">${name}</span>
+  </div>
+  <p class="t-meta" style="margin:6px 0 14px;line-height:1.5;min-height:31px">${note}</p>
+  ${panel}
+</div>`;
+
+const modalChrome = (body, foot) => `
+<div class="l2" style="overflow:hidden">
+  <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--hair)">
+    <div style="flex:1;min-width:0">
+      <div class="t-card" style="font-size:14px">Edit forecast curve</div>
+      <div style="display:flex;align-items:center;gap:9px;margin-top:3px">
+        <span class="t-meta">Valencia BESS</span>${src("revenew")}
+      </div>
+    </div>
+    <span style="color:var(--s400);display:flex;flex:none">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5.4 5.4l9.2 9.2M14.6 5.4l-9.2 9.2"/></svg>
+    </span>
+  </div>
+  ${body}
+  ${foot ? `<div style="display:flex;align-items:center;gap:9px;padding:13px 16px;border-top:1px solid var(--hair);
+       background:linear-gradient(158deg,rgba(255,255,255,.5),rgba(255,255,255,.3))">${foot}</div>` : ""}
+</div>`;
+
+const embedStates = sheet({
+  w: 1440, h: 560,
+  body: `
+<p class="eyebrow" style="color:var(--blue700);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:11px">Screen 5 · States</p>
+<h1 class="t-page" style="font-size:24px">When the other product is slow, broken, or done</h1>
+<div style="display:flex;gap:24px;margin-top:22px;align-items:flex-start">
+
+  ${stateCol({
+    n: "01", name: "Loading",
+    note: "The parent owns the frame from the first frame, so the modal never appears empty or jumps size.",
+    panel: modalChrome(`
+      <div style="padding:18px 16px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:14px">
+          <div style="width:96px;flex:none;display:flex;flex-direction:column;gap:9px">
+            ${skel("60%", 8)}${skel("100%", 30)}${skel("50%", 8)}${skel("100%", 30)}
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:9px">
+            ${skel("45%", 8)}${skel("100%", 96)}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;margin-top:2px">
+          <span style="width:13px;height:13px;border-radius:50%;border:2px solid rgba(37,99,235,.2);border-top-color:${SB};display:block"></span>
+          <span class="t-meta">Loading the forecast editor…</span>
+        </div>
+      </div>`),
+  })}
+
+  ${stateCol({
+    n: "02", name: "Didn’t load",
+    note: "Never a dead end: retry, or take the same work straight to Revenew. The user is told what is safe, in their own words.",
+    panel: modalChrome(`
+      <div style="padding:26px 20px 22px;text-align:center">
+        <span style="width:40px;height:40px;margin:0 auto;border-radius:12px;display:flex;align-items:center;justify-content:center;
+              background:rgba(245,158,11,.13);color:#9A6208">${ic("alert", 20)}</span>
+        <div class="t-card" style="font-size:14px;margin-top:13px">The forecast editor didn’t load</div>
+        <p class="t-body" style="font-size:12.5px;color:var(--s500);margin-top:7px;line-height:1.55">
+          Nothing was changed. You can try again, or open the curve directly in Revenew.
+        </p>
+      </div>`,
+      `<button class="btn btn-ghost" style="height:32px;font-size:12.5px">Cancel</button>
+       <span style="flex:1"></span>
+       <button class="btn btn-secondary" style="height:32px;font-size:12.5px">Open in Revenew${ic("upRight", 13, 1.8)}</button>
+       <button class="btn btn-primary" style="height:32px;font-size:12.5px">Try again</button>`),
+  })}
+
+  ${stateCol({
+    n: "03", name: "Saved — back in context",
+    note: "The modal closes onto the screen it came from. What the save invalidates is stated, and the next action is offered rather than assumed.",
+    panel: `
+      <div class="l2" style="display:flex;align-items:flex-start;gap:11px;padding:13px 15px">
+        <span style="width:22px;height:22px;flex:none;border-radius:7px;display:flex;align-items:center;justify-content:center;
+              background:rgba(16,185,129,.14);color:#0E9469">${ic("check", 14, 2.1)}</span>
+        <span style="flex:1;min-width:0">
+          <span class="t-card" style="display:block;font-size:13.5px">Forecast curve updated</span>
+          <span class="t-meta" style="display:block;margin-top:3px;line-height:1.5">Revenue and the financial model will recalculate.</span>
+        </span>
+      </div>
+      <div class="l3" style="padding:13px 15px;margin-top:12px;display:flex;align-items:center;gap:12px">
+        <span style="flex:1;min-width:0">
+          <span class="kpi-lab" style="display:block">Price curve</span>
+          <span style="display:block;font-size:13.5px;font-weight:500;color:var(--s900);margin-top:4px">Base case 2026</span>
+          <span style="display:flex;align-items:center;gap:9px;margin-top:6px">${src("revenew")}<span class="t-meta">updated just now</span></span>
+        </span>
+      </div>
+      <div class="l1" style="padding:13px 15px;margin-top:12px;display:flex;align-items:center;gap:12px">
+        <span style="color:#9A6208;display:flex;flex:none">${ic("alert", 17)}</span>
+        <span style="flex:1;min-width:0">
+          <span style="display:block;font-size:13px;font-weight:500;color:var(--s900)">Dispatch results are out of date</span>
+          <span class="t-meta" style="display:block;margin-top:3px">Base case 2027 · ran with the previous curve</span>
+        </span>
+        <button class="btn btn-primary" style="height:32px;font-size:12.5px;flex:none">Re-run</button>
+      </div>`,
+  })}
+</div>`,
+});
+writeFileSync("EmbeddedStates.dc.html", embedStates);
+console.log("EmbeddedStates.dc.html", embedStates.length);
+
+/* ═══════════════════════════════════════════════════════════════
+   SCREEN 6 — Cross-product Analytics
+   §14 §15 §34 — the scatter is the argument: one axis owned by
+   StoreBrid, the other by Revenew, and neither product can draw it.
+   Single hue, so no categorical palette to validate.
+   ═══════════════════════════════════════════════════════════════ */
+const FLEET = [
+  /* name, utilisation %, IRR %, MW */
+  ["Murcia BESS", 78, 13.4, 110, "start"],
+  ["Valencia BESS", 74, 12.8, 100, "top"],
+  ["Girona BESS", 76, 12.6, 85, null],
+  ["Bilbao BESS", 71, 12.1, 90, null],
+  ["Madrid Hybrid", 68, 11.9, 80, null],
+  ["Córdoba Storage", 62, 10.6, 45, null],
+  ["Faro Storage", 64, 10.1, 35, null],
+  ["Évora Hybrid", 59, 9.6, 50, null],
+  ["Almería BESS", 81, 9.4, 60, "start"],
+  ["Toledo Hybrid", 57, 8.9, 70, null],
+  ["Cádiz Storage", 52, 7.8, 40, "start"],
+];
+
+function fleetScatter() {
+  const W = 660, H = 344, L = 46, R = 16, T = 16, B = 40;
+  const pw = W - L - R, ph = H - T - B;
+  const xlo = 45, xhi = 90, ylo = 6, yhi = 15;
+  const x = (v) => L + ((v - xlo) / (xhi - xlo)) * pw;
+  const y = (v) => T + ph - ((v - ylo) / (yhi - ylo)) * ph;
+  const r = (mw) => 6 + ((mw - 35) / 75) * 7;
+
+  const gx = [50, 60, 70, 80, 90].map((g) =>
+    `<line x1="${x(g).toFixed(1)}" y1="${T}" x2="${x(g).toFixed(1)}" y2="${T + ph}" stroke="${GRID}" stroke-width="1"/>
+     <text x="${x(g).toFixed(1)}" y="${T + ph + 15}" text-anchor="middle" font-size="9.5" fill="${AXIS}">${g}%</text>`).join("");
+  const gy = [6, 9, 12, 15].map((g) =>
+    `<line x1="${L}" y1="${y(g).toFixed(1)}" x2="${W - R}" y2="${y(g).toFixed(1)}" stroke="${GRID}" stroke-width="1"/>
+     <text x="${L - 8}" y="${(y(g) + 3.4).toFixed(1)}" text-anchor="end" font-size="9.5" fill="${AXIS}">${g}%</text>`).join("");
+
+  const dots = FLEET.map(([n, u, irr, mw]) =>
+    `<circle class="mk" cx="${x(u).toFixed(1)}" cy="${y(irr).toFixed(1)}" r="${r(mw).toFixed(1)}"
+       fill="#0891B2" fill-opacity=".72" stroke="#fff" stroke-width="2"><title>${n} — ${u}% utilisation · ${irr}% IRR · ${mw} MW</title></circle>`).join("");
+
+  /* selective direct labels: the two extremes and the one outlier */
+  const labs = FLEET.filter((f) => f[4]).map(([n, u, irr, mw, pos]) =>
+    pos === "top"
+      ? `<text x="${(x(u) - 6).toFixed(1)}" y="${(y(irr) - r(mw) - 9).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0F172A">${n}</text>`
+      : `<text x="${(x(u) + r(mw) + 7).toFixed(1)}" y="${(y(irr) + 3.6).toFixed(1)}" text-anchor="start" font-size="10.5" font-weight="600" fill="#0F172A">${n}</text>`).join("");
+
+  return `
+<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block" role="img" aria-label="Battery utilisation against IRR, one dot per connected project, sized by installed power">
+  <style>.mk{transition:opacity .12s} .mk:hover{opacity:.85}</style>
+  ${gx}${gy}${dots}${labs}
+  <text x="${L - 8}" y="${T + 4}" text-anchor="end" font-size="9" fill="${AXIS}">IRR</text>
+</svg>`;
+}
+
+const reviewRow = ({ name, reading, prompt, last }) => `
+<div style="padding:13px 16px;${last ? "" : "border-bottom:1px solid var(--hair)"}">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+    <a href="#" style="font-size:13.5px;font-weight:500">${name}</a>
+    <span class="t-meta" style="white-space:nowrap">${reading}</span>
+  </div>
+  <div class="t-meta" style="margin-top:5px;line-height:1.5">${prompt}</div>
+</div>`;
+
+/* every €/MWh in the table is derived, never typed */
+const CMP = [
+  { name: "Murcia BESS",     mwh: 220, cycles: 348, util: 78, degr: 2.3, rev: 9.80, irr: 13.4 },
+  { name: "Valencia BESS",   mwh: 200, cycles: 326, util: 74, degr: 2.1, rev: 8.42, irr: 12.8 },
+  { name: "Girona BESS",     mwh: 170, cycles: 331, util: 76, degr: 2.2, rev: 7.10, irr: 12.6 },
+  { name: "Madrid Hybrid",   mwh: 120, cycles: 298, util: 68, degr: 1.9, rev: 4.55, irr: 11.9 },
+  { name: "Almería BESS",    mwh: 120, cycles: 356, util: 81, degr: 2.6, rev: 4.34, irr: 9.4 },
+  { name: "Sevilla Storage", mwh: 100, cycles: 312, util: 71, degr: 2.0, linked: false },
+];
+const eur = (n) => "€" + n.toFixed(1);
+const cmpRow = (p) => {
+  const num = (t) => `<td class="t-tbl" style="text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums">${t}</td>`;
+  const gap = `<td style="text-align:right"><span class="t-meta" style="opacity:.55">—</span></td>`;
+  return `
+<tr>
+  <td><a href="#" class="anchor">${p.name}</a>
+      ${p.linked === false ? `<div class="t-meta" style="margin-top:2px">Not linked to Revenew · <a href="#" style="font-size:11px">Link</a></div>` : ""}</td>
+  ${num(p.cycles)}${num(p.util + "%")}${num(p.degr.toFixed(1) + "%/yr")}
+  ${p.linked === false ? gap + gap + gap : num(eur(p.rev) + "M") + num(p.irr.toFixed(1) + "%") +
+    `<td style="text-align:right;white-space:nowrap"><b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${eur(p.rev * 1e6 / (p.cycles * p.mwh))}</b></td>`}
+</tr>`;
+};
+const cmpHead = (label, source, first) => `
+<th style="${first ? "" : "text-align:right"};vertical-align:bottom;height:54px;padding-bottom:9px">
+  <span style="display:block">${label}</span>
+  <span style="display:${first ? "block" : "flex"};justify-content:flex-end;margin-top:5px;font-weight:400">${source}</span>
+</th>`;
+
+const analytics = doc({
+  w: 1440, h: 1360, side: rootSide("analytics"),
+  body: `
+${header({
+  crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><b>Analytics</b>`,
+  eyebrow: "11 projects connected to both products · 1.24 GW · 2.48 GWh",
+  title: "Analytics",
+  actions: `<button class="btn btn-secondary">${ic("upRight", 16)}Export</button>`,
+})}
+
+<div style="display:flex;align-items:center;gap:12px;margin:20px 0 22px;flex-wrap:wrap">
+  <button class="btn btn-secondary">${ic("layers", 16)}Iberia Core${ic("down", 15, 1.8)}</button>
+  <button class="btn btn-secondary">${ic("clock", 16)}2026${ic("down", 15, 1.8)}</button>
+  <div class="tabs">
+    <a href="#" class="on">Connected only <span class="count">11</span></a>
+    <a href="#">All projects <span class="count">24</span></a>
+  </div>
+  <span style="margin-left:auto;display:flex;align-items:center;gap:7px" class="t-meta">
+    ${ic("link", 14, 1.7)}Combined metrics need both products linked
+  </span>
+</div>
+
+<div class="grid" style="grid-template-columns:repeat(5, minmax(0, 1fr))">
+  ${kpi({ label: "Battery utilisation", value: "72%", source: src("storebrid"), delta: "+3 pt" })}
+  ${kpi({ label: "Energy discharged", value: "512 GWh", source: src("storebrid"), delta: "+6.2%" })}
+  ${kpi({ label: "Annual revenue", value: "€63.4M", source: src("revenew"), delta: "+4.1%" })}
+  ${kpi({ label: "Portfolio IRR", value: "11.4%", source: src("revenew"), delta: "−0.2 pt" })}
+  ${kpi({ label: "Revenue / MWh discharged", value: "€123.8", source: src("combined"),
+          combined: true, formula: "€63.4M revenue ÷ 512 GWh discharged" })}
+</div>
+
+<div style="display:flex;gap:20px;margin-top:24px;align-items:stretch">
+  <section class="l1 hero" style="flex:1.62;min-width:0;padding:20px 22px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+      <div>
+        <h2 class="t-sec">Technical utilisation vs financial return</h2>
+        <p class="t-meta" style="margin-top:5px">11 connected projects · 2026 · dot size is installed power</p>
+      </div>
+      ${src("combined")}
+    </div>
+    <div style="margin-top:14px">${fleetScatter()}</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:4px;padding-top:12px;border-top:1px solid var(--hair)">
+      <span style="display:inline-flex;align-items:center;gap:7px"><span class="t-meta">Battery utilisation</span>${src("storebrid")}</span>
+      <span style="display:inline-flex;align-items:center;gap:7px"><span class="t-meta">IRR</span>${src("revenew")}</span>
+    </div>
+  </section>
+
+  <section class="l1" style="flex:1;min-width:0;overflow:hidden;display:flex;flex-direction:column">
+    <div style="padding:15px 16px 13px;background:linear-gradient(158deg,rgba(255,255,255,.44),rgba(255,255,255,.26))">
+      <div class="t-card" style="font-size:15px">Worth a look</div>
+      <div class="t-meta" style="margin-top:4px">Projects where the technical and the financial picture disagree</div>
+    </div>
+    ${reviewRow({ name: "Almería BESS", reading: "81% · 9.4% IRR", prompt: "Cycles hardest in the portfolio, returns second from bottom. Review the degradation and ReCapEx assumptions." })}
+    ${reviewRow({ name: "Cádiz Storage", reading: "52% · 7.8% IRR", prompt: "Lowest utilisation. Check whether the export limit in the plant configuration still matches the grid offer." })}
+    ${reviewRow({ name: "Toledo Hybrid", reading: "57% · 8.9% IRR", prompt: "Dispatch and revenue both below the co-located median. Compare against Madrid Hybrid.", last: true })}
+    <div style="flex:1"></div>
+  </section>
+</div>
+
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin:26px 0 14px">
+  <h2 class="t-sec">Project comparison</h2>
+  <a href="#" style="font-size:13px;font-weight:500">Add a column</a>
+</div>
+<section class="l1" style="overflow:hidden">
+  <table class="tbl">
+    <thead><tr>
+      ${cmpHead("Project", src("suite"), true)}
+      ${cmpHead("Cycles / yr", src("storebrid"))}
+      ${cmpHead("Utilisation", src("storebrid"))}
+      ${cmpHead("Degradation", src("storebrid"))}
+      ${cmpHead("Annual revenue", src("revenew"))}
+      ${cmpHead("IRR", src("revenew"))}
+      ${cmpHead("Revenue / MWh", src("combined"))}
+    </tr></thead>
+    <tbody>${CMP.map(cmpRow).join("")}</tbody>
+  </table>
+</section>
+<p class="t-meta" style="margin-top:12px">
+  Sevilla Storage has no financial figures because it is not linked to Revenew — the columns stay in place and stay empty, rather than the project dropping out of the comparison.
+</p>`,
+});
+writeFileSync("Analytics.dc.html", analytics);
+console.log("Analytics.dc.html", analytics.length);
+
+/* ── canvas manifest ─────────────────────────────────────────────
+   Laid out in the §37 prototyping order, left to right, top to
+   bottom. Row positions are computed so a note never lands on an
+   artboard.                                                       */
+const COLX = [0, 1560, 3120];
+const ROWS = [
+  [["Main.dc.html", 1440, 1040, "1 · Suite Home (dual-licence)"],
+   ["Projects.dc.html", 1440, 940, "2 · Unified Projects"],
+   ["ProjectOverview.dc.html", 1440, 1280, "3 · Unified Project Overview"]],
+  [["Workspace.dc.html", 1440, 1000, "4 · Project workspace navigation"],
+   ["EmbeddedWorkflow.dc.html", 1440, 1000, "5 · Embedded cross-product workflow"],
+   ["Analytics.dc.html", 1440, 1360, "6 · Cross-product Analytics"]],
+  [["EmbeddedStates.dc.html", 1440, 560, "5b · Embedded workflow states"],
+   ["SourceAttribution.dc.html", 800, 860, "Pattern · Source attribution"]],
+];
+
+const NOTES = {
+  "Main.dc.html": ["n-home",
+    "SCREEN 1 · Suite Home — dual-licence\n\nGoal: prove the Suite is one workspace, not a launcher. The portfolio bar is the whole argument — 24 projects, 11 of them connected to both products.\n\nSources: Suite (capacity, counts) · StoreBrid + Revenew (activity) · Combined (revenue / MWh).\n\nOn click: project cards and activity rows go to the Suite Project Overview, never straight into a product."],
+  "Projects.dc.html": ["n-projects",
+    "SCREEN 2 · Unified Projects\n\nGoal: establish the Suite Project. Product coverage is a COLUMN — a property of the project — not two launch buttons.\n\nNote §7: coverage ≠ entitlement. Victor holds both licences, but Sevilla Storage is StoreBrid-only and Porto PV is Revenew-only.\n\nOn click: a row opens the Project Overview."],
+  "ProjectOverview.dc.html": ["n-overview",
+    "SCREEN 3 · Unified Project Overview — the showcase\n\nGoal: both products in one project experience. The Performance panel holds two recessed wells rather than two competing cards — one surface, two sources.\n\nThe 5th KPI is the Combined one (§15): it belongs to neither product and shows its own derivation, because a metric nobody owns has to earn trust.\n\nSidebar moved to Engineering / Commercial (§11). Product names dropped to a dot beside the group label."],
+  "Workspace.dc.html": ["n-workspace",
+    "SCREEN 4 · Project workspace navigation\n\nGoal: kill the application-switching mental model. The page is titled “Simulations” under “Engineering” — StoreBrid appears only as an attribution dot, and the project name never leaves the sidebar or the breadcrumb (§39.3).\n\nThe table is StoreBrid's real simulation vocabulary: Completed, In progress, Running…, Waiting, Completed (error).\n\nTHE THING TO VALIDATE: the “Continue in Commercial” card at the bottom. It is the anti-switching move — a capability-shaped link, not an app link. It is also the piece least supported by the .md, so push on it."],
+  "EmbeddedWorkflow.dc.html": ["n-embed",
+    "SCREEN 5 · Embedded cross-product workflow\n\nYou are in Engineering (StoreBrid), editing a curve Revenew owns. §25: the parent owns modal, focus, close, fallback and post-save refresh; the product owns its content.\n\nThat split is drawn literally — Suite glass in the header and footer, Revenew's own white/slate/DM-Sans surface in the body. It shows the integration model without ever saying iframe (§39.1).\n\nThe footer states what the save invalidates, in the user's words. “Open in Revenew” is the standing fallback (§26)."],
+  "Analytics.dc.html": ["n-analytics",
+    "SCREEN 6 · Cross-product Analytics\n\nThe scatter is the argument for the whole Suite: X is owned by StoreBrid, Y by Revenew, and neither product can draw this chart alone (§15).\n\nAlmería BESS is the payload — hardest-cycled, second-worst return. That contradiction is invisible inside either product.\n\nFAILURE STATE (§38): Sevilla Storage is StoreBrid-only, so its financial columns stay in place and stay empty with a Link affordance, rather than the project dropping out of the comparison."],
+  "EmbeddedStates.dc.html": ["n-states",
+    "SCREEN 5b · The states screen 5 has to have (§32)\n\nLoading, didn't-load, and saved-back-in-context. The error state is the one that matters: never a dead end, always “nothing was changed” plus a route to Revenew.\n\nThe third panel is the return-to-context flow — the save invalidates the dispatch run, so the next action is offered instead of assumed."],
+  "SourceAttribution.dc.html": ["n-attrib",
+    "PATTERN SHEET — supporting, not one of the six screens.\n\nThe attribution chip and the two badge families, pulled out so they can be argued about once instead of on every screen.\n\nDelete this artboard if you would rather keep the canvas to the screens alone."],
+};
+
+const artboards = [], annotations = [];
+let rowY = 0;
+for (const row of ROWS) {
+  row.forEach(([file, w, h, title], i) => {
+    artboards.push({ file, x: COLX[i], y: rowY, w, h, title, print: "fixed" });
+    const [id, text] = NOTES[file];
+    annotations.push({ id, x: COLX[i], y: rowY - 230, w: 460, text });
+  });
+  rowY += Math.max(...row.map((r) => r[2])) + 300;
+}
+writeFileSync("canvas.json", JSON.stringify({ artboards, annotations, launch: { view: "canvas" } }, null, 2));
+console.log("canvas.json —", artboards.length, "artboards,", annotations.length, "notes");
