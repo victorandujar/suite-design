@@ -7416,9 +7416,9 @@ const decisionTiles = () => {
     const w = fresh.reduce((x, y) => (better(f(y), f(x)) ? y : x));
     const beaten = all.find((x) => x.stale && better(f(x), f(w)));
     return `
-    <div class="glass-sm" style="flex:1;min-width:0;padding:16px 18px">
+    <div class="wash" style="flex:1;min-width:0;padding:14px 16px">
       <span class="band" style="font-size:10px">${label}</span>
-      <span style="display:block;font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">${fmt(f(w))}</span>
+      <span style="display:block;font-size:18px;font-weight:700;letter-spacing:-.022em;color:var(--s900);margin-top:7px;font-variant-numeric:tabular-nums">${fmt(f(w))}</span>
       <span class="t-meta" style="display:block;margin-top:7px">${w.a.name}</span>
       ${beaten ? `<span class="t-meta" style="display:block;margin-top:6px;color:${WARN.ink};line-height:1.45">${beaten.a.name} scores higher but is outdated</span>` : ""}
       ${(() => {
@@ -7589,11 +7589,13 @@ const impactBlock = (fromId, toId) => {
    value. Otherwise +€8.6M of CAPEX and +€3.0M of NPV point the same
    way and mean opposite things. */
 function deltaBars(w = 1240) {
+  let gmax = 1;
   const base = acMetrics(AC("base"));
   const others = ACASES.filter((a) => !a.current)
     .map((a) => ({ a, ...acMetrics(a), stale: isStale(a.tid, a.sid) }));
   const rows = [
     ["CAPEX", "what it costs to build", (m) => m.capex, (v) => (v >= 0 ? "+" : "−") + "€" + Math.abs(v).toFixed(1) + "M", false, SB],
+    ["Energy discharged", "what the asset moves", (m) => m.c.t.gwh, (v) => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1) + " GWh", true, SB],
     ["Revenue / yr", "what it earns", (m) => m.rev, (v) => (v >= 0 ? "+" : "−") + "€" + Math.abs(v).toFixed(2) + "M", true, RN],
     ["NPV", "value created", (m) => m.npv, (v) => (v >= 0 ? "+" : "−") + "€" + Math.abs(v).toFixed(1) + "M", true, RN],
     ["IRR", "rate of return", (m) => m.irr, (v) => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1) + " pp", true, CMB],
@@ -7613,24 +7615,34 @@ function deltaBars(w = 1240) {
     <text x="${(mid - colW * 0.36).toFixed(1)}" y="46" text-anchor="start" font-size="9" fill="#9A6208">← worse</text>
     <text x="${(mid + colW * 0.36).toFixed(1)}" y="46" text-anchor="end" font-size="9" fill="#0E9469">better →</text>`;
   }).join("")}
+  ${(() => { /* one relative scale for every row, computed once */
+    gmax = Math.max(...rows.flatMap(([, , get]) =>
+      others.map((o) => Math.abs((get(o) - get(base)) / (Math.abs(get(base)) || 1)))), 0.0001);
+    return ""; })()}
   ${rows.map(([label, note, get, fmt, higherBetter, col], ri) => {
     const y = TT + ri * rowH;
     const deltas = others.map((o) => get(o) - get(base));
-    const max = Math.max(...deltas.map(Math.abs), 0.0001);
+    const rels = others.map((o) => (get(o) - get(base)) / (Math.abs(get(base)) || 1));
     return `
     <text x="${L - 18}" y="${y + 20}" text-anchor="end" font-size="11.5" font-weight="600" fill="${INK}">${label}</text>
     <text x="${L - 18}" y="${y + 34}" text-anchor="end" font-size="9" fill="${AXIS}">${note}</text>
     ${others.map((o, ci) => {
-      const d = deltas[ci], mid = L + ci * colW + colW / 2, half = colW * 0.30;
+      const d = deltas[ci], rel = rels[ci], mid = L + ci * colW + colW / 2, half = colW * 0.30;
       const good = d === 0 ? null : (higherBetter ? d > 0 : d < 0);
-      const bw = (Math.abs(d) / max) * half;
+      /* §6 · Bar length is RELATIVE change, so six metrics in six different
+         units share one axis honestly. The figure printed is the real
+         difference — the bar compares, the number quantifies. */
+      const bw = (Math.abs(rel) / gmax) * half;
       const toRight = good === true;
+      const pc = (rel >= 0 ? "+" : "−") + (Math.abs(rel) * 100).toFixed(0) + "%";
       return `
       <line x1="${mid.toFixed(1)}" y1="${y + 4}" x2="${mid.toFixed(1)}" y2="${y + 40}" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
-      <path class="mk" d="${bar(toRight ? mid : mid - bw, y + 11, Math.max(bw, 2), 20, 3, true)}"
-        fill="${col}" fill-opacity="${o.stale ? ".3" : good ? ".8" : ".42"}"><title>${o.a.name} — ${label} ${fmt(d)}</title></path>
-      <text x="${(toRight ? mid + bw + 9 : mid - bw - 9).toFixed(1)}" y="${y + 26}" text-anchor="${toRight ? "start" : "end"}"
-        font-size="11.5" font-weight="700" fill="${o.stale ? AXIS : good ? "#0E9469" : "#C22222"}">${fmt(d)}</text>`;
+      <path class="mk" d="${bar(toRight ? mid : mid - bw, y + 9, Math.max(bw, 2), 18, 3, true)}"
+        fill="${col}" fill-opacity="${o.stale ? ".3" : good ? ".8" : ".42"}"><title>${o.a.name} — ${label} ${fmt(d)} (${pc} against the base case)</title></path>
+      <text x="${(toRight ? mid + bw + 9 : mid - bw - 9).toFixed(1)}" y="${y + 16}" text-anchor="${toRight ? "start" : "end"}"
+        font-size="11.5" font-weight="700" fill="${o.stale ? AXIS : good ? "#0E9469" : "#C22222"}">${fmt(d)}</text>
+      <text x="${(toRight ? mid + bw + 9 : mid - bw - 9).toFixed(1)}" y="${y + 30}" text-anchor="${toRight ? "start" : "end"}"
+        font-size="9.5" fill="${AXIS}">${pc}</text>`;
     }).join("")}`;
   }).join("")}
 </svg>`;
@@ -7687,6 +7699,94 @@ const savedBar = () => `
 /* §2 · "Deltas before density." The full table is a checking instrument,
    not the reading — so it sits one level down, behind its own control,
    and says so when it is open. `detail` is the only thing that opens it. */
+/* §8 · One bridge, not three. The hero always reads baseline against ONE
+   selected case; the others stay a click away. Three bridges side by side
+   would be three stories competing, which is the problem this iteration
+   exists to fix. */
+const pairSelector = (selId) => `
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+  <span class="t-meta" style="flex:none">Inspecting</span>
+  <span style="display:inline-flex;align-items:center;gap:7px">
+    <i style="width:5px;height:5px;border-radius:50%;background:${SU};display:block"></i>
+    <b style="font-size:13.5px;font-weight:600;color:var(--s900)">${AC("base").name}</b>
+    <span class="t-meta">baseline</span>
+  </span>
+  <span style="color:var(--s400);display:flex">${ic("right", 14, 2)}</span>
+  <button class="btn btn-secondary" style="height:34px;font-size:12.5px">
+    <i style="width:5px;height:5px;border-radius:50%;background:${CMB};display:block"></i>${AC(selId).name}${ic("down", 14, 1.8)}</button>
+  <span style="flex:1"></span>
+  <span class="t-meta">The other cases stay in the delta chart and the table below</span>
+</div>`;
+
+/* §10 · A limit is a position, not a sentence. One bullet row per ACTIVE
+   criterion — never one per metric — so the reader sees which side of the
+   line each case sits on before reading a number. */
+const criteriaThreshold = (selId) => {
+  if (!CRITERIA.length) return "";
+  const cases = ACASES.map((a) => ({ a, c: acCase(a), m: acMetrics(a) }));
+  return `
+<section class="panel" style="padding:20px 26px;margin-top:18px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+    <span class="band">Against your criteria</span>${src("suite")}
+    <span style="flex:1"></span>
+    <span class="t-meta">Only the limits you set are drawn</span>
+  </div>
+  ${CRITERIA.map(({ key, target }) => {
+    const k = CRIT_SPEC[key];
+    const vals = cases.map((x) => k.get(x.c));
+    const lo = Math.min(...vals, target), hi = Math.max(...vals, target);
+    const pad = (hi - lo) * 0.22 || 1;
+    const A0 = lo - pad, B0 = hi + pad;
+    const pct = (v) => ((v - A0) / (B0 - A0)) * 100;
+    const ok = k.op === "\u2264";
+    return `
+    <div style="display:flex;align-items:center;gap:18px;padding:15px 0;border-top:1px solid var(--hair)">
+      <span style="flex:none;width:150px;min-width:0">
+        <span style="display:flex;align-items:center;gap:7px">
+          <span style="font-size:13.5px;font-weight:600;color:var(--s900)">${k.label}</span>${src(k.from)}
+        </span>
+        <span class="t-meta" style="display:block;margin-top:3px">${k.op} ${k.fmt(target)}</span>
+      </span>
+      <span style="flex:1;min-width:0;position:relative;height:44px;display:block">
+        <span style="position:absolute;left:0;right:0;top:26px;height:1px;background:var(--hair);display:block"></span>
+        <span style="position:absolute;left:${pct(target).toFixed(1)}%;top:14px;bottom:0;width:1.5px;
+              background:${WARN.ink};opacity:.55;display:block"></span>
+        <span style="position:absolute;left:${pct(target).toFixed(1)}%;top:0;transform:translateX(-50%);
+              font-size:10px;font-weight:600;color:${WARN.ink};white-space:nowrap">limit ${k.fmt(target)}</span>
+        ${ok ? `<span style="position:absolute;left:0;width:${pct(target).toFixed(1)}%;top:24px;height:5px;border-radius:3px;
+              background:rgba(14,157,168,.16);display:block"></span>` : ""}
+        ${(() => {
+          /* Cases built on the same simulation share a CAPEX, so their markers
+             land on the same point. Draw one marker per distinct value and let
+             it carry every name — stacking two dots at identical coordinates
+             would hide one of them and quietly undercount the field. */
+          const byVal = new Map();
+          for (const x of cases) {
+            const v = +k.get(x.c).toFixed(4);
+            (byVal.get(v) || byVal.set(v, []).get(v)).push(x);
+          }
+          return [...byVal.entries()].map(([v, xs]) => {
+            const pass = k.pass(v, target), isSel = xs.some((x) => x.a.id === selId);
+            const d = isSel ? 15 : 11;
+            return `<span class="mk" style="position:absolute;left:${pct(v).toFixed(1)}%;top:${(26 - d / 2).toFixed(1)}px;margin-left:-${(d / 2).toFixed(1)}px;
+                  width:${d}px;height:${d}px;border-radius:50%;display:block;background:#fff;
+                  box-shadow:0 0 0 ${isSel ? 2.4 : 1.8}px ${pass ? SU : WARN.ink}">
+              <span style="position:absolute;inset:0"><title>${xs.map((x) => x.a.name).join(" and ")} — ${k.fmt(v)}${pass ? "" : ` · ${k.fmt(Math.abs(k.over(v, target))).replace("\u2212", "")} over the limit`}</title></span></span>
+              ${xs.length > 1 ? `<span style="position:absolute;left:${pct(v).toFixed(1)}%;top:36px;transform:translateX(-50%);
+                    font-size:9px;color:var(--s400);white-space:nowrap">${xs.length} cases</span>` : ""}`;
+          }).join("");
+        })()}
+      </span>
+      <span style="flex:none;width:230px;text-align:right">
+        ${cases.filter((x) => !k.pass(k.get(x.c), target)).map((x) =>
+          `<span style="display:block;font-size:12px;color:${WARN.ink};line-height:1.5">${x.a.name} ${k.fmt(Math.abs(k.over(k.get(x.c), target))).replace("\u2212", "")} ${ok ? "above" : "below"} limit</span>`).join("")
+        || `<span class="t-meta">All cases within the limit</span>`}
+      </span>
+    </div>`;
+  }).join("")}
+</section>`;
+};
+
 const alternativesBody = ({ detail = false } = {}) => `
 ${head({
   crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Projects</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Valencia BESS</a><span class="sep">${ic("right", 12, 2)}</span><b>Compare</b>`,
@@ -7702,6 +7802,21 @@ ${savedBar()}
   <button class="btn btn-secondary" style="height:40px">${ic("plus", 15, 1.9)}Add case</button>
 </div>
 
+${pairSelector("high")}
+
+${sec({ label: "What the design change buys", source: src("combined"), top: 0,
+        sub: "From the technical decision to its financial consequence — the chain the Suite exists to draw." })}
+${impactBlock("base", "high")}
+${criteriaThreshold("high")}
+
+${sec({ label: "Difference from " + AC("base").name, source: src("combined"),
+        sub: "Every bar is read from the base case and oriented by what it means: an improvement points right. Bar length is relative change so metrics in different units compare honestly; the figure is the actual difference." })}
+<section class="panel lift" style="padding:24px 26px">
+  ${deltaBars(1240)}
+</section>
+
+${sec({ label: "Best on each objective", source: src("combined"),
+        sub: "Four objectives, three analysis cases, no single winner. The Suite names the trade-off; the choice is yours." })}
 ${decisionTiles()}
 <div style="display:flex;align-items:center;gap:12px;margin-top:18px;padding:14px 18px;border-radius:var(--r-sm);
      background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 74%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.16)">
@@ -7711,9 +7826,7 @@ ${decisionTiles()}
   </span>
   <button class="btn btn-secondary" style="flex:none;height:34px;font-size:12.5px">${ic("gauge", 15)}Use as current analysis</button>
 </div>
-<p class="t-meta" style="margin-top:12px;line-height:1.6;max-width:112ch">
-  Four objectives, three analysis cases, no single winner. The Suite names the trade-off; the choice is yours.
-</p>
+
 
 ${(() => {
   /* §8 · The matrix already computed how far each asset moves across the
@@ -7756,25 +7869,7 @@ ${sec({ label: "Market sensitivity", source: src("combined"),
 </section>`;
 })()}
 
-<section class="panel lift" style="padding:24px 26px;margin-top:26px">
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:12px">
-    <div>
-      <div style="display:flex;align-items:center;gap:9px"><span class="band">Difference from ${AC("base").name}</span>${src("combined")}</div>
-      <h2 class="t-sec" style="margin-top:8px">What each analysis case changes</h2>
-      <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.55;max-width:86ch">
-        Every bar is read from the base case and oriented by what it means: an improvement points right, a worse result points left.
-        The number keeps its real sign, so +€8.6M of CAPEX still reads as +€8.6M while sitting on the worse side.
-      </p>
-    </div>
-  </div>
-  ${deltaBars(1240)}
-</section>
 
-${sec({ label: "What the design change buys", source: src("combined"),
-        sub: "Each step below moves one dimension, so the financial consequence can be read against the technical one." })}
-<div style="display:flex;flex-direction:column;gap:18px">
-  ${impactBlock("base", "high")}
-  ${impactBlock("high", "stress")}
 </div>
 <p class="t-meta" style="margin-top:16px;line-height:1.6;max-width:112ch">
   Doubling storage costs €8.6M and returns €1.93M a year, lifting NPV by €3.0M. The stress test then holds that asset and
@@ -7859,7 +7954,7 @@ const createAC = () => {
   });
 };
 writeFileSync("CreateAnalysisCase.dc.html",
-  doc({ w: 1440, h: 2740, side: projectSide("compare"), body: alternativesBody(), overlay: createAC() }));
+  doc({ w: 1440, h: 2700, side: projectSide("compare"), body: alternativesBody(), overlay: createAC() }));
 
 /* ═══════════════════════════════════════════════════════════════
    §13-§17 · DECISION BRIEF
@@ -7923,12 +8018,12 @@ const decisionBrief = () => {
   });
 };
 
-writeFileSync("DecisionBrief.dc.html", doc({ w: 1440, h: 2740, side: projectSide("compare"),
+writeFileSync("DecisionBrief.dc.html", doc({ w: 1440, h: 2700, side: projectSide("compare"),
   body: alternativesBody(), overlay: decisionBrief() }));
 console.log("DecisionBrief.dc.html");
 
 writeFileSync("CompareAlternatives.dc.html",
-  doc({ w: 1440, h: 2740, side: projectSide("compare"), body: alternativesBody() }));
+  doc({ w: 1440, h: 2700, side: projectSide("compare"), body: alternativesBody() }));
 
 /* ═══════════════════════════════════════════════════════════════
    §3 · SIGN IN — the way into the Suite
@@ -8061,7 +8156,7 @@ console.log("Login.dc.html", login.length);
 
 /* §2 · the full table as its own destination, one level below Compare. */
 writeFileSync("CompareAllMetrics.dc.html",
-  doc({ w: 1440, h: 3570, side: projectSide("compare"), body: alternativesBody({ detail: true }) }));
+  doc({ w: 1440, h: 3520, side: projectSide("compare"), body: alternativesBody({ detail: true }) }));
 console.log("CompareAllMetrics.dc.html");
 
 /* ═══════════════════════════════════════════════════════════════
@@ -8208,14 +8303,14 @@ const PAGES = [
      ["CaseMatrix.dc.html", 1440, 3190, "2 · Case matrix"],
      ["CaseMatrixRobustness.dc.html", 1440, 1180, "2b · Case matrix — robustness"],
      ["CaseMatrixUnevaluated.dc.html", 1440, 3190, "2c · Case matrix — evaluation states"],
-     ["CompareAlternatives.dc.html", 1440, 2740, "3 · Compare"],
-     ["CompareAllMetrics.dc.html", 1440, 3570, "3b · Compare — all metrics"],
-     ["DecisionBrief.dc.html", 1440, 2740, "3c · Save decision brief"]],
+     ["CompareAlternatives.dc.html", 1440, 2700, "3 · Compare"],
+     ["CompareAllMetrics.dc.html", 1440, 3520, "3b · Compare — all metrics"],
+     ["DecisionBrief.dc.html", 1440, 2700, "3c · Save decision brief"]],
     [["OverviewChangeSim.dc.html", 1440, 2380, "4 · Change technical simulation"],
      ["OverviewChangeScenario.dc.html", 1440, 2380, "5 · Change financial case"],
      ["OverviewTechnical.dc.html", 1440, 2380, "6 · Technical details"]],
     [["FinancialDetails.dc.html", 1440, 1160, "7 · Financial details"],
-     ["CreateAnalysisCase.dc.html", 1440, 2740, "8 · Create analysis case"],
+     ["CreateAnalysisCase.dc.html", 1440, 2700, "8 · Create analysis case"],
      ["CompareExplained.dc.html", 1440, 5060, "9 · Explain difference"]],
     [["OverviewStale.dc.html", 1440, 2470, "10 · Financial results outdated"],
      ["EditProjectDetails.dc.html", 1440, 2380, "11 · Project details"]],

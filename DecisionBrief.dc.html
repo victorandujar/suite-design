@@ -262,8 +262,8 @@ a.glass-sm:hover{
 .grid{display:grid;gap:20px}
 </style>
 </helmet>
-<div class="atmos" style="width:1440px;min-height:2740px;position:relative">
-  <div class="shell" style="min-height:2740px">
+<div class="atmos" style="width:1440px;min-height:2700px;position:relative">
+  <div class="shell" style="min-height:2700px">
     <aside class="side">
 
 <div class="brand">
@@ -434,244 +434,32 @@ a.glass-sm:hover{
 </div>
 
 
-<div style="display:flex;gap:14px">
-  
-    <div class="glass-sm" style="flex:1;min-width:0;padding:16px 18px">
-      <span class="band" style="font-size:10px">Best NPV</span>
-      <span style="display:block;font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">€11.3M</span>
-      <span class="t-meta" style="display:block;margin-top:7px">High storage</span>
-      
-      <span style="display:block;margin-top:8px;padding-top:8px;border-top:1px solid var(--hair)">
-          <span class="t-meta" style="display:block;color:#9A6208;line-height:1.45">High storage is outside your criteria — CAPEX €2.7M above limit</span>
-          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.45">Within criteria: <b style="font-weight:600;color:var(--s900)">€8.3M</b> · Base case</span>
-        </span>
-    </div>
-  
-    <div class="glass-sm" style="flex:1;min-width:0;padding:16px 18px">
-      <span class="band" style="font-size:10px">Best IRR</span>
-      <span style="display:block;font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">13.2%</span>
-      <span class="t-meta" style="display:block;margin-top:7px">High storage</span>
-      
-      <span style="display:block;margin-top:8px;padding-top:8px;border-top:1px solid var(--hair)">
-          <span class="t-meta" style="display:block;color:#9A6208;line-height:1.45">High storage is outside your criteria — CAPEX €2.7M above limit</span>
-          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.45">Within criteria: <b style="font-weight:600;color:var(--s900)">12.8%</b> · Base case</span>
-        </span>
-    </div>
-  
-    <div class="glass-sm" style="flex:1;min-width:0;padding:16px 18px">
-      <span class="band" style="font-size:10px">Lowest CAPEX</span>
-      <span style="display:block;font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">€42.1M</span>
-      <span class="t-meta" style="display:block;margin-top:7px">Base case</span>
-      
-      <span class="t-meta" style="display:block;margin-top:6px;color:var(--su700);line-height:1.45">Also the leader within your criteria</span>
-    </div>
-  
-    <div class="glass-sm" style="flex:1;min-width:0;padding:16px 18px">
-      <span class="band" style="font-size:10px">Shortest payback</span>
-      <span style="display:block;font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">6.2 yrs</span>
-      <span class="t-meta" style="display:block;margin-top:7px">High storage</span>
-      
-      <span style="display:block;margin-top:8px;padding-top:8px;border-top:1px solid var(--hair)">
-          <span class="t-meta" style="display:block;color:#9A6208;line-height:1.45">High storage is outside your criteria — CAPEX €2.7M above limit</span>
-          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.45">Within criteria: <b style="font-weight:600;color:var(--s900)">6.3 yrs</b> · Base case</span>
-        </span>
-    </div>
-</div>
-<div style="margin-top:12px">
-<div style="display:flex;align-items:center;gap:12px;margin-bottom:0;
-     padding:12px 16px;border-radius:var(--r-xs);
-     background:linear-gradient(168deg,rgba(245,158,11,0.08),rgba(255,255,255,0) 70%);box-shadow:inset 0 0 0 1px rgba(245,158,11,0.2)">
-  <span style="color:#9A6208;display:flex;flex:none;"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
-  <span style="flex:1;min-width:0">
-    
-    <span class="t-meta" style="display:block;line-height:1.55;font-size:12.5px">1 analysis case is excluded from these conclusions — its financial result was calculated before the technical simulation changed.</span>
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+  <span class="t-meta" style="flex:none">Inspecting</span>
+  <span style="display:inline-flex;align-items:center;gap:7px">
+    <i style="width:5px;height:5px;border-radius:50%;background:#0E9DA8;display:block"></i>
+    <b style="font-size:13.5px;font-weight:600;color:var(--s900)">Base case</b>
+    <span class="t-meta">baseline</span>
   </span>
-  <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Recalculate in ReveNew<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
-  
-</div></div>
-<div style="display:flex;align-items:center;gap:12px;margin-top:18px;padding:14px 18px;border-radius:var(--r-sm);
-     background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 74%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.16)">
-  <span style="color:var(--su700);display:flex;flex:none"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/></svg></span>
-  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
-    <b style="font-weight:600">High storage</b> is selected. Making it the current analysis takes it back to Overview, where every figure then reads from it.
-  </span>
-  <button class="btn btn-secondary" style="flex:none;height:34px;font-size:12.5px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/></svg>Use as current analysis</button>
+  <span style="color:var(--s400);display:flex"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+  <button class="btn btn-secondary" style="height:34px;font-size:12.5px">
+    <i style="width:5px;height:5px;border-radius:50%;background:#6D5AC6;display:block"></i>High storage<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.2 8 4.8 4.6L14.8 8"/></svg></button>
+  <span style="flex:1"></span>
+  <span class="t-meta">The other cases stay in the delta chart and the table below</span>
 </div>
-<p class="t-meta" style="margin-top:12px;line-height:1.6;max-width:112ch">
-  Four objectives, three analysis cases, no single winner. The Suite names the trade-off; the choice is yours.
-</p>
 
 
-
-<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:28px 0 14px">
-  <div style="min-width:0">
-    
-    <div style="display:flex;align-items:center;gap:10px">
-      <h2 class="t-sec">Market sensitivity</h2><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
-    </div>
-    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">How far each case's IRR moves across the three financial cases, holding its asset constant. The range belongs to the technical simulation, so two cases built on the same asset share it and differ only in where they sit inside it. Modelled views, not probabilities — a range, not a distribution.</p>
-  </div>
-  
-</div>
-<section class="panel" style="padding:22px 26px">
-  
-  <div style="display:flex;align-items:center;gap:16px;padding:13px 0;">
-    <span style="flex:none;width:200px;min-width:0">
-      <span style="display:block;font-size:13.5px;font-weight:600;color:var(--s900)">Base case</span>
-      <span class="t-meta" style="display:block;margin-top:2px">Base 2 h</span>
-    </span>
-    <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
-      <span style="position:absolute;left:0;right:0;top:9px;height:1px;background:var(--hair);display:block"></span>
-      <span style="position:absolute;top:6.5px;height:7px;border-radius:4px;display:block;
-            left:10.5%;width:66.7%;
-            background:linear-gradient(90deg,rgba(175,71,178,.34),rgba(37,99,235,.5))"></span>
-      <span class="mk" style="position:absolute;top:4px;left:66.7%;margin-left:-6px;width:12px;height:12px;
-            border-radius:50%;display:block;background:#fff;box-shadow:0 0 0 2px #0E9DA8"></span>
-    </span>
-    <span style="flex:none;width:132px;text-align:right;font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">9.6–13.4%</span>
-  </div>
-  <div style="display:flex;align-items:center;gap:16px;padding:13px 0;border-top:1px solid var(--hair)">
-    <span style="flex:none;width:200px;min-width:0">
-      <span style="display:block;font-size:13.5px;font-weight:600;color:var(--s900)">High storage</span>
-      <span class="t-meta" style="display:block;margin-top:2px">4 h variant</span>
-    </span>
-    <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
-      <span style="position:absolute;left:0;right:0;top:9px;height:1px;background:var(--hair);display:block"></span>
-      <span style="position:absolute;top:6.5px;height:7px;border-radius:4px;display:block;
-            left:17.5%;width:71.9%;
-            background:linear-gradient(90deg,rgba(175,71,178,.34),rgba(37,99,235,.5))"></span>
-      <span class="mk" style="position:absolute;top:4px;left:73.7%;margin-left:-6px;width:12px;height:12px;
-            border-radius:50%;display:block;background:#fff;box-shadow:0 0 0 2px #0E9DA8"></span>
-    </span>
-    <span style="flex:none;width:132px;text-align:right;font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">10.0–14.1%</span>
-  </div>
-  <div style="display:flex;align-items:center;gap:16px;padding:13px 0;border-top:1px solid var(--hair)">
-    <span style="flex:none;width:200px;min-width:0">
-      <span style="display:block;font-size:13.5px;font-weight:600;color:var(--s900)">Stress test</span>
-      <span class="t-meta" style="display:block;margin-top:2px">4 h variant</span>
-    </span>
-    <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
-      <span style="position:absolute;left:0;right:0;top:9px;height:1px;background:var(--hair);display:block"></span>
-      <span style="position:absolute;top:6.5px;height:7px;border-radius:4px;display:block;
-            left:17.5%;width:71.9%;
-            background:linear-gradient(90deg,rgba(175,71,178,.34),rgba(37,99,235,.5))"></span>
-      <span class="mk" style="position:absolute;top:4px;left:17.5%;margin-left:-6px;width:12px;height:12px;
-            border-radius:50%;display:block;background:#fff;box-shadow:0 0 0 2px #0E9DA8"></span>
-    </span>
-    <span style="flex:none;width:132px;text-align:right;font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">10.0–14.1%</span>
-  </div>
-  <div style="display:flex;align-items:center;gap:16px;margin-top:14px;padding-top:12px;border-top:1px solid var(--hair)">
-    <span style="display:inline-flex;align-items:center;gap:7px"><i style="width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px #0E9DA8;display:block"></i><span class="t-meta">Where this case sits on its own financial case</span></span>
-    <span style="flex:1"></span>
-    <a href="#" style="font-size:12.5px;font-weight:500">Full sensitivity in the case matrix<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></a>
-  </div>
-</section>
-
-<section class="panel lift" style="padding:24px 26px;margin-top:26px">
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:12px">
-    <div>
-      <div style="display:flex;align-items:center;gap:9px"><span class="band">Difference from Base case</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span></div>
-      <h2 class="t-sec" style="margin-top:8px">What each analysis case changes</h2>
-      <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.55;max-width:86ch">
-        Every bar is read from the base case and oriented by what it means: an improvement points right, a worse result points left.
-        The number keeps its real sign, so +€8.6M of CAPEX still reads as +€8.6M while sitting on the worse side.
-      </p>
-    </div>
-  </div>
-  
-<svg viewBox="0 0 1240 344" width="100%" style="display:block" role="img" aria-label="Difference from the base case, oriented so better is to the right">
-  <style>.mk{transition:opacity .12s} .mk:hover{opacity:.82}</style>
-  
-    <text x="416.5" y="16" text-anchor="middle" font-size="12" font-weight="600" fill="#0F172A">High storage</text>
-    <text x="416.5" y="31" text-anchor="middle" font-size="9.5" fill="#5F6C82">vs Base case</text>
-    <text x="224.6" y="46" text-anchor="start" font-size="9" fill="#9A6208">← worse</text>
-    <text x="608.4" y="46" text-anchor="end" font-size="9" fill="#0E9469">better →</text>
-    <text x="949.5" y="16" text-anchor="middle" font-size="12" font-weight="600" fill="#0F172A">Stress test</text>
-    <text x="949.5" y="31" text-anchor="middle" font-size="9.5" fill="#5F6C82">vs Base case · outdated</text>
-    <text x="757.6" y="46" text-anchor="start" font-size="9" fill="#9A6208">← worse</text>
-    <text x="1141.4" y="46" text-anchor="end" font-size="9" fill="#0E9469">better →</text>
-  
-    <text x="132" y="74" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">CAPEX</text>
-    <text x="132" y="88" text-anchor="end" font-size="9" fill="#5F6C82">what it costs to build</text>
-    
-      <line x1="416.5" y1="58" x2="416.5" y2="94" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
-      <path class="mk" d="M256.6 85L256.6 68Q256.6 65 259.6 65L413.5 65Q416.5 65 416.5 68L416.5 85Z"
-        fill="#2563EB" fill-opacity=".42"><title>High storage — CAPEX +€8.6M</title></path>
-      <text x="247.6" y="80" text-anchor="end"
-        font-size="11.5" font-weight="700" fill="#C22222">+€8.6M</text>
-      <line x1="949.5" y1="58" x2="949.5" y2="94" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
-      <path class="mk" d="M789.6 85L789.6 68Q789.6 65 792.6 65L946.5 65Q949.5 65 949.5 68L949.5 85Z"
-        fill="#2563EB" fill-opacity=".3"><title>Stress test — CAPEX +€8.6M</title></path>
-      <text x="780.6" y="80" text-anchor="end"
-        font-size="11.5" font-weight="700" fill="#5F6C82">+€8.6M</text>
-    <text x="132" y="130" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">Revenue / yr</text>
-    <text x="132" y="144" text-anchor="end" font-size="9" fill="#5F6C82">what it earns</text>
-    
-      <line x1="416.5" y1="114" x2="416.5" y2="150" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
-      <path class="mk" d="M416.5 141L416.5 124Q416.5 121 419.5 121L573.4 121Q576.4 121 576.4 124L576.4 141Z"
-        fill="#AF47B2" fill-opacity=".8"><title>High storage — Revenue / yr +€1.93M</title></path>
-      <text x="585.4" y="136" text-anchor="start"
-        font-size="11.5" font-weight="700" fill="#0E9469">+€1.93M</text>
-      <line x1="949.5" y1="114" x2="949.5" y2="150" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
-      <path class="mk" d="M949.5 141L949.5 124Q949.5 121 952.5 121L953.1279792746114 121Q956.1279792746114 121 956.1279792746114 124L956.1279792746114 141Z"
-        fill="#AF47B2" fill-opacity=".3"><title>Stress test — Revenue / yr +€0.08M</title></path>
-      <text x="965.1" y="136" text-anchor="start"
-        font-size="11.5" font-weight="700" fill="#5F6C82">+€0.08M</text>
-    <text x="132" y="186" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">NPV</text>
-    <text x="132" y="200" text-anchor="end" font-size="9" fill="#5F6C82">value created</text>
-    
-      <line x1="416.5" y1="170" x2="416.5" y2="206" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
-      <path class="mk" d="M416.5 197L416.5 180Q416.5 177 419.5 177L482.7739686657523 177Q485.7739686657523 177 485.7739686657523 180L485.7739686657523 197Z"
-        fill="#AF47B2" fill-opacity=".8"><title>High storage — NPV +€3.0M</title></path>
-      <text x="494.8" y="192" text-anchor="start"
-        font-size="11.5" font-weight="700" fill="#0E9469">+€3.0M</text>
-      <line x1="949.5" y1="170" x2="949.5" y2="206" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
-      <path class="mk" d="M789.6 197L789.6 180Q789.6 177 792.6 177L946.5 177Q949.5 177 949.5 180L949.5 197Z"
-        fill="#AF47B2" fill-opacity=".3"><title>Stress test — NPV −€6.9M</title></path>
-      <text x="780.6" y="192" text-anchor="end"
-        font-size="11.5" font-weight="700" fill="#5F6C82">−€6.9M</text>
-    <text x="132" y="242" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">IRR</text>
-    <text x="132" y="256" text-anchor="end" font-size="9" fill="#5F6C82">rate of return</text>
-    
-      <line x1="416.5" y1="226" x2="416.5" y2="262" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
-      <path class="mk" d="M416.5 253L416.5 236Q416.5 233 419.5 233L436.34285714285704 233Q439.34285714285704 233 439.34285714285704 236L439.34285714285704 253Z"
-        fill="#6D5AC6" fill-opacity=".8"><title>High storage — IRR +0.4 pp</title></path>
-      <text x="448.3" y="248" text-anchor="start"
-        font-size="11.5" font-weight="700" fill="#0E9469">+0.4 pp</text>
-      <line x1="949.5" y1="226" x2="949.5" y2="262" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
-      <path class="mk" d="M789.6 253L789.6 236Q789.6 233 792.6 233L946.5 233Q949.5 233 949.5 236L949.5 253Z"
-        fill="#6D5AC6" fill-opacity=".3"><title>Stress test — IRR −2.8 pp</title></path>
-      <text x="780.6" y="248" text-anchor="end"
-        font-size="11.5" font-weight="700" fill="#5F6C82">−2.8 pp</text>
-    <text x="132" y="298" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">Payback</text>
-    <text x="132" y="312" text-anchor="end" font-size="9" fill="#5F6C82">years to break even</text>
-    
-      <line x1="416.5" y1="282" x2="416.5" y2="318" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
-      <path class="mk" d="M416.5 309L416.5 292Q416.5 289 419.5 289L433.2948439336978 289Q436.2948439336978 289 436.2948439336978 292L436.2948439336978 309Z"
-        fill="#AF47B2" fill-opacity=".8"><title>High storage — Payback −0.1 y</title></path>
-      <text x="445.3" y="304" text-anchor="start"
-        font-size="11.5" font-weight="700" fill="#0E9469">−0.1 y</text>
-      <line x1="949.5" y1="282" x2="949.5" y2="318" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
-      <path class="mk" d="M789.6 309L789.6 292Q789.6 289 792.6 289L946.5 289Q949.5 289 949.5 292L949.5 309Z"
-        fill="#AF47B2" fill-opacity=".3"><title>Stress test — Payback +1.1 y</title></path>
-      <text x="780.6" y="304" text-anchor="end"
-        font-size="11.5" font-weight="700" fill="#5F6C82">+1.1 y</text>
-</svg>
-</section>
-
-
-<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:28px 0 14px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:0px 0 14px">
   <div style="min-width:0">
     
     <div style="display:flex;align-items:center;gap:10px">
       <h2 class="t-sec">What the design change buys</h2><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
     </div>
-    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">Each step below moves one dimension, so the financial consequence can be read against the technical one.</p>
+    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">From the technical decision to its financial consequence — the chain the Suite exists to draw.</p>
   </div>
   
 </div>
-<div style="display:flex;flex-direction:column;gap:18px">
-  
+
 <section class="panel" style="padding:24px 26px">
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
     <span class="t-card" style="font-size:16px">High storage</span>
@@ -795,116 +583,353 @@ a.glass-sm:hover{
     <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Explain difference<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></button>
   </div>
 </section>
-  
-<section class="panel" style="padding:24px 26px">
-  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
-    <span class="t-card" style="font-size:16px">Stress test</span>
-    <span class="t-meta">vs High storage</span>
-    <span class="cov"><i style="background:#AF47B2"></i>Financial only</span>
-  </div>
-  
-<div style="margin-bottom:16px">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
-    <span class="band" style="color:var(--su700)">From the market view to its financial consequence</span>
-    <span class="hr" style="flex:1"></span>
-    <span class="t-meta">Each step in its own unit</span>
-  </div>
-  <div style="display:flex;align-items:stretch;gap:0">
-    
-      <div style="flex:1;min-width:0;display:flex;align-items:center">
-        <div style="flex:1;min-width:0;padding:14px 12px;border-radius:var(--r-xs);text-align:center;
-             background:linear-gradient(168deg,rgba(255,255,255,.62),rgba(255,255,255,.34));
-             box-shadow:inset 0 0 0 1px var(--hair)">
-          <span style="display:block;font-size:17px;font-weight:700;letter-spacing:-.022em;
-                color:var(--s900);font-variant-numeric:tabular-nums">−€21.2/MWh</span>
-          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.35">capture price moved</span>
-          <span style="display:flex;justify-content:center;margin-top:7px">
-            <i style="width:5px;height:5px;border-radius:50%;background:#AF47B2;display:block"></i>
-          </span>
-        </div>
-        
-        <span style="flex:none;width:26px;display:flex;align-items:center;justify-content:center;color:var(--s700)"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
-      </div>
-      <div style="flex:1;min-width:0;display:flex;align-items:center">
-        <div style="flex:1;min-width:0;padding:14px 12px;border-radius:var(--r-xs);text-align:center;
-             background:linear-gradient(168deg,rgba(255,255,255,.62),rgba(255,255,255,.34));
-             box-shadow:inset 0 0 0 1px var(--hair)">
-          <span style="display:block;font-size:17px;font-weight:700;letter-spacing:-.022em;
-                color:var(--s900);font-variant-numeric:tabular-nums">€0.0M</span>
-          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.35">capital committed</span>
-          <span style="display:flex;justify-content:center;margin-top:7px">
-            <i style="width:5px;height:5px;border-radius:50%;background:#2563EB;display:block"></i>
-          </span>
-        </div>
-        
-        <span style="flex:none;width:26px;display:flex;align-items:center;justify-content:center;color:var(--s700)"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
-      </div>
-      <div style="flex:1;min-width:0;display:flex;align-items:center">
-        <div style="flex:1;min-width:0;padding:14px 12px;border-radius:var(--r-xs);text-align:center;
-             background:linear-gradient(168deg,rgba(255,255,255,.62),rgba(255,255,255,.34));
-             box-shadow:inset 0 0 0 1px var(--hair)">
-          <span style="display:block;font-size:17px;font-weight:700;letter-spacing:-.022em;
-                color:var(--s900);font-variant-numeric:tabular-nums">−€1.85M/yr</span>
-          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.35">revenue it earns</span>
-          <span style="display:flex;justify-content:center;margin-top:7px">
-            <i style="width:5px;height:5px;border-radius:50%;background:#AF47B2;display:block"></i>
-          </span>
-        </div>
-        
-        <span style="flex:none;width:26px;display:flex;align-items:center;justify-content:center;color:var(--s300)"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
-      </div>
-      <div style="flex:1;min-width:0;display:flex;align-items:center">
-        <div style="flex:1;min-width:0;padding:14px 12px;border-radius:var(--r-xs);text-align:center;
-             background:linear-gradient(168deg,rgba(255,255,255,.62),rgba(255,255,255,.34));
-             box-shadow:inset 0 0 0 1px var(--hair)">
-          <span style="display:block;font-size:17px;font-weight:700;letter-spacing:-.022em;
-                color:var(--s900);font-variant-numeric:tabular-nums">−€9.8M</span>
-          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.35">value it creates</span>
-          <span style="display:flex;justify-content:center;margin-top:7px">
-            <i style="width:5px;height:5px;border-radius:50%;background:#AF47B2;display:block"></i>
-          </span>
-        </div>
-        
-        <span style="flex:none;width:26px;display:flex;align-items:center;justify-content:center;color:var(--s700)"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
-      </div>
-      <div style="flex:1;min-width:0;display:flex;align-items:center">
-        <div style="flex:1;min-width:0;padding:14px 12px;border-radius:var(--r-xs);text-align:center;
-             background:linear-gradient(168deg,rgba(255,255,255,.62),rgba(255,255,255,.34));
-             box-shadow:inset 0 0 0 1px var(--hair)">
-          <span style="display:block;font-size:17px;font-weight:700;letter-spacing:-.022em;
-                color:var(--s900);font-variant-numeric:tabular-nums">−3.2 pp</span>
-          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.35">rate that value returns</span>
-          <span style="display:flex;justify-content:center;margin-top:7px">
-            <i style="width:5px;height:5px;border-radius:50%;background:#6D5AC6;display:block"></i>
-          </span>
-        </div>
-        
-      </div>
-  </div>
-  <div style="display:flex;align-items:center;gap:16px;margin-top:11px;flex-wrap:wrap">
-    <span style="display:inline-flex;align-items:center;gap:6px"><i style="width:5px;height:5px;border-radius:50%;background:#2563EB;display:block"></i><span class="t-meta">StoreBrid decides these</span></span>
-    <span style="display:inline-flex;align-items:center;gap:6px"><i style="width:5px;height:5px;border-radius:50%;background:#AF47B2;display:block"></i><span class="t-meta">ReveNew produces these</span></span>
-    <span style="display:inline-flex;align-items:center;gap:6px"><i style="width:5px;height:5px;border-radius:50%;background:#6D5AC6;display:block"></i><span class="t-meta">Needs both</span></span>
+
+<section class="panel" style="padding:20px 26px;margin-top:18px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+    <span class="band">Against your criteria</span><span class="src"><i style="background:#0E9DA8"></i>Suite</span>
     <span style="flex:1"></span>
-    <span class="t-meta">A sequence, not a flow — the quantities are in different units and do not conserve.</span>
+    <span class="t-meta">Only the limits you set are drawn</span>
   </div>
+  
+    <div style="display:flex;align-items:center;gap:18px;padding:15px 0;border-top:1px solid var(--hair)">
+      <span style="flex:none;width:150px;min-width:0">
+        <span style="display:flex;align-items:center;gap:7px">
+          <span style="font-size:13.5px;font-weight:600;color:var(--s900)">CAPEX</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+        </span>
+        <span class="t-meta" style="display:block;margin-top:3px">≤ €48.0M</span>
+      </span>
+      <span style="flex:1;min-width:0;position:relative;height:44px;display:block">
+        <span style="position:absolute;left:0;right:0;top:26px;height:1px;background:var(--hair);display:block"></span>
+        <span style="position:absolute;left:62.9%;top:14px;bottom:0;width:1.5px;
+              background:#9A6208;opacity:.55;display:block"></span>
+        <span style="position:absolute;left:62.9%;top:0;transform:translateX(-50%);
+              font-size:10px;font-weight:600;color:#9A6208;white-space:nowrap">limit €48.0M</span>
+        <span style="position:absolute;left:0;width:62.9%;top:24px;height:5px;border-radius:3px;
+              background:rgba(14,157,168,.16);display:block"></span>
+        <span class="mk" style="position:absolute;left:15.3%;top:20.5px;margin-left:-5.5px;
+                  width:11px;height:11px;border-radius:50%;display:block;background:#fff;
+                  box-shadow:0 0 0 1.8px #0E9DA8">
+              <span style="position:absolute;inset:0"><title>Base case — €42.1M</title></span></span>
+              <span class="mk" style="position:absolute;left:84.7%;top:18.5px;margin-left:-7.5px;
+                  width:15px;height:15px;border-radius:50%;display:block;background:#fff;
+                  box-shadow:0 0 0 2.4px #9A6208">
+              <span style="position:absolute;inset:0"><title>High storage and Stress test — €50.7M · €2.7M over the limit</title></span></span>
+              <span style="position:absolute;left:84.7%;top:36px;transform:translateX(-50%);
+                    font-size:9px;color:var(--s400);white-space:nowrap">2 cases</span>
+      </span>
+      <span style="flex:none;width:230px;text-align:right">
+        <span style="display:block;font-size:12px;color:#9A6208;line-height:1.5">High storage €2.7M above limit</span><span style="display:block;font-size:12px;color:#9A6208;line-height:1.5">Stress test €2.7M above limit</span>
+      </span>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px;padding:15px 0;border-top:1px solid var(--hair)">
+      <span style="flex:none;width:150px;min-width:0">
+        <span style="display:flex;align-items:center;gap:7px">
+          <span style="font-size:13.5px;font-weight:600;color:var(--s900)">IRR</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+        </span>
+        <span class="t-meta" style="display:block;margin-top:3px">≥ 12.0%</span>
+      </span>
+      <span style="flex:1;min-width:0;position:relative;height:44px;display:block">
+        <span style="position:absolute;left:0;right:0;top:26px;height:1px;background:var(--hair);display:block"></span>
+        <span style="position:absolute;left:58.7%;top:14px;bottom:0;width:1.5px;
+              background:#9A6208;opacity:.55;display:block"></span>
+        <span style="position:absolute;left:58.7%;top:0;transform:translateX(-50%);
+              font-size:10px;font-weight:600;color:#9A6208;white-space:nowrap">limit 12.0%</span>
+        
+        <span class="mk" style="position:absolute;left:76.0%;top:20.5px;margin-left:-5.5px;
+                  width:11px;height:11px;border-radius:50%;display:block;background:#fff;
+                  box-shadow:0 0 0 1.8px #0E9DA8">
+              <span style="position:absolute;inset:0"><title>Base case — 12.8%</title></span></span>
+              <span class="mk" style="position:absolute;left:84.7%;top:18.5px;margin-left:-7.5px;
+                  width:15px;height:15px;border-radius:50%;display:block;background:#fff;
+                  box-shadow:0 0 0 2.4px #0E9DA8">
+              <span style="position:absolute;inset:0"><title>High storage — 13.2%</title></span></span>
+              <span class="mk" style="position:absolute;left:15.3%;top:20.5px;margin-left:-5.5px;
+                  width:11px;height:11px;border-radius:50%;display:block;background:#fff;
+                  box-shadow:0 0 0 1.8px #9A6208">
+              <span style="position:absolute;inset:0"><title>Stress test — 10.0% · 2.0% over the limit</title></span></span>
+              
+      </span>
+      <span style="flex:none;width:230px;text-align:right">
+        <span style="display:block;font-size:12px;color:#9A6208;line-height:1.5">Stress test 2.0% below limit</span>
+      </span>
+    </div>
+</section>
+
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:28px 0 14px">
+  <div style="min-width:0">
+    
+    <div style="display:flex;align-items:center;gap:10px">
+      <h2 class="t-sec">Difference from Base case</h2><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+    </div>
+    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">Every bar is read from the base case and oriented by what it means: an improvement points right. Bar length is relative change so metrics in different units compare honestly; the figure is the actual difference.</p>
+  </div>
+  
+</div>
+<section class="panel lift" style="padding:24px 26px">
+  
+<svg viewBox="0 0 1240 400" width="100%" style="display:block" role="img" aria-label="Difference from the base case, oriented so better is to the right">
+  <style>.mk{transition:opacity .12s} .mk:hover{opacity:.82}</style>
+  
+    <text x="416.5" y="16" text-anchor="middle" font-size="12" font-weight="600" fill="#0F172A">High storage</text>
+    <text x="416.5" y="31" text-anchor="middle" font-size="9.5" fill="#5F6C82">vs Base case</text>
+    <text x="224.6" y="46" text-anchor="start" font-size="9" fill="#9A6208">← worse</text>
+    <text x="608.4" y="46" text-anchor="end" font-size="9" fill="#0E9469">better →</text>
+    <text x="949.5" y="16" text-anchor="middle" font-size="12" font-weight="600" fill="#0F172A">Stress test</text>
+    <text x="949.5" y="31" text-anchor="middle" font-size="9.5" fill="#5F6C82">vs Base case · outdated</text>
+    <text x="757.6" y="46" text-anchor="start" font-size="9" fill="#9A6208">← worse</text>
+    <text x="1141.4" y="46" text-anchor="end" font-size="9" fill="#0E9469">better →</text>
+  
+  
+    <text x="132" y="74" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">CAPEX</text>
+    <text x="132" y="88" text-anchor="end" font-size="9" fill="#5F6C82">what it costs to build</text>
+    
+      <line x1="416.5" y1="58" x2="416.5" y2="94" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M376.8726914773792 81L376.8726914773792 66Q376.8726914773792 63 379.8726914773792 63L413.5 63Q416.5 63 416.5 66L416.5 81Z"
+        fill="#2563EB" fill-opacity=".42"><title>High storage — CAPEX +€8.6M (+20% against the base case)</title></path>
+      <text x="367.9" y="70" text-anchor="end"
+        font-size="11.5" font-weight="700" fill="#C22222">+€8.6M</text>
+      <text x="367.9" y="84" text-anchor="end"
+        font-size="9.5" fill="#5F6C82">+20%</text>
+      <line x1="949.5" y1="58" x2="949.5" y2="94" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M909.8726914773791 81L909.8726914773791 66Q909.8726914773791 63 912.8726914773791 63L946.5 63Q949.5 63 949.5 66L949.5 81Z"
+        fill="#2563EB" fill-opacity=".3"><title>Stress test — CAPEX +€8.6M (+20% against the base case)</title></path>
+      <text x="900.9" y="70" text-anchor="end"
+        font-size="11.5" font-weight="700" fill="#5F6C82">+€8.6M</text>
+      <text x="900.9" y="84" text-anchor="end"
+        font-size="9.5" fill="#5F6C82">+20%</text>
+    <text x="132" y="130" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">Energy discharged</text>
+    <text x="132" y="144" text-anchor="end" font-size="9" fill="#5F6C82">what the asset moves</text>
+    
+      <line x1="416.5" y1="114" x2="416.5" y2="150" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M416.5 137L416.5 122Q416.5 119 419.5 119L494.42813442613704 119Q497.42813442613704 119 497.42813442613704 122L497.42813442613704 137Z"
+        fill="#2563EB" fill-opacity=".8"><title>High storage — Energy discharged +27.2 GWh (+42% against the base case)</title></path>
+      <text x="506.4" y="126" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#0E9469">+27.2 GWh</text>
+      <text x="506.4" y="140" text-anchor="start"
+        font-size="9.5" fill="#5F6C82">+42%</text>
+      <line x1="949.5" y1="114" x2="949.5" y2="150" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M949.5 137L949.5 122Q949.5 119 952.5 119L1027.428134426137 119Q1030.428134426137 119 1030.428134426137 122L1030.428134426137 137Z"
+        fill="#2563EB" fill-opacity=".3"><title>Stress test — Energy discharged +27.2 GWh (+42% against the base case)</title></path>
+      <text x="1039.4" y="126" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#5F6C82">+27.2 GWh</text>
+      <text x="1039.4" y="140" text-anchor="start"
+        font-size="9.5" fill="#5F6C82">+42%</text>
+    <text x="132" y="186" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">Revenue / yr</text>
+    <text x="132" y="200" text-anchor="end" font-size="9" fill="#5F6C82">what it earns</text>
+    
+      <line x1="416.5" y1="170" x2="416.5" y2="206" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M416.5 193L416.5 178Q416.5 175 419.5 175L457.9655264236385 175Q460.9655264236385 175 460.9655264236385 178L460.9655264236385 193Z"
+        fill="#AF47B2" fill-opacity=".8"><title>High storage — Revenue / yr +€1.93M (+23% against the base case)</title></path>
+      <text x="470.0" y="182" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#0E9469">+€1.93M</text>
+      <text x="470.0" y="196" text-anchor="start"
+        font-size="9.5" fill="#5F6C82">+23%</text>
+      <line x1="949.5" y1="170" x2="949.5" y2="206" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M949.5 193L949.5 176Q949.5 175 950.5 175L950.5 175Q951.5 175 951.5 176L951.5 193Z"
+        fill="#AF47B2" fill-opacity=".3"><title>Stress test — Revenue / yr +€0.08M (+1% against the base case)</title></path>
+      <text x="960.3" y="182" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#5F6C82">+€0.08M</text>
+      <text x="960.3" y="196" text-anchor="start"
+        font-size="9.5" fill="#5F6C82">+1%</text>
+    <text x="132" y="242" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">NPV</text>
+    <text x="132" y="256" text-anchor="end" font-size="9" fill="#5F6C82">value created</text>
+    
+      <line x1="416.5" y1="226" x2="416.5" y2="262" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M416.5 249L416.5 234Q416.5 231 419.5 231L482.7739686657523 231Q485.7739686657523 231 485.7739686657523 234L485.7739686657523 249Z"
+        fill="#AF47B2" fill-opacity=".8"><title>High storage — NPV +€3.0M (+36% against the base case)</title></path>
+      <text x="494.8" y="238" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#0E9469">+€3.0M</text>
+      <text x="494.8" y="252" text-anchor="start"
+        font-size="9.5" fill="#5F6C82">+36%</text>
+      <line x1="949.5" y1="226" x2="949.5" y2="262" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M789.6 249L789.6 234Q789.6 231 792.6 231L946.5 231Q949.5 231 949.5 234L949.5 249Z"
+        fill="#AF47B2" fill-opacity=".3"><title>Stress test — NPV −€6.9M (−82% against the base case)</title></path>
+      <text x="780.6" y="238" text-anchor="end"
+        font-size="11.5" font-weight="700" fill="#5F6C82">−€6.9M</text>
+      <text x="780.6" y="252" text-anchor="end"
+        font-size="9.5" fill="#5F6C82">−82%</text>
+    <text x="132" y="298" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">IRR</text>
+    <text x="132" y="312" text-anchor="end" font-size="9" fill="#5F6C82">rate of return</text>
+    
+      <line x1="416.5" y1="282" x2="416.5" y2="318" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M416.5 305L416.5 290Q416.5 287 419.5 287L419.5621718343108 287Q422.5621718343108 287 422.5621718343108 290L422.5621718343108 305Z"
+        fill="#6D5AC6" fill-opacity=".8"><title>High storage — IRR +0.4 pp (+3% against the base case)</title></path>
+      <text x="431.6" y="294" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#0E9469">+0.4 pp</text>
+      <text x="431.6" y="308" text-anchor="start"
+        font-size="9.5" fill="#5F6C82">+3%</text>
+      <line x1="949.5" y1="282" x2="949.5" y2="318" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M907.0647971598243 305L907.0647971598243 290Q907.0647971598243 287 910.0647971598243 287L946.5 287Q949.5 287 949.5 290L949.5 305Z"
+        fill="#6D5AC6" fill-opacity=".3"><title>Stress test — IRR −2.8 pp (−22% against the base case)</title></path>
+      <text x="898.1" y="294" text-anchor="end"
+        font-size="11.5" font-weight="700" fill="#5F6C82">−2.8 pp</text>
+      <text x="898.1" y="308" text-anchor="end"
+        font-size="9.5" fill="#5F6C82">−22%</text>
+    <text x="132" y="354" text-anchor="end" font-size="11.5" font-weight="600" fill="#0F172A">Payback</text>
+    <text x="132" y="368" text-anchor="end" font-size="9" fill="#5F6C82">years to break even</text>
+    
+      <line x1="416.5" y1="338" x2="416.5" y2="374" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M416.5 361L416.5 345.09338941681636Q416.5 343 418.59338941681636 343L418.5933894168164 343Q420.6867788336328 343 420.6867788336328 345.09338941681636L420.6867788336328 361Z"
+        fill="#AF47B2" fill-opacity=".8"><title>High storage — Payback −0.1 y (−2% against the base case)</title></path>
+      <text x="429.7" y="350" text-anchor="start"
+        font-size="11.5" font-weight="700" fill="#0E9469">−0.1 y</text>
+      <text x="429.7" y="364" text-anchor="start"
+        font-size="9.5" fill="#5F6C82">−2%</text>
+      <line x1="949.5" y1="338" x2="949.5" y2="374" stroke="rgba(30,58,138,.16)" stroke-width="1"/>
+      <path class="mk" d="M915.6797820816251 361L915.6797820816251 346Q915.6797820816251 343 918.6797820816251 343L946.5 343Q949.5 343 949.5 346L949.5 361Z"
+        fill="#AF47B2" fill-opacity=".3"><title>Stress test — Payback +1.1 y (+17% against the base case)</title></path>
+      <text x="906.7" y="350" text-anchor="end"
+        font-size="11.5" font-weight="700" fill="#5F6C82">+1.1 y</text>
+      <text x="906.7" y="364" text-anchor="end"
+        font-size="9.5" fill="#5F6C82">+17%</text>
+</svg>
+</section>
+
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:28px 0 14px">
+  <div style="min-width:0">
+    
+    <div style="display:flex;align-items:center;gap:10px">
+      <h2 class="t-sec">Best on each objective</h2><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+    </div>
+    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">Four objectives, three analysis cases, no single winner. The Suite names the trade-off; the choice is yours.</p>
+  </div>
+  
+</div>
+
+<div style="display:flex;gap:14px">
+  
+    <div class="wash" style="flex:1;min-width:0;padding:14px 16px">
+      <span class="band" style="font-size:10px">Best NPV</span>
+      <span style="display:block;font-size:18px;font-weight:700;letter-spacing:-.022em;color:var(--s900);margin-top:7px;font-variant-numeric:tabular-nums">€11.3M</span>
+      <span class="t-meta" style="display:block;margin-top:7px">High storage</span>
+      
+      <span style="display:block;margin-top:8px;padding-top:8px;border-top:1px solid var(--hair)">
+          <span class="t-meta" style="display:block;color:#9A6208;line-height:1.45">High storage is outside your criteria — CAPEX €2.7M above limit</span>
+          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.45">Within criteria: <b style="font-weight:600;color:var(--s900)">€8.3M</b> · Base case</span>
+        </span>
+    </div>
+  
+    <div class="wash" style="flex:1;min-width:0;padding:14px 16px">
+      <span class="band" style="font-size:10px">Best IRR</span>
+      <span style="display:block;font-size:18px;font-weight:700;letter-spacing:-.022em;color:var(--s900);margin-top:7px;font-variant-numeric:tabular-nums">13.2%</span>
+      <span class="t-meta" style="display:block;margin-top:7px">High storage</span>
+      
+      <span style="display:block;margin-top:8px;padding-top:8px;border-top:1px solid var(--hair)">
+          <span class="t-meta" style="display:block;color:#9A6208;line-height:1.45">High storage is outside your criteria — CAPEX €2.7M above limit</span>
+          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.45">Within criteria: <b style="font-weight:600;color:var(--s900)">12.8%</b> · Base case</span>
+        </span>
+    </div>
+  
+    <div class="wash" style="flex:1;min-width:0;padding:14px 16px">
+      <span class="band" style="font-size:10px">Lowest CAPEX</span>
+      <span style="display:block;font-size:18px;font-weight:700;letter-spacing:-.022em;color:var(--s900);margin-top:7px;font-variant-numeric:tabular-nums">€42.1M</span>
+      <span class="t-meta" style="display:block;margin-top:7px">Base case</span>
+      
+      <span class="t-meta" style="display:block;margin-top:6px;color:var(--su700);line-height:1.45">Also the leader within your criteria</span>
+    </div>
+  
+    <div class="wash" style="flex:1;min-width:0;padding:14px 16px">
+      <span class="band" style="font-size:10px">Shortest payback</span>
+      <span style="display:block;font-size:18px;font-weight:700;letter-spacing:-.022em;color:var(--s900);margin-top:7px;font-variant-numeric:tabular-nums">6.2 yrs</span>
+      <span class="t-meta" style="display:block;margin-top:7px">High storage</span>
+      
+      <span style="display:block;margin-top:8px;padding-top:8px;border-top:1px solid var(--hair)">
+          <span class="t-meta" style="display:block;color:#9A6208;line-height:1.45">High storage is outside your criteria — CAPEX €2.7M above limit</span>
+          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.45">Within criteria: <b style="font-weight:600;color:var(--s900)">6.3 yrs</b> · Base case</span>
+        </span>
+    </div>
+</div>
+<div style="margin-top:12px">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:0;
+     padding:12px 16px;border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(245,158,11,0.08),rgba(255,255,255,0) 70%);box-shadow:inset 0 0 0 1px rgba(245,158,11,0.2)">
+  <span style="color:#9A6208;display:flex;flex:none;"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
+  <span style="flex:1;min-width:0">
+    
+    <span class="t-meta" style="display:block;line-height:1.55;font-size:12.5px">1 analysis case is excluded from these conclusions — its financial result was calculated before the technical simulation changed.</span>
+  </span>
+  <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Recalculate in ReveNew<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
+  
+</div></div>
+<div style="display:flex;align-items:center;gap:12px;margin-top:18px;padding:14px 18px;border-radius:var(--r-sm);
+     background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 74%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.16)">
+  <span style="color:var(--su700);display:flex;flex:none"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/></svg></span>
+  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
+    <b style="font-weight:600">High storage</b> is selected. Making it the current analysis takes it back to Overview, where every figure then reads from it.
+  </span>
+  <button class="btn btn-secondary" style="flex:none;height:34px;font-size:12.5px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/></svg>Use as current analysis</button>
 </div>
 
 
 
 
-  <div style="display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)">
-    <span class="band" style="flex:none;color:var(--su700);padding-top:2px">Trade-off</span>
-    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.6">No additional capital is committed. The whole difference is what this market view is worth on the asset already built — value lost without rebuilding anything.</span>
-    <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:28px 0 14px">
+  <div style="min-width:0">
+    
+    <div style="display:flex;align-items:center;gap:10px">
+      <h2 class="t-sec">Market sensitivity</h2><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+    </div>
+    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">How far each case's IRR moves across the three financial cases, holding its asset constant. The range belongs to the technical simulation, so two cases built on the same asset share it and differ only in where they sit inside it. Modelled views, not probabilities — a range, not a distribution.</p>
   </div>
-  <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
-    <span class="t-meta" style="flex:1;min-width:0">
-      Only the ReveNew case moved, so the whole difference sits on the financial step.
+  
+</div>
+<section class="panel" style="padding:22px 26px">
+  
+  <div style="display:flex;align-items:center;gap:16px;padding:13px 0;">
+    <span style="flex:none;width:200px;min-width:0">
+      <span style="display:block;font-size:13.5px;font-weight:600;color:var(--s900)">Base case</span>
+      <span class="t-meta" style="display:block;margin-top:2px">Base 2 h</span>
     </span>
-    <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Explain difference<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></button>
+    <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
+      <span style="position:absolute;left:0;right:0;top:9px;height:1px;background:var(--hair);display:block"></span>
+      <span style="position:absolute;top:6.5px;height:7px;border-radius:4px;display:block;
+            left:10.5%;width:66.7%;
+            background:linear-gradient(90deg,rgba(175,71,178,.34),rgba(37,99,235,.5))"></span>
+      <span class="mk" style="position:absolute;top:4px;left:66.7%;margin-left:-6px;width:12px;height:12px;
+            border-radius:50%;display:block;background:#fff;box-shadow:0 0 0 2px #0E9DA8"></span>
+    </span>
+    <span style="flex:none;width:132px;text-align:right;font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">9.6–13.4%</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;padding:13px 0;border-top:1px solid var(--hair)">
+    <span style="flex:none;width:200px;min-width:0">
+      <span style="display:block;font-size:13.5px;font-weight:600;color:var(--s900)">High storage</span>
+      <span class="t-meta" style="display:block;margin-top:2px">4 h variant</span>
+    </span>
+    <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
+      <span style="position:absolute;left:0;right:0;top:9px;height:1px;background:var(--hair);display:block"></span>
+      <span style="position:absolute;top:6.5px;height:7px;border-radius:4px;display:block;
+            left:17.5%;width:71.9%;
+            background:linear-gradient(90deg,rgba(175,71,178,.34),rgba(37,99,235,.5))"></span>
+      <span class="mk" style="position:absolute;top:4px;left:73.7%;margin-left:-6px;width:12px;height:12px;
+            border-radius:50%;display:block;background:#fff;box-shadow:0 0 0 2px #0E9DA8"></span>
+    </span>
+    <span style="flex:none;width:132px;text-align:right;font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">10.0–14.1%</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;padding:13px 0;border-top:1px solid var(--hair)">
+    <span style="flex:none;width:200px;min-width:0">
+      <span style="display:block;font-size:13.5px;font-weight:600;color:var(--s900)">Stress test</span>
+      <span class="t-meta" style="display:block;margin-top:2px">4 h variant</span>
+    </span>
+    <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
+      <span style="position:absolute;left:0;right:0;top:9px;height:1px;background:var(--hair);display:block"></span>
+      <span style="position:absolute;top:6.5px;height:7px;border-radius:4px;display:block;
+            left:17.5%;width:71.9%;
+            background:linear-gradient(90deg,rgba(175,71,178,.34),rgba(37,99,235,.5))"></span>
+      <span class="mk" style="position:absolute;top:4px;left:17.5%;margin-left:-6px;width:12px;height:12px;
+            border-radius:50%;display:block;background:#fff;box-shadow:0 0 0 2px #0E9DA8"></span>
+    </span>
+    <span style="flex:none;width:132px;text-align:right;font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">10.0–14.1%</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;margin-top:14px;padding-top:12px;border-top:1px solid var(--hair)">
+    <span style="display:inline-flex;align-items:center;gap:7px"><i style="width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px #0E9DA8;display:block"></i><span class="t-meta">Where this case sits on its own financial case</span></span>
+    <span style="flex:1"></span>
+    <a href="#" style="font-size:12.5px;font-weight:500">Full sensitivity in the case matrix<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></a>
   </div>
 </section>
+
+
 </div>
 <p class="t-meta" style="margin-top:16px;line-height:1.6;max-width:112ch">
   Doubling storage costs €8.6M and returns €1.93M a year, lifting NPV by €3.0M. The stress test then holds that asset and
@@ -1044,7 +1069,7 @@ a.glass-sm:hover{
 </div>
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":2740}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":2700}}'>
 class Component extends DCLogic {}
 </script>
 </body>
