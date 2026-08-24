@@ -935,6 +935,38 @@ const staleNotice = ({ title, body, cta, link, gap = "20px" } = {}) => `
   ${link ? `<a href="#" style="flex:none;font-size:12.5px;font-weight:500;white-space:nowrap">${link}${ic("right", 12, 2)}</a>` : ""}
 </div>`;
 
+/* The catalogue the criteria editor offers. Every one reads a computed
+   result; none of them is an input to a model. */
+const CRIT_SPEC = {
+  capex: { label: "CAPEX", op: "≤", get: (c) => c.t.capex, fmt: (v) => "€" + v.toFixed(1) + "M",
+           unit: "€M", pass: (v, t) => v <= t, over: (v, t) => v - t, from: "storebrid" },
+  irr:   { label: "IRR", op: "≥", get: (c) => c.irr, fmt: (v) => v.toFixed(1) + "%",
+           unit: "%", pass: (v, t) => v >= t, over: (v, t) => t - v, from: "combined" },
+  pb:    { label: "Payback", op: "≤", get: (c) => paybackOfCase(c), fmt: (v) => v.toFixed(1) + " yrs",
+           unit: "yrs", pass: (v, t) => v <= t, over: (v, t) => v - t, from: "revenew" },
+  npv:   { label: "NPV", op: "≥", get: (c) => npvOfCase(c), fmt: (v) => eurMs(v),
+           unit: "€M", pass: (v, t) => v >= t, over: (v, t) => t - v, from: "revenew" },
+};
+
+/* The worked example the screens carry. Criteria are optional — CRITERIA
+   empty is a valid, and the default, state of the product. */
+const CRITERIA = [{ key: "capex", target: 48 }, { key: "irr", target: 12 }];
+
+/* Why a combination fails, in the words of the criterion it failed.
+   Returns [] when it satisfies everything. */
+const failsOf = (c, crit = CRITERIA) => crit.flatMap(({ key, target }) => {
+  const k = CRIT_SPEC[key], v = k.get(c);
+  return k.pass(v, target) ? [] : [{ k, key, target, v, by: k.over(v, target) }];
+});
+const eligible = (c, crit = CRITERIA) => failsOf(c, crit).length === 0;
+
+/* Every pairing in the project, and the ones a deterministic claim may
+   be made about: eligible, and not sitting on data that has moved on.
+   §14 — a stale result never wins anything until it is recalculated. */
+const ALLCOMBOS = () => TECH.flatMap((t) => SCEN.map((sc) => caseOf(t.id, sc.id)));
+const claimable = (crit = CRITERIA) =>
+  ALLCOMBOS().filter((c) => !isStale(c.t.id, c.sc.id) && eligible(c, crit));
+
 /* the pairing, drawn the same way everywhere it appears */
 const acPair = (a, { size = "md", freshness } = {}) => {
   const c = acCase(a), big = size === "lg";
@@ -1122,6 +1154,52 @@ const activityRow = ({ what, project, source, when }) => `
    Every card is a deterministic reading of figures that already exist:
    an observation, the two numbers that support it, and what it may mean.
    Nothing here is generated, ranked or recommended. */
+/* §4-§5, §27 · The reason to come back. Every item is a decision the user
+   already started — a saved brief, an open comparison, criteria they set —
+   so nothing here is invented: it is the Suite handing back the reasoning
+   they left behind. Deliberately two or three, never a task list; Home is
+   not a queue. */
+const CONTINUE = [
+  { project: "Valencia BESS", title: "4 h storage investment decision",
+    kind: "Decision brief", cases: 3, objective: "Maximise NPV",
+    crit: "CAPEX ≤ €48M · IRR ≥ 12%", when: "Saved 2 days ago · Victor Andújar",
+    note: "Stress test became outdated after you saved this.", warn: true,
+    action: "Continue comparison" },
+  { project: "Madrid Hybrid", title: "High spread sensitivity",
+    kind: "Open comparison", cases: 2, objective: "Maximise IRR",
+    crit: "CAPEX ≤ €48M", when: "Last opened yesterday",
+    note: "Left with two cases selected and no brief saved.",
+    action: "Continue analysis" },
+  { project: "Porto PV", title: "Contracted vs merchant", kind: "Decision brief",
+    cases: 2, objective: "Shortest payback", crit: "None",
+    when: "Saved 5 days ago · Ana Ruiz",
+    note: "Both cases still in step with their sources.",
+    action: "Open brief" },
+];
+
+const continueCard = (x) => `
+<a href="#" class="panel" style="flex:1;min-width:0;display:flex;flex-direction:column;padding:18px 20px;text-decoration:none">
+  <span style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+    <span class="cov"><i style="background:${SU}"></i>${x.kind}</span>
+    <span class="t-meta">${x.project}</span>
+  </span>
+  <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);margin-top:10px">${x.title}</span>
+  <span style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:11px">
+    <span class="t-meta">${x.cases} analysis cases</span>
+    <span class="t-meta">Objective <b style="font-weight:600;color:var(--s700)">${x.objective}</b></span>
+    <span class="t-meta">Constraints <b style="font-weight:600;color:var(--s700)">${x.crit}</b></span>
+  </span>
+  <span style="display:flex;align-items:flex-start;gap:8px;margin-top:12px;flex:1">
+    ${x.warn ? `<span style="color:${WARN.ink};display:flex;flex:none;margin-top:1px">${ic("alert", 13)}</span>` : ""}
+    <span class="t-meta" style="line-height:1.55;${x.warn ? `color:${WARN.ink}` : ""}">${x.note}</span>
+  </span>
+  <span style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--hair)">
+    <span class="t-meta" style="flex:1;min-width:0">${x.when}</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:500;color:var(--b700)">
+      ${x.action}${ic("right", 13, 2)}</span>
+  </span>
+</a>`;
+
 const attnCard = ({ subject, verdict, tone, readings, implication, action }) => `
 <a href="#" class="panel" style="flex:1;min-width:0;display:flex;flex-direction:column;padding:18px 20px;text-decoration:none">
   <span style="display:flex;align-items:center;gap:8px">
@@ -1157,7 +1235,7 @@ const insightCard = ({ verdict, tone, body, action, source }) => `
   </span>
 </a>`;
 
-const HOMEB = { w: 1440, h: 1710 };
+const HOMEB = { w: 1440, h: 2040 };
 const homeBody = () => `
 ${head({
   eyebrow: "Friday, 21 August · Sunveon Energy",
@@ -1216,6 +1294,13 @@ ${sec({ label: "Needs your attention", top: 30,
     readings: [["52%", "utilisation", src("storebrid")], ["7.8%", "IRR", src("combined")]],
     implication: "Least-used asset in the portfolio. Its export limit in the plant configuration sits below the grid offer on file, which caps what the market case can earn.",
     action: "Review project" })}
+</div>
+
+${sec({ label: "Continue analysis", top: 34,
+        sub: "Decisions you already started — a saved brief, an open comparison, the criteria you set. The Suite hands the reasoning back rather than making you rebuild it.",
+        right: `<a href="#" style="font-size:13px;font-weight:500">All saved briefs</a>` })}
+<div style="display:flex;gap:14px;align-items:stretch">
+  ${CONTINUE.map(continueCard).join("")}
 </div>
 
 <div style="display:flex;gap:26px;margin-top:34px;align-items:flex-start">
@@ -1349,13 +1434,39 @@ console.log("Main.dc.html", home.length);
 /* ═══════════════════════════════════════════════════════════════
    Unified Projects — kept as built, moved onto the calmer foundation
    ═══════════════════════════════════════════════════════════════ */
-const projectRow = ({ name, desc, country, tech, capacity, sb, rn, status, when }) => `
+/* §11-§12 · The registry said what a project IS. It never said whether it
+   was worth opening. Six states, derived — not a seventh column of prose:
+   whether both sides exist, whether anyone has paired them, and whether
+   what they produced still holds. */
+const anStatus = ({ sb, rn, cases = 0, stale = 0 }) => {
+  if (!sb && !rn) return { tag: "Not analysed", tone: "n", sub: "Neither side configured" };
+  if (sb && !rn) return { tag: "Technical only", tone: "sb", sub: "No financial case yet" };
+  if (!sb && rn) return { tag: "Financial only", tone: "rn", sub: "No simulation yet" };
+  if (!cases) return { tag: "Not analysed", tone: "n", sub: "Both sides ready, nothing paired" };
+  if (stale) return { tag: "Needs recalculation", tone: "warn", sub: `${cases} cases · ${stale} outdated` };
+  return { tag: "Ready", tone: "ok", sub: `${cases} analysis cases` };
+};
+
+const anCell = (x) => {
+  const st = anStatus(x);
+  const dot = { sb: SB, rn: RN, ok: SU, warn: WARN.ink, n: "var(--s300)" }[st.tone];
+  return `
+  <span style="display:block">
+    ${st.tone === "warn"
+      ? staleTag(st.tag)
+      : `<span class="cov"${st.tone === "ok" ? ` style="border-color:rgba(14,157,168,.3);background:linear-gradient(168deg,rgba(14,157,168,.1),rgba(14,157,168,.05));color:var(--su700)"` : ""}><i style="background:${dot}"></i>${st.tag}</span>`}
+    <span class="t-meta" style="display:block;margin-top:5px">${st.sub}</span>
+  </span>`;
+};
+
+const projectRow = ({ name, desc, country, tech, capacity, sb, rn, status, when, cases = 0, stale = 0 }) => `
 <tr>
   <td><a href="#" class="anchor">${name}</a><div class="t-meta" style="margin-top:2px">${desc}</div></td>
   <td class="t-tbl">${country}</td>
   <td class="t-tbl">${tech}</td>
   <td class="t-tbl" style="white-space:nowrap">${capacity}</td>
   <td>${cov(sb, rn)}</td>
+  <td>${anCell({ sb, rn, cases, stale })}</td>
   <td>${status}</td>
   <td class="t-meta num">${when}</td>
 </tr>`;
@@ -1395,17 +1506,18 @@ ${head({
 <section class="panel lift" style="overflow:hidden">
   <table class="tbl">
     <thead><tr>
-      <th style="width:23%">Project</th><th style="width:10%">Location</th><th style="width:13%">Technology</th>
-      <th style="width:15%">Capacity</th><th style="width:18%">Capabilities</th><th style="width:11%">Status</th>
-      <th style="width:10%;text-align:right">Last activity</th>
+      <th style="width:20%">Project</th><th style="width:8%">Location</th><th style="width:11%">Technology</th>
+      <th style="width:12%">Capacity</th><th style="width:15%">Capabilities</th>
+      <th style="width:16%">Analysis</th><th style="width:10%">Status</th>
+      <th style="width:8%;text-align:right">Last activity</th>
     </tr></thead>
     <tbody>
-      ${projectRow({ name: "Valencia BESS", desc: "Merchant + PPA · COD 2027", country: "Spain", tech: "BESS", capacity: "100 MW / 200 MWh", sb: 1, rn: 1, status: ST.active, when: "2h ago" })}
-      ${projectRow({ name: "Madrid Hybrid", desc: "PV + storage · COD 2027", country: "Spain", tech: "PV + BESS", capacity: "80 MW / 120 MWh", sb: 1, rn: 1, status: ST.active, when: "Yesterday" })}
+      ${projectRow({ name: "Valencia BESS", cases: 3, stale: 1, desc: "Merchant + PPA · COD 2027", country: "Spain", tech: "BESS", capacity: "100 MW / 200 MWh", sb: 1, rn: 1, status: ST.active, when: "2h ago" })}
+      ${projectRow({ name: "Madrid Hybrid", cases: 2, stale: 1, desc: "PV + storage · COD 2027", country: "Spain", tech: "PV + BESS", capacity: "80 MW / 120 MWh", sb: 1, rn: 1, status: ST.active, when: "Yesterday" })}
       ${projectRow({ name: "Sevilla Storage", desc: "Stand-alone BESS · COD 2028", country: "Spain", tech: "BESS", capacity: "50 MW / 100 MWh", sb: 1, rn: 0, status: ST.active, when: "2d ago" })}
       ${projectRow({ name: "Porto PV", desc: "Merchant solar · COD 2027", country: "Portugal", tech: "PV", capacity: "45 MW", sb: 0, rn: 1, status: ST.active, when: "2d ago" })}
       ${projectRow({ name: "Helios II", desc: "Late-stage development", country: "Spain", tech: "PV", capacity: "45 MW", sb: 0, rn: 1, status: ST.development, when: "3d ago" })}
-      ${projectRow({ name: "Almería BESS", desc: "Two-hour duration · COD 2028", country: "Spain", tech: "BESS", capacity: "60 MW / 120 MWh", sb: 1, rn: 1, status: ST.active, when: "4d ago" })}
+      ${projectRow({ name: "Almería BESS", cases: 4, desc: "Two-hour duration · COD 2028", country: "Spain", tech: "BESS", capacity: "60 MW / 120 MWh", sb: 1, rn: 1, status: ST.active, when: "4d ago" })}
       ${projectRow({ name: "Zaragoza Wind + BESS", desc: "Co-located wind · COD 2029", country: "Spain", tech: "Wind + BESS", capacity: "120 MW / 90 MWh", sb: 1, rn: 0, status: ST.development, when: "1w ago" })}
       ${projectRow({ name: "Lisboa Storage", desc: "Awaiting grid connection", country: "Portugal", tech: "BESS", capacity: "30 MW / 60 MWh", sb: 0, rn: 1, status: ST.draft, when: "2w ago" })}
     </tbody>
@@ -1694,7 +1806,30 @@ ${(() => {
     <b style="font-weight:600;color:var(--s900)">${c.t.gwh} GWh</b> a year — <b style="font-weight:600;color:var(--s900)">€${perEur.toFixed(2)}</b> of NPV per euro invested.
   </span>
   <a href="#" style="flex:none;font-size:12.5px;font-weight:500;white-space:nowrap">Explain${ic("right", 12, 2)}</a>
+</div>
+${(() => {
+  /* §13-§14 · The loop back into the Suite's own capability. Both lines are
+     counted from combinations that already exist, so neither is a
+     recommendation: one says how many pairings currently beat the case on
+     screen, the other whether the case clears the constraints the user set.
+     Naming a winner would be the Suite deciding; counting is the Suite
+     reporting. */
+  const beats = ALLCOMBOS().filter((z) => !isStale(z.t.id, z.sc.id) && z.irr > c.irr).length;
+  const f = CRITERIA.length ? failsOf(c) : [];
+  if (!beats && !f.length) return "";
+  return `
+<div style="display:flex;align-items:center;gap:12px;margin-top:10px;padding:12px 20px;border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.3));box-shadow:inset 0 0 0 1px var(--hair)">
+  <span style="color:var(--s400);display:flex;flex:none">${ic("layers", 15)}</span>
+  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.55">
+    ${f.length
+      ? `This case is <b style="font-weight:600;color:var(--s900)">outside the active criteria</b> — ${f[0].k.label} ${f[0].k.fmt(Math.abs(f[0].by)).replace("−", "")} ${f[0].k.op === "≤" ? "above the limit" : "below target"}.`
+      : ""}
+    ${beats ? `<b style="font-weight:600;color:var(--s900)">${beats} of the ${TECH.length * SCEN.length} combinations</b> currently exceed it on IRR.` : ""}
+  </span>
+  <a href="#" style="flex:none;font-size:12.5px;font-weight:500;white-space:nowrap">Explore alternatives${ic("right", 12, 2)}</a>
 </div>`;
+})()}`;
 })()}
 
 <div style="display:flex;gap:22px;margin-top:26px;align-items:stretch">
@@ -1709,10 +1844,14 @@ ${(() => {
   ${perfBlock({ band: "Financial performance", tone: "var(--rv600)", source: src("revenew"),
     title: "What it earns",
     rows: [["NPV", eurMs(m.npv), `at ${(WACC * 100).toFixed(1)}% cost of capital`],
-           ["IRR", m.irr.toFixed(1) + "%"],
-           ["CAPEX", "€" + m.capex.toFixed(1) + "M", "costed in StoreBrid, consumed by the financial model"],
+           /* §23 · IRR and payback need both sides — ReveNew cash flows against
+              StoreBrid CAPEX — so they carry Combined here too, even sitting
+              inside the financial block. A metric cannot be ReveNew on one
+              screen and Combined on another. */
+           ["IRR", m.irr.toFixed(1) + "%", `<span style="display:inline-flex;align-items:center;gap:6px">${src("combined")}ReveNew cash flows against StoreBrid CAPEX</span>`],
+           ["CAPEX", "€" + m.capex.toFixed(1) + "M", `<span style="display:inline-flex;align-items:center;gap:6px">${src("storebrid")}costed in StoreBrid, consumed by the financial model</span>`],
            ["Revenue", eurM(m.rev) + "/yr", `capture €${c.sc.capture.toFixed(1)}/MWh`],
-           ["Payback", m.pb.toFixed(1) + " years", "undiscounted, from COD"]],
+           ["Payback", m.pb.toFixed(1) + " years", `<span style="display:inline-flex;align-items:center;gap:6px">${src("combined")}undiscounted, from COD</span>`]],
     action: `${ic("euro", 15)}View financial breakdown` })}
 </div>
 
@@ -1995,7 +2134,7 @@ ${scrim()}
 </aside>`;
 
 
-const OVB = { w: 1440, h: 2190, side: projectSide("overview") };
+const OVB = { w: 1440, h: 2250, side: projectSide("overview") };
 writeFileSync("ProjectOverview.dc.html", doc({ ...OVB, body: overviewBody() }));
 writeFileSync("OverviewChangeSim.dc.html", doc({ ...OVB, focusSb: true, body: overviewBody(), overlay: pickDrawer({ kind: "tech" }) }));
 writeFileSync("OverviewChangeScenario.dc.html", doc({ ...OVB, rvFocus: true, body: overviewBody(), overlay: pickDrawer({ kind: "fin" }) }));
@@ -2285,7 +2424,7 @@ console.log("EmbeddedStates.dc.html", embedStates.length);
    needs BOTH products to answer. Insights name the mismatch, quote
    the two numbers behind it, and link to the project.
    ═══════════════════════════════════════════════════════════════ */
-const insight = ({ name, verdict, readings, why }) => `
+const insight = ({ name, verdict, readings, why, action }) => `
 <div style="padding:16px 0">
   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
     <a href="#" style="font-size:14px;font-weight:500">${name}</a>
@@ -2299,6 +2438,7 @@ const insight = ({ name, verdict, readings, why }) => `
       </span>`).join("")}
   </div>
   <p style="font-size:12.5px;color:var(--s500);line-height:1.55;margin:10px 0 0">${why}</p>
+  ${action ? `<a href="#" style="display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12px;font-weight:500;color:var(--b700);text-decoration:none">${action}${ic("right", 12, 2)}</a>` : ""}
 </div>`;
 
 const CMP = [
@@ -2329,7 +2469,7 @@ const cmpHead = (label, source, first) => `
 </th>`;
 
 const analytics = doc({
-  w: 1440, h: 1960, side: rootSide("analytics"), rvFocus: true,
+  w: 1440, h: 2580, side: rootSide("analytics"), rvFocus: true,
   body: `
 ${head({
   crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><b>Analytics</b>`,
@@ -2384,22 +2524,66 @@ ${head({
   </div>
   <div style="width:1px;background:var(--hair);flex:none"></div>
   <div style="flex:1;min-width:0;padding:24px 26px;background:linear-gradient(168deg,rgba(255,255,255,.34),rgba(255,255,255,.16))">
-    <div class="band">Performance insights</div>
-    <h2 class="t-sec" style="margin-top:8px">Where the two disagree</h2>
-    <p class="t-meta" style="margin-top:6px;font-size:12px">Each reads one StoreBrid number against one ReveNew number.</p>
+    <div class="band">Portfolio signals</div>
+    <h2 class="t-sec" style="margin-top:8px">Where should I investigate?</h2>
+    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">
+      Each reads one StoreBrid number against one ReveNew number, and each one leads somewhere it can be acted on.</p>
     <div class="rows" style="margin-top:6px">
-      ${insight({ name: "Almería BESS", verdict: "High utilisation · low return",
+      ${insight({ name: "Almería BESS", action: "Review project", verdict: "High utilisation · low return",
         readings: [["81%", "utilisation", src("storebrid")], ["9.4%", "IRR", src("revenew")]],
         why: "Cycles hardest in the portfolio while its return sits second from bottom. Degradation is 2.6%/yr against a 2.1% median — check the ReCapEx assumptions." })}
-      ${insight({ name: "Cádiz Storage", verdict: "Low utilisation · low return",
+      ${insight({ name: "Cádiz Storage", action: "Review project", verdict: "Low utilisation · low return",
         readings: [["52%", "utilisation", src("storebrid")], ["7.8%", "IRR", src("revenew")]],
         why: "Least-used asset in the portfolio. The export limit in its plant configuration is below the grid offer on file." })}
-      ${insight({ name: "Toledo Hybrid", verdict: "Below the co-located median",
+      ${insight({ name: "Toledo Hybrid", action: "Open comparison", verdict: "Below the co-located median",
         readings: [["57%", "utilisation", src("storebrid")], ["8.9%", "IRR", src("revenew")]],
         why: "Both figures trail Madrid Hybrid, the closest comparable, on a similar capacity and market." })}
     </div>
   </div>
 </section>
+
+${(() => {
+  /* §10 · Which projects depend most on the market view being right. The
+     range comes from each project's own financial cases; it is a spread,
+     not a probability, and the copy has to keep saying so. Sorted by how
+     wide the spread is, because that is the question — not by return. */
+  const PS = [
+    { p: "Valencia BESS", lo: 9.6, hi: 14.1, cur: 12.8, cases: 3 },
+    { p: "Almería BESS", lo: 7.1, hi: 11.8, cur: 9.4, cases: 3 },
+    { p: "Murcia BESS", lo: 11.2, hi: 15.0, cur: 13.4, cases: 3 },
+    { p: "Madrid Hybrid", lo: 10.8, hi: 12.9, cur: 11.9, cases: 2 },
+    { p: "Porto PV", lo: 10.4, hi: 12.1, cur: 11.2, cases: 2 },
+  ].sort((a, b) => (b.hi - b.lo) - (a.hi - a.lo));
+  const A0 = Math.min(...PS.map((x) => x.lo)) - 0.7, B0 = Math.max(...PS.map((x) => x.hi)) + 0.7;
+  const pct = (v) => ((v - A0) / (B0 - A0)) * 100;
+  return `
+${sec({ label: "Financial-case sensitivity", source: src("combined"), top: 26,
+        sub: "How far each project's IRR moves across its own financial cases. A spread between modelled views, not a probability — the widest ones are the ones whose case depends most on the market view being right." })}
+<section class="panel" style="padding:22px 26px">
+  ${PS.map((x, i) => `
+  <div style="display:flex;align-items:center;gap:16px;padding:12px 0;${i ? "border-top:1px solid var(--hair)" : ""}">
+    <span style="flex:none;width:190px;min-width:0">
+      <a href="#" style="font-size:13.5px;font-weight:500">${x.p}</a>
+      <span class="t-meta" style="display:block;margin-top:2px">${x.cases} financial cases</span>
+    </span>
+    <span style="flex:1;min-width:0;position:relative;height:18px;display:block">
+      <span style="position:absolute;left:0;right:0;top:8px;height:1px;background:var(--hair);display:block"></span>
+      <span style="position:absolute;top:5.5px;height:7px;border-radius:4px;display:block;
+            left:${pct(x.lo).toFixed(1)}%;width:${(pct(x.hi) - pct(x.lo)).toFixed(1)}%;
+            background:linear-gradient(90deg,rgba(175,71,178,.32),rgba(37,99,235,.48))"></span>
+      <span style="position:absolute;top:3px;left:${pct(x.cur).toFixed(1)}%;margin-left:-6px;width:12px;height:12px;
+            border-radius:50%;display:block;background:#fff;box-shadow:0 0 0 2px ${SU}"></span>
+    </span>
+    <span style="flex:none;width:118px;text-align:right;font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${x.lo.toFixed(1)}–${x.hi.toFixed(1)}%</span>
+    <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:var(--s500);font-variant-numeric:tabular-nums">${(x.hi - x.lo).toFixed(1)} pp</span>
+  </div>`).join("")}
+  <div style="display:flex;align-items:center;gap:16px;margin-top:14px;padding-top:12px;border-top:1px solid var(--hair)">
+    <span style="display:inline-flex;align-items:center;gap:7px"><i style="width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px ${SU};display:block"></i><span class="t-meta">Current analysis case</span></span>
+    <span style="flex:1"></span>
+    <a href="#" style="font-size:12.5px;font-weight:500">Open the widest in its case matrix${ic("right", 12, 2)}</a>
+  </div>
+</section>`;
+})()}
 
 <section class="panel" style="padding:24px 26px;margin-top:24px">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
@@ -2993,9 +3177,79 @@ const nextStep = ({ name, product, dot, body, action, tone }) => `
   <button class="btn btn-secondary" style="margin-top:16px;align-self:flex-start">${action}${ic("upRight", 14, 1.8)}</button>
 </div>`;
 
-const projectNew = doc({
-  w: 1440, h: 1080, side: projectSide("overview", "both", "Andalucía Solar + BESS", "Spain · Hybrid · not configured"),
-  body: `
+/* §15-§16 · Onboarding used to end at two links out and leave the user in
+   whichever product they clicked. It is a three-phase loop instead: each
+   engine configures its own half, and the third phase is the Suite claiming
+   the analysis back the moment both halves exist. The third step is not a
+   fourth link — it is the reason the first two were worth doing. */
+const stepCard = ({ n, name, product, dot, body, action, state }) => {
+  const done = state === "done", live = state === "live", wait = state === "wait";
+  return `
+<div class="${live ? "glass-sm" : "wash"}" style="flex:1;min-width:0;padding:20px 22px;display:flex;flex-direction:column;
+     ${live ? "box-shadow:0 0 0 1px rgba(14,157,168,.28), var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.92)" : ""}${wait ? "opacity:.62" : ""}">
+  <span style="display:flex;align-items:center;gap:10px">
+    <span style="width:22px;height:22px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;
+          font-size:11px;font-weight:700;${done ? `background:${SU};color:#fff` : `background:rgba(30,58,138,.07);color:var(--s500)`}">
+      ${done ? ic("check", 12, 3) : n}</span>
+    <span style="flex:1;min-width:0;font-size:14px;font-weight:600;color:var(--s900)">${name}</span>
+    ${dot ? `<span class="src"><i style="background:${dot}"></i>${product}</span>` : src("suite")}
+  </span>
+  <p class="t-meta" style="margin-top:11px;line-height:1.6;flex:1">${body}</p>
+  <span style="display:block;margin-top:14px">
+    ${done
+      ? `<span class="cov" style="border-color:rgba(14,157,168,.3);background:linear-gradient(168deg,rgba(14,157,168,.1),rgba(14,157,168,.05));color:var(--su700)"><i style="background:${SU}"></i>${product} ready</span>`
+      : wait
+        ? `<span class="t-meta">Waiting for the other side</span>`
+        : `<button class="btn ${live ? "btn-primary" : "btn-secondary"}" style="height:34px;font-size:12.5px">${action}${dot ? ic("upRight", 13, 1.8) : ic("right", 13, 2)}</button>`}
+  </span>
+</div>`;
+};
+
+const setupLoop = (stage) => {
+  const sb = stage === "partial" || stage === "ready", rn = stage === "ready";
+  return `
+<section class="panel lift" style="padding:26px 28px">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px">
+    <div>
+      <h2 class="t-sec">${stage === "ready" ? "Your first analysis is ready" : "Start configuring your project"}</h2>
+      <p style="font-size:13px;color:var(--s500);line-height:1.6;margin-top:8px;max-width:88ch">
+        ${stage === "ready"
+          ? "Both halves now exist, so the pairing the Suite is for can finally be made. Nothing was modelled here — this is the first technical × financial combination of what the two products already built."
+          : stage === "partial"
+            ? "Engineering has run its first simulation. The Suite has nothing to pair it with until a financial case exists, so the analysis stays out of reach until then."
+            : "The project exists and both products can already see it. Each domain configures its own half; the shared details are done."}
+      </p>
+    </div>
+    ${src("suite")}
+  </div>
+  <div style="display:flex;gap:16px;margin-top:22px;align-items:stretch">
+    ${stepCard({ n: 1, name: "Configure engineering", product: "StoreBrid", dot: SB,
+      body: "Plant layout, BESS sizing, losses and cycling limits — then the first dispatch simulation.",
+      action: "Open StoreBrid", state: sb ? "done" : "live" })}
+    ${stepCard({ n: 2, name: "Configure the financial model", product: "ReveNew", dot: RN,
+      body: "Price curves, market assumptions and contracts — then the first financial case.",
+      action: "Open ReveNew", state: rn ? "done" : sb ? "live" : "" })}
+    ${stepCard({ n: 3, name: "Analyse the project", product: "Suite", dot: null,
+      body: rn
+        ? "Pair the simulation with the financial case, explore every combination, and compare what each trade-off costs and returns."
+        : "Pairing needs one of each. This step opens by itself once both sides exist — the Suite never models either half.",
+      action: "Open analysis", state: rn ? "live" : "wait" })}
+  </div>
+  ${stage !== "empty" ? `
+  <div style="display:flex;align-items:center;gap:12px;margin-top:18px;padding:13px 18px;border-radius:var(--r-xs);
+       background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 76%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.14)">
+    <span style="color:var(--su700);display:flex;flex:none">${ic(rn ? "gauge" : "clock", 15)}</span>
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
+      ${rn
+        ? "<b style=\"font-weight:600\">Base case 2027</b> × <b style=\"font-weight:600\">Base market</b> — your first technical × financial combination is ready to open."
+        : "Engineering ready · financial model missing. Come back here, or the Suite will claim the analysis the moment ReveNew has a case."}
+    </span>
+    ${rn ? `<button class="btn btn-primary" style="flex:none;height:32px;font-size:12.5px">${ic("gauge", 14)}Open analysis${ic("right", 13, 2)}</button>` : ""}
+  </div>` : ""}
+</section>`;
+};
+
+const projectNewBody = (stage = "empty") => `
 ${head({
   crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Projects</a><span class="sep">${ic("right", 12, 2)}</span><b>Andalucía Solar + BESS</b>`,
   eyebrow: "Suite project · created 2 minutes ago",
@@ -3006,25 +3260,7 @@ ${head({
   actions: `<button class="btn btn-ghost btn-icon">${ic("dots", 18)}</button>`,
 })}
 
-<section class="panel lift" style="padding:26px 28px">
-  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px">
-    <div>
-      <h2 class="t-sec">Start configuring your project</h2>
-      <p style="font-size:13px;color:var(--s500);line-height:1.6;margin-top:8px;max-width:82ch">
-        The project exists and both products can already see it. What each domain needs next is its own — the shared details are done.
-      </p>
-    </div>
-    ${src("suite")}
-  </div>
-  <div style="display:flex;gap:20px;margin-top:22px">
-    ${nextStep({ name: "Engineering", product: "StoreBrid", dot: SB, tone: "sliders",
-      body: "Plant layout, BESS sizing, losses and cycling limits — then the first dispatch simulation.",
-      action: "Configure plant" })}
-    ${nextStep({ name: "Financial", product: "ReveNew", dot: RN, tone: "trend",
-      body: "Price curves, market assumptions and contracts — then the first revenue case and the financial model.",
-      action: "Configure market assumptions" })}
-  </div>
-</section>
+${setupLoop(stage)}
 
 <div style="display:flex;gap:26px;margin-top:30px;align-items:flex-start">
   <section style="flex:1.25;min-width:0">
@@ -3054,10 +3290,13 @@ ${head({
       </p>
     </div>
   </section>
-</div>`,
-});
-writeFileSync("ProjectNew.dc.html", projectNew);
-console.log("CreateProject.dc.html", createProject.length, "· ProjectNew.dc.html", projectNew.length);
+</div>`;
+
+const PNB = { w: 1440, h: 1080,
+  side: projectSide("overview", "both", "Andalucía Solar + BESS", "Spain · Hybrid · not configured") };
+writeFileSync("ProjectNew.dc.html", doc({ ...PNB, body: projectNewBody("empty") }));
+writeFileSync("ProjectAnalysisReady.dc.html", doc({ ...PNB, h: 1140, body: projectNewBody("ready") }));
+console.log("CreateProject.dc.html · ProjectNew.dc.html · ProjectAnalysisReady.dc.html");
 
 
 /* ── §29 · the SAME Suite project, seen through a licence ────────
@@ -3694,7 +3933,7 @@ const activityHead = ({ on = "all", srcOn = "all" } = {}) => head({
   actions: `<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end">
               ${eventFilter(on)}
               <div class="tabs">
-                <a href="#" class="${srcOn === "all" ? "on" : ""}">All <span class="count">${on === "dec" ? 11 : 38}</span></a>
+                <a href="#" class="${srcOn === "all" ? "on" : ""}">All <span class="count">${on === "dec" ? 12 : 38}</span></a>
                 <a href="#"><i style="width:5px;height:5px;border-radius:50%;background:${SB};display:block"></i>StoreBrid <span class="count">${on === "dec" ? 0 : 14}</span></a>
                 <a href="#"><i style="width:5px;height:5px;border-radius:50%;background:${RN};display:block"></i>ReveNew <span class="count">${on === "dec" ? 1 : 16}</span></a>
                 <a href="#"><i style="width:5px;height:5px;border-radius:50%;background:${SU};display:block"></i>Suite <span class="count">${on === "dec" ? 10 : 8}</span></a>
@@ -3739,7 +3978,7 @@ ${activityHead({ on: "dec" })}
      background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 76%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.13)">
   <span style="color:var(--su700);display:flex;flex:none">${ic("gauge", 15)}</span>
   <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
-    11 of the 38 events changed what is being analysed or how it is compared. Where the current analysis changed, the figures each pairing produced at that moment are kept.
+    12 of the 38 events changed what is being analysed or how it is compared. Where the current analysis changed, the figures each pairing produced at that moment are kept.
   </span>
 </div>
 ${tlDay("Today",
@@ -3753,7 +3992,9 @@ ${tlDay("Today",
     who: "Victor Andújar", when: "6h ago",
     from: `Base case · ${eurMs(acMetrics(AC("base")).npv)} NPV · ${acMetrics(AC("base")).irr.toFixed(1)}% IRR`,
     to: `High storage · ${eurMs(acMetrics(AC("high")).npv)} NPV · ${acMetrics(AC("high")).irr.toFixed(1)}% IRR` }) +
-  tlDecision({ what: "Comparison saved — “4 h storage investment decision” · Base case, High storage, Stress test",
+  tlDecision({ what: "Decision brief saved — <b style=\"font-weight:600;color:var(--s900)\">4 h storage investment decision</b> · objective Maximise NPV · 3 cases compared · <a href=\"#\">Open brief</a>",
+    who: "Victor Andújar", when: "7h ago" }) +
+  tlDecision({ what: "Decision criteria changed — CAPEX ≤ €52M → <b style=\"font-weight:600;color:var(--s900)\">CAPEX ≤ €48M</b>, IRR ≥ 12% added",
     who: "Victor Andújar", when: "7h ago" }))}
 ${tlDay("Yesterday",
   tlDecision({ what: "Comparison baseline changed — Base case → High storage, then back to Base case",
@@ -4388,38 +4629,6 @@ const METKEYS = ["irr", "rev", "perMwh", "perCyc", "gwh", "capex"];
    assumptions stay where they are edited.
    ═══════════════════════════════════════════════════════════════ */
 const objectiveOf = (mk) => (MET[mk].lowerBetter ? "Minimise " : "Maximise ") + MET[mk].label;
-
-/* The catalogue the criteria editor offers. Every one reads a computed
-   result; none of them is an input to a model. */
-const CRIT_SPEC = {
-  capex: { label: "CAPEX", op: "≤", get: (c) => c.t.capex, fmt: (v) => "€" + v.toFixed(1) + "M",
-           unit: "€M", pass: (v, t) => v <= t, over: (v, t) => v - t, from: "storebrid" },
-  irr:   { label: "IRR", op: "≥", get: (c) => c.irr, fmt: (v) => v.toFixed(1) + "%",
-           unit: "%", pass: (v, t) => v >= t, over: (v, t) => t - v, from: "combined" },
-  pb:    { label: "Payback", op: "≤", get: (c) => paybackOfCase(c), fmt: (v) => v.toFixed(1) + " yrs",
-           unit: "yrs", pass: (v, t) => v <= t, over: (v, t) => v - t, from: "revenew" },
-  npv:   { label: "NPV", op: "≥", get: (c) => npvOfCase(c), fmt: (v) => eurMs(v),
-           unit: "€M", pass: (v, t) => v >= t, over: (v, t) => t - v, from: "revenew" },
-};
-
-/* The worked example the screens carry. Criteria are optional — CRITERIA
-   empty is a valid, and the default, state of the product. */
-const CRITERIA = [{ key: "capex", target: 48 }, { key: "irr", target: 12 }];
-
-/* Why a combination fails, in the words of the criterion it failed.
-   Returns [] when it satisfies everything. */
-const failsOf = (c, crit = CRITERIA) => crit.flatMap(({ key, target }) => {
-  const k = CRIT_SPEC[key], v = k.get(c);
-  return k.pass(v, target) ? [] : [{ k, key, target, v, by: k.over(v, target) }];
-});
-const eligible = (c, crit = CRITERIA) => failsOf(c, crit).length === 0;
-
-/* Every pairing in the project, and the ones a deterministic claim may
-   be made about: eligible, and not sitting on data that has moved on.
-   §14 — a stale result never wins anything until it is recalculated. */
-const ALLCOMBOS = () => TECH.flatMap((t) => SCEN.map((sc) => caseOf(t.id, sc.id)));
-const claimable = (crit = CRITERIA) =>
-  ALLCOMBOS().filter((c) => !isStale(c.t.id, c.sc.id) && eligible(c, crit));
 
 const bestBy = (mk, pool) => {
   if (!pool.length) return null;
@@ -7873,29 +8082,29 @@ console.log("deck slides -> export/slides");
 const COLX = [0, 1560, 3120];
 const PAGES = [
   { id: "page-1", name: "Project workspace", rows: [
-    [["ProjectOverview.dc.html", 1440, 2190, "1 · Overview"],
+    [["ProjectOverview.dc.html", 1440, 2250, "1 · Overview"],
      ["CaseMatrix.dc.html", 1440, 3190, "2 · Case matrix"],
      ["CaseMatrixRobustness.dc.html", 1440, 1180, "2b · Case matrix — robustness"],
      ["CaseMatrixUnevaluated.dc.html", 1440, 3190, "2c · Case matrix — evaluation states"],
      ["CompareAlternatives.dc.html", 1440, 2820, "3 · Compare"],
      ["CompareAllMetrics.dc.html", 1440, 3660, "3b · Compare — all metrics"],
      ["DecisionBrief.dc.html", 1440, 2820, "3c · Save decision brief"]],
-    [["OverviewChangeSim.dc.html", 1440, 2190, "4 · Change technical simulation"],
-     ["OverviewChangeScenario.dc.html", 1440, 2190, "5 · Change financial case"],
-     ["OverviewTechnical.dc.html", 1440, 2190, "6 · Technical details"]],
+    [["OverviewChangeSim.dc.html", 1440, 2250, "4 · Change technical simulation"],
+     ["OverviewChangeScenario.dc.html", 1440, 2250, "5 · Change financial case"],
+     ["OverviewTechnical.dc.html", 1440, 2250, "6 · Technical details"]],
     [["FinancialDetails.dc.html", 1440, 1160, "7 · Financial details"],
      ["CreateAnalysisCase.dc.html", 1440, 2820, "8 · Create analysis case"],
      ["CompareExplained.dc.html", 1440, 4910, "9 · Explain difference"]],
-    [["OverviewStale.dc.html", 1440, 2280, "10 · Financial results outdated"],
-     ["EditProjectDetails.dc.html", 1440, 2190, "11 · Project details"]],
+    [["OverviewStale.dc.html", 1440, 2340, "10 · Financial results outdated"],
+     ["EditProjectDetails.dc.html", 1440, 2250, "11 · Project details"]],
   ]},
   { id: "page-2", name: "Suite", rows: [
     [["Login.dc.html", 1440, 900, "Sign in"],
-     ["NeedsAttention.dc.html", 1440, 1710, "Needs attention"]],
-    [["Main.dc.html", 1440, 1710, "Home"],
+     ["NeedsAttention.dc.html", 1440, 2040, "Needs attention"]],
+    [["Main.dc.html", 1440, 2040, "Home"],
      ["Projects.dc.html", 1440, 800, "Projects"],
      ["CreateProject.dc.html", 1440, 1380, "Create project"]],
-    [["Analytics.dc.html", 1440, 1990, "Analytics"],
+    [["Analytics.dc.html", 1440, 2580, "Analytics"],
      ["Files.dc.html", 1440, 870, "Files"],
      ["Activity.dc.html", 1440, 1280, "Activity"]],
     [["Settings.dc.html", 1440, 1600, "Settings"],
@@ -7904,7 +8113,8 @@ const PAGES = [
   { id: "page-3", name: "States, licences & patterns", rows: [
     [["ProjectStoreBrid.dc.html", 1440, 1170, "Project — engineering licence"],
      ["ProjectReveNew.dc.html", 1440, 1140, "Project — financial licence"],
-     ["ProjectNew.dc.html", 1440, 1020, "New project"]],
+     ["ProjectNew.dc.html", 1440, 1020, "New project"],
+     ["ProjectAnalysisReady.dc.html", 1440, 1140, "New project — first analysis ready"]],
     [["States.dc.html", 1440, 850, "Empty and unavailable"],
      ["Administration.dc.html", 1440, 1200, "Administration & licences"],
      ["SourceAttribution.dc.html", 860, 1130, "Patterns"]],
@@ -7913,6 +8123,7 @@ const PAGES = [
 ];
 
 const NOTES = {
+  "ProjectAnalysisReady.dc.html": ["n-ready", "NEW PROJECT — FIRST ANALYSIS READY\n\nOnboarding used to end at two links out, leaving the user inside whichever product they clicked. It is a three-phase loop now: StoreBrid configures its half, ReveNew configures its half, and the third phase is the Suite claiming the analysis back the moment both exist.\n\nThe third step is not a fourth link — it is the reason the first two were worth doing. Until both halves exist it stays visibly out of reach and says why: pairing needs one of each, and the Suite never models either half.\n\nThis is the retention loop in its smallest form. A project configured across two separate products gives nobody a reason to come back; a project whose first combination is waiting does."],
   "DecisionBrief.dc.html": ["n-brief", "3c · SAVE DECISION BRIEF\n\nSaving a comparison kept a set of chips. What it never kept was the reasoning: what question was being asked, what was being optimised, what would not be accepted, and what the person concluded.\n\nEverything in the captured block already exists on the screen — objective, constraints, baseline, cases, deltas, sensitivity, trade-off, data status. So the brief is a capture step, not a new module, and it asks for exactly two things the product cannot derive: the question and the note. The note is explicitly the user's to write; nothing generates it.\n\nIt stays out of the way of the other two concepts. A brief is saved reasoning; the baseline is the reference deltas are measured against; the current analysis is what Overview shows. And it stops short of governance — no approvals, no sign-off, no locking. The figures re-read from both products when it is reopened, so a brief follows its sources instead of freezing a copy of them."],
   "CaseMatrixUnevaluated.dc.html": ["n-uneval", "2c · CASE MATRIX — EVALUATION STATES\n\nEvery other screen assumes a combination can be read live, because that is what the current architecture implies. If evaluating one turns out to cost something, the matrix must not draw a number that does not exist yet.\n\nSo the cell has a second life cycle beside its freshness one: NOT EVALUATED with a Calculate action, CALCULATING while it runs, then AVAILABLE. Saved analysis cases are always available — they were evaluated when they were named. The layout does not change; only what the cell is allowed to claim.\n\nDesigned so the product can ship against either backend model without a redesign, and so nobody has to decide the architecture to unblock the design."],
   "CaseMatrixRobustness.dc.html": ["n-robust", "2b · CASE MATRIX — ROBUSTNESS\n\nThe same screen, second tab. The matrix already holds every asset against every financial case, so the spread of a row is free information: how much of the outcome the market decides rather than the asset.\n\nThe language is constrained by what the data actually is. Three financial cases are three modelled views; they carry no probabilities. So this reads as a RANGE, never a distribution — no risk, no confidence, no expected value, and nothing weighted, because weighting needs probabilities nobody supplied.\n\nThe three summaries — highest upside, highest floor, smallest variation — are readings, not a ranking. Which of them matters depends on the decision, and the Suite has no way to know that. Note the honest tie: two configurations move by the same 3.8 pp, and the card says so rather than picking one."],
@@ -7974,7 +8185,7 @@ const NOTES = {
   "Administration.dc.html": ["n-admin", "ADMINISTRATION & LICENCES\n\nEntitlement visibility. The organisation holds both products; individual members do not."],
   "States.dc.html": ["n-states", "EMPTY AND UNAVAILABLE\n\nThe project is always whole. What varies is whether a domain's work has started, or whether the viewer holds that licence."],
   "EmbeddedStates.dc.html": ["n-states-embed", "EMBEDDED STATES\n\nLoading, didn't-load, saved-back-in-context. Never a dead end.\n\nCHANGED. The third state used to claim a forecast change invalidated the DISPATCH results. It does not — StoreBrid is upstream. What it invalidates is the three cases built on that scenario, and that is what it now says."],
-  "SourceAttribution.dc.html": ["n-attrib", "PATTERNS\n\nThe source chip and the cross-product context line. The boundary rule at the bottom still governs every screen."],
+  "SourceAttribution.dc.html": ["n-attrib", "PATTERNS\n\nThe source chip and the cross-product context line. The boundary rule at the bottom still governs every screen.\n\nTHE PROVENANCE RULE, stated once so it can be checked anywhere:\n\nOWNERSHIP is which product calculates the number. LINEAGE is what it needed to be calculated. SUITE-DERIVED is what neither product could produce alone.\n\nSo: energy, cycles, utilisation, degradation and CAPEX are StoreBrid. Revenue, capture price and NPV are ReveNew. Revenue per MWh, revenue per cycle and NPV per MW are Combined, because each divides one product's output by the other's.\n\nIRR and payback are the case worth stating explicitly: they come out of the project financial model, which needs ReveNew cash flows AND StoreBrid CAPEX, so they are Combined everywhere — including inside the financial block on Overview, where the row now carries its own chip rather than inheriting the block's. A metric cannot be ReveNew on one screen and Combined on another.\n\nCAPEX is the mirror case: owned by StoreBrid, consumed by ReveNew. It keeps the StoreBrid chip and states the lineage in words rather than being relabelled Combined — ownership and lineage are different questions."],
 };
 
 const artboards = [], annotations = [], pages = [];

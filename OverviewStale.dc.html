@@ -262,8 +262,8 @@ a.glass-sm:hover{
 .grid{display:grid;gap:20px}
 </style>
 </helmet>
-<div class="atmos" style="width:1440px;min-height:2280px;position:relative">
-  <div class="shell" style="min-height:2280px">
+<div class="atmos" style="width:1440px;min-height:2340px;position:relative">
+  <div class="shell" style="min-height:2340px">
     <aside class="side">
 
 <div class="brand">
@@ -414,6 +414,16 @@ a.glass-sm:hover{
   <a href="#" style="flex:none;font-size:12.5px;font-weight:500;white-space:nowrap">Explain<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></a>
 </div>
 
+<div style="display:flex;align-items:center;gap:12px;margin-top:10px;padding:12px 20px;border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.3));box-shadow:inset 0 0 0 1px var(--hair)">
+  <span style="color:var(--s400);display:flex;flex:none"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 3 6.8 3.6L10 10.2 3.2 6.6z"/><path d="m3.2 10.6 6.8 3.6 6.8-3.6"/></svg></span>
+  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.55">
+    
+    <b style="font-weight:600;color:var(--s900)">3 of the 9 combinations</b> currently exceed it on IRR.
+  </span>
+  <a href="#" style="flex:none;font-size:12.5px;font-weight:500;white-space:nowrap">Explore alternatives<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></a>
+</div>
+
 <div style="display:flex;gap:22px;margin-top:26px;align-items:stretch">
   
 <section class="panel" style="flex:1;min-width:0;padding:24px 26px;display:flex;flex-direction:column">
@@ -480,14 +490,14 @@ a.glass-sm:hover{
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:12px 0">
         <span style="min-width:0">
           <span style="display:block;font-size:12.5px;color:var(--s500)">IRR</span>
-          
+          <span class="t-meta" style="display:block;margin-top:3px"><span style="display:inline-flex;align-items:center;gap:6px"><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>ReveNew cash flows against StoreBrid CAPEX</span></span>
         </span>
         <b style="font-size:16px;font-weight:600;color:var(--s900);white-space:nowrap;font-variant-numeric:tabular-nums">12.8%</b>
       </div>
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:12px 0">
         <span style="min-width:0">
           <span style="display:block;font-size:12.5px;color:var(--s500)">CAPEX</span>
-          <span class="t-meta" style="display:block;margin-top:3px">costed in StoreBrid, consumed by the financial model</span>
+          <span class="t-meta" style="display:block;margin-top:3px"><span style="display:inline-flex;align-items:center;gap:6px"><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>costed in StoreBrid, consumed by the financial model</span></span>
         </span>
         <b style="font-size:16px;font-weight:600;color:var(--s900);white-space:nowrap;font-variant-numeric:tabular-nums">€42.1M</b>
       </div>
@@ -501,7 +511,7 @@ a.glass-sm:hover{
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:12px 0">
         <span style="min-width:0">
           <span style="display:block;font-size:12.5px;color:var(--s500)">Payback</span>
-          <span class="t-meta" style="display:block;margin-top:3px">undiscounted, from COD</span>
+          <span class="t-meta" style="display:block;margin-top:3px"><span style="display:inline-flex;align-items:center;gap:6px"><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>undiscounted, from COD</span></span>
         </span>
         <b style="font-size:16px;font-weight:600;color:var(--s900);white-space:nowrap;font-variant-numeric:tabular-nums">6.3 years</b>
       </div>
@@ -783,7 +793,7 @@ a.glass-sm:hover{
   
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":2280}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":2340}}'>
 class Component extends DCLogic {}
 </script>
 </body>

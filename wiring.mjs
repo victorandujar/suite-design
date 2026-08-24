@@ -20,6 +20,14 @@ export const NAV = {
   "Files": "Files",
   "Activity": "Activity",
   "All events": "ActivityDecisions",
+  "Continue comparison": "CompareAlternatives",
+  "Continue analysis": "CompareAlternatives",
+  "Open brief": "DecisionBrief",
+  "All saved briefs": "DecisionBrief",
+  "Explore alternatives": "CaseMatrix",
+  "Open analysis": "ProjectOverview",
+  "Open comparison": "CompareAlternatives",
+  "Review sensitivity": "CaseMatrixRobustness",
   "Analysis & decisions": "Activity",
   "Settings": "Settings",
 
@@ -111,6 +119,7 @@ export const OVERRIDE = {
   Main:                { "View": "NeedsAttention" },
   // §15: al calcular una combinación pendiente, la celda pasa a estar disponible.
   CaseMatrixUnevaluated: { "Calculate": "CaseMatrix" },
+  Analytics:             { "Open the widest in its case matrix": "CaseMatrixRobustness" },
   // Desde el panel se entra al caso afectado, que es la pantalla stale.
   NeedsAttention:      { "Review case": "OverviewStale", "Recalculate in ReveNew": "OverviewStale",
                          "Recalculate in StoreBrid": "OverviewStale" },
@@ -125,7 +134,9 @@ export const OVERRIDE = {
   CreateAnalysisCase:  { "Cancel": "CaseMatrix", "Save": "CaseMatrix" },
   EditProjectDetails:  { "Cancel": "ProjectOverview", "Save": "ProjectOverview" },
   States:              { "Create project": "CreateProject" },
-  ProjectNew:          { "Configure plant": "CreateProject" },
+  ProjectNew:          { "Configure plant": "CreateProject", "Open StoreBrid": "ProjectStoreBrid",
+                         "Open ReveNew": "ProjectReveNew" },
+  ProjectAnalysisReady:{ "Open analysis": "ProjectOverview" },
 
   // En la matriz, la celda seleccionada se adopta como análisis actual.
   CaseMatrix:          { "Recalculate in ReveNew": "OverviewStale",
