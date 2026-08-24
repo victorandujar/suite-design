@@ -618,6 +618,10 @@ const niceTicks = (lo, hi, n) => {
 };
 
 const GRID = "rgba(30,58,138,.07)", AXIS = "#5F6C82", INK = "#0F172A";
+/* §27, §40 · Point labels sit wherever their point is, which means they
+   land on gridlines and reference rays. One knockout, used by every
+   scatter, so the label always wins without hiding what is under it. */
+const KO = 'paint-order="stroke" stroke="#fff" stroke-width="3.4" stroke-linejoin="round"';
 /* Bubble and scatter fields read as one neutral mass; the Combined accent is
    spent only on the points a panel is actually talking about (§1). Colour
    stops being decoration and becomes the pointer.                        */
@@ -789,8 +793,8 @@ function fleetScatter(w = 640) {
              + FLEET.filter((f) => FLAGGED.has(f.n)).map(mark).join("");
   const labs = FLEET.filter((f) => f.lab && FLAGGED.has(f.n)).map(({ n, util: u, irr, mw, lab }) =>
     lab === "top"
-      ? `<text x="${(x(u) - 6).toFixed(1)}" y="${(y(irr) - bubbleR(mw) - 9).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="600" fill="${INK}">${n}</text>`
-      : `<text x="${(x(u) + bubbleR(mw) + 7).toFixed(1)}" y="${(y(irr) + 3.6).toFixed(1)}" text-anchor="start" font-size="10.5" font-weight="600" fill="${INK}">${n}</text>`).join("");
+      ? `<text x="${(x(u) - 6).toFixed(1)}" y="${(y(irr) - bubbleR(mw) - 9).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="600" fill="${INK}" ${KO}>${n}</text>`
+      : `<text x="${(x(u) + bubbleR(mw) + 7).toFixed(1)}" y="${(y(irr) + 3.6).toFixed(1)}" text-anchor="start" font-size="10.5" font-weight="600" fill="${INK}" ${KO}>${n}</text>`).join("");
 
   return `
 <svg viewBox="0 0 ${w} ${H}" width="100%" style="display:block" role="img" aria-label="Battery utilisation against IRR, one bubble per Suite project, sized by installed power">
@@ -831,7 +835,8 @@ function valueOverTime(w = 1052) {
   ${MKSTYLE}${grids}
   <path d="${line}" fill="none" stroke="#6D5AC6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
   ${dots}
-  <text x="${L - 9}" y="${T + 4}" text-anchor="end" font-size="9" fill="${AXIS}">€/MWh</text>
+  ${/* the unit caption sat on top of the highest tick label, and the legend
+        beside the chart already says "Revenue / MWh discharged" */""}
   <text x="${cx(7).toFixed(1)}" y="${(y(152) - 10).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="600" fill="${INK}">€152</text>
   <text x="${cx(4).toFixed(1)}" y="${(y(88) + 16).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="600" fill="${INK}">€88</text>
   <line x1="${L}" y1="${S_T - 12}" x2="${w - R}" y2="${S_T - 12}" stroke="${GRID}" stroke-width="1"/>
@@ -875,6 +880,9 @@ const caseOf = (tid, sid) => {
     perCycle: (rev * 1e6) / t.cycles,
     perMw: (rev * 1e6) / t.mw };
 };
+/* §29 · toFixed() emits an ASCII hyphen; everything signed in this product
+   uses the typographic minus, so the two must not appear side by side. */
+const signed = (v, d = 1) => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(d);
 const eurM = (v) => "€" + v.toFixed(2) + "M";
 const eurMs = (v) => (v < 0 ? "−€" : "€") + Math.abs(v).toFixed(1) + "M";
 
@@ -1646,7 +1654,7 @@ function investValue(w = 1240) {
     <line x1="${X(0)}" y1="${Y(0)}" x2="${X(rayEnd).toFixed(1)}" y2="${Y(rayEnd * ratio).toFixed(1)}"
       stroke="${SU}" stroke-width="1.5" stroke-dasharray="5 4" opacity=".7"/>
     <text x="${X(rayEnd * 0.42).toFixed(1)}" y="${(Y(rayEnd * 0.42 * ratio) + 17).toFixed(1)}"
-      font-size="10" font-weight="600" fill="var(--su700)">€${ratio.toFixed(2)} of NPV per € — the current rate</text>`;
+      font-size="10" font-weight="600" fill="var(--su700)" ${KO}>€${ratio.toFixed(2)} of NPV per € — the current rate</text>`;
 
   const marks = rows.map((r) => {
     const x = X(r.capex), y = Y(r.npv), rad = rOf(r.a.tid ? acCase(r.a).t.mwh : 200);
@@ -1660,8 +1668,8 @@ function investValue(w = 1240) {
     <circle class="mk" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rad.toFixed(1)}"
       fill="${fill}" fill-opacity="${r.stale ? ".24" : isCur ? ".3" : ".62"}" stroke="#fff" stroke-width="2.2">
       <title>${r.a.name} — €${r.capex.toFixed(1)}M CAPEX · ${eurMs(r.npv)} NPV · ${r.irr.toFixed(1)}% IRR · ${eurM(r.rev)} revenue${r.stale ? " · outdated" : ""}</title></circle>
-    <text x="${(x + rad + 10).toFixed(1)}" y="${(y - 2).toFixed(1)}" font-size="11.5" font-weight="600" fill="${INK}">${r.a.name}</text>
-    <text x="${(x + rad + 10).toFixed(1)}" y="${(y + 13).toFixed(1)}" font-size="10" fill="${AXIS}">€${dens.toFixed(2)} per € invested${
+    <text x="${(x + rad + 10).toFixed(1)}" y="${(y - 2).toFixed(1)}" font-size="11.5" font-weight="600" fill="${INK}" ${KO}>${r.a.name}</text>
+    <text x="${(x + rad + 10).toFixed(1)}" y="${(y + 13).toFixed(1)}" font-size="10" fill="${AXIS}" ${KO}>€${dens.toFixed(2)} per € invested${
       r.stale ? " · outdated" : above ? " · above today's rate" : below ? " · below today's rate" : ""}</text>`;
   }).join("");
 
@@ -1887,9 +1895,14 @@ ${(() => {
      reading, not more numbers. */
   const perEur = m.npv / m.capex;
   return `
-<div style="display:flex;align-items:center;gap:20px;margin-top:14px;padding:15px 20px;border-radius:var(--r-xs);
+${/* §31 · Two tinted strips used to stack here, the same weight and the
+      same treatment, saying two different things. One surface, two rows:
+      what this pairing produces, and where it sits among the alternatives —
+      which are exactly the two questions this page answers. */""}
+<div style="margin-top:14px;padding:15px 20px;border-radius:var(--r-xs);
      background:linear-gradient(168deg,rgba(14,157,168,.055),rgba(255,255,255,0) 78%);
      box-shadow:inset 0 0 0 1px rgba(14,157,168,.13)">
+<div style="display:flex;align-items:center;gap:20px">
   <span class="band" style="flex:none;color:var(--su700)">Reading</span>
   <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);line-height:1.6">
     This configuration turns <b style="font-weight:600;color:var(--s900)">€${m.capex.toFixed(1)}M</b> of CAPEX costed in StoreBrid into
@@ -1909,8 +1922,7 @@ ${(() => {
   const f = CRITERIA.length ? failsOf(c) : [];
   if (!beats && !f.length) return "";
   return `
-<div style="display:flex;align-items:center;gap:12px;margin-top:10px;padding:12px 20px;border-radius:var(--r-xs);
-     background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.3));box-shadow:inset 0 0 0 1px var(--hair)">
+<div style="display:flex;align-items:center;gap:12px;margin-top:13px;padding-top:12px;border-top:1px solid rgba(14,157,168,.14)">
   <span style="color:var(--s400);display:flex;flex:none">${ic("layers", 15)}</span>
   <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.55">
     ${f.length
@@ -1920,38 +1932,15 @@ ${(() => {
   </span>
   <a href="#" style="flex:none;font-size:12.5px;font-weight:500;white-space:nowrap">Explore alternatives${ic("right", 12, 2)}</a>
 </div>`;
-})()}`;
+})()}
+</div>`;
 })()}
 
-<div style="display:flex;gap:22px;margin-top:26px;align-items:stretch">
-  ${perfBlock({ band: "Technical performance", tone: "var(--b700)", source: src("storebrid"),
-    title: "What the asset does",
-    chartTitle: "Effective capacity over life",
-    chartNote: "2.1%/yr · StoreBrid",
-    chart: degradation(520),
-    rows: [["Installed power", c.t.mw + " MW", `${c.t.mwh} MWh · ${c.t.dur.toFixed(1)} h duration`],
-           ["Energy discharged", c.t.gwh + " GWh/yr", `${c.t.cycles} full cycles`],
-           ["Utilisation", c.t.util + "%"],
-           ["Round-trip efficiency", c.t.rte + "%"],
-           ["Capacity at year 15", "73%", "2.1%/yr degradation"]],
-    action: `${ic("analytics", 15)}View technical details` })}
-  ${perfBlock({ band: "Financial performance", tone: "var(--rv600)", source: src("revenew"),
-    title: "What it earns",
-    chartTitle: "Cumulative cash flow",
-    chartNote: `crosses zero after ${m.pb.toFixed(1)} yrs · ReveNew`,
-    chart: projCash(c, 520),
-    rows: [["NPV", eurMs(m.npv), `at ${(WACC * 100).toFixed(1)}% cost of capital`],
-           /* §23 · IRR and payback need both sides — ReveNew cash flows against
-              StoreBrid CAPEX — so they carry Combined here too, even sitting
-              inside the financial block. A metric cannot be ReveNew on one
-              screen and Combined on another. */
-           ["IRR", m.irr.toFixed(1) + "%", `<span style="display:inline-flex;align-items:center;gap:6px">${src("combined")}ReveNew cash flows against StoreBrid CAPEX</span>`],
-           ["CAPEX", "€" + m.capex.toFixed(1) + "M", `<span style="display:inline-flex;align-items:center;gap:6px">${src("storebrid")}costed in StoreBrid, consumed by the financial model</span>`],
-           ["Revenue", eurM(m.rev) + "/yr", `capture €${c.sc.capture.toFixed(1)}/MWh`],
-           ["Payback", m.pb.toFixed(1) + " years", `<span style="display:inline-flex;align-items:center;gap:6px">${src("combined")}undiscounted, from COD</span>`]],
-    action: `${ic("euro", 15)}View financial breakdown` })}
-</div>
-
+${/* §15 · Investment against value is the Suite's OWN reading — cost from
+      one product against value from the other — so it comes before the two
+      single-product blocks that support it, not after them. The page now
+      runs: what is paired -> what it produces -> where it sits among the
+      alternatives -> what each side contributes. */""}
 <section class="panel lift" style="padding:24px 26px;margin-top:24px">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px">
     <div style="flex:1;min-width:0">
@@ -1985,6 +1974,35 @@ ${(() => {
     <span class="t-meta">Position against the dashed line is the reading</span>${src("combined")}
   </div>
 </section>
+
+<div style="display:flex;gap:22px;margin-top:26px;align-items:stretch">
+  ${perfBlock({ band: "Technical performance", tone: "var(--b700)", source: src("storebrid"),
+    title: "What the asset does",
+    chartTitle: "Effective capacity over life",
+    chartNote: "2.1%/yr · StoreBrid",
+    chart: degradation(520),
+    rows: [["Installed power", c.t.mw + " MW", `${c.t.mwh} MWh · ${c.t.dur.toFixed(1)} h duration`],
+           ["Energy discharged", c.t.gwh + " GWh/yr", `${c.t.cycles} full cycles`],
+           ["Utilisation", c.t.util + "%"],
+           ["Round-trip efficiency", c.t.rte + "%"],
+           ["Capacity at year 15", "73%", "2.1%/yr degradation"]],
+    action: `${ic("analytics", 15)}View technical details` })}
+  ${perfBlock({ band: "Financial performance", tone: "var(--rv600)", source: src("revenew"),
+    title: "What it earns",
+    chartTitle: "Cumulative cash flow",
+    chartNote: `crosses zero after ${m.pb.toFixed(1)} yrs · ReveNew`,
+    chart: projCash(c, 520),
+    rows: [["NPV", eurMs(m.npv), `at ${(WACC * 100).toFixed(1)}% cost of capital`],
+           /* §23 · IRR and payback need both sides — ReveNew cash flows against
+              StoreBrid CAPEX — so they carry Combined here too, even sitting
+              inside the financial block. A metric cannot be ReveNew on one
+              screen and Combined on another. */
+           ["IRR", m.irr.toFixed(1) + "%", `<span style="display:inline-flex;align-items:center;gap:6px">${src("combined")}ReveNew cash flows against StoreBrid CAPEX</span>`],
+           ["CAPEX", "€" + m.capex.toFixed(1) + "M", `<span style="display:inline-flex;align-items:center;gap:6px">${src("storebrid")}costed in StoreBrid, consumed by the financial model</span>`],
+           ["Revenue", eurM(m.rev) + "/yr", `capture €${c.sc.capture.toFixed(1)}/MWh`],
+           ["Payback", m.pb.toFixed(1) + " years", `<span style="display:inline-flex;align-items:center;gap:6px">${src("combined")}undiscounted, from COD</span>`]],
+    action: `${ic("euro", 15)}View financial breakdown` })}
+</div>
 
 ${exploreBlock()}
 
@@ -2609,10 +2627,10 @@ function portScatter({ xOf, yOf, xTicks, yTicks, xFmt, yFmt, xLab, yLab, refs, l
   const labs = FLEET.filter((p) => FLAGGED.has(p.n) && place(p)).map((p) => {
     const at = place(p), px = X(xOf(p)), py = Y(yOf(p)), r = bubbleR(p.mw);
     return at === "top"
-      ? `<text x="${px.toFixed(1)}" y="${(py - r - 9).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="600" fill="${INK}">${p.n}</text>`
+      ? `<text x="${px.toFixed(1)}" y="${(py - r - 9).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="600" fill="${INK}" ${KO}>${p.n}</text>`
       : at === "end"
-        ? `<text x="${(px - r - 7).toFixed(1)}" y="${(py + 3.6).toFixed(1)}" text-anchor="end" font-size="10.5" font-weight="600" fill="${INK}">${p.n}</text>`
-        : `<text x="${(px + r + 7).toFixed(1)}" y="${(py + 3.6).toFixed(1)}" text-anchor="start" font-size="10.5" font-weight="600" fill="${INK}">${p.n}</text>`;
+        ? `<text x="${(px - r - 7).toFixed(1)}" y="${(py + 3.6).toFixed(1)}" text-anchor="end" font-size="10.5" font-weight="600" fill="${INK}" ${KO}>${p.n}</text>`
+        : `<text x="${(px + r + 7).toFixed(1)}" y="${(py + 3.6).toFixed(1)}" text-anchor="start" font-size="10.5" font-weight="600" fill="${INK}" ${KO}>${p.n}</text>`;
   }).join("");
   return `
 <svg viewBox="0 0 ${w} ${H}" width="100%" style="display:block" role="img" aria-label="${xLab} against ${yLab}, one bubble per Suite project">
@@ -2691,7 +2709,7 @@ ${(() => {
   const irr = FSUM((p) => p.irr * p.capex) / cap;
   return `
 <div class="kpirow">
-  ${kpi({ label: "Battery utilisation", value: util.toFixed(0) + "%", source: src("storebrid"), delta: "+3 pt" })}
+  ${kpi({ label: "Battery utilisation", value: util.toFixed(0) + "%", source: src("storebrid"), delta: "+3 pp" })}
   ${kpi({ label: "Energy discharged", value: gwh.toFixed(0) + " GWh", source: src("storebrid"), delta: "+6.2%" })}
   ${kpi({ label: "Annual revenue", value: "€" + rev.toFixed(1) + "M", source: src("revenew"), delta: "+4.1%" })}
   ${kpi({ label: "Portfolio IRR", value: irr.toFixed(1) + "%", source: src("combined"), combined: true,
@@ -2714,7 +2732,7 @@ ${(() => {
       One bubble per Suite project. Neither product can draw this — each owns one axis.<br>
       <span style="display:inline-flex;align-items:center;gap:6px;margin-top:4px">
         <svg width="11" height="11" aria-hidden="true"><circle cx="5.5" cy="5.5" r="5" fill="${CMB}" fill-opacity=".72"/></svg>
-        Coloured only where Performance insights has something to say — the rest is the field.
+        Coloured only where Portfolio signals has something to say — the rest is the field.
       </span>
     </p>
     <div style="margin-top:12px">${fleetScatter(640)}</div>
@@ -2845,16 +2863,18 @@ ${sec({ label: "Financial-case sensitivity", source: src("combined"), top: 26,
 </section>`;
 })()}
 
-<section class="panel" style="padding:24px 26px;margin-top:24px">
+${/* §17 · Every analytical block below the hero is introduced the same
+      way — a section heading naming the question, then one panel holding
+      the chart. This one carried its title inside the panel instead, which
+      made it read as a stray card rather than the fourth reading. */""}
+${sec({ label: "Over the year", source: src("combined"), top: 26,
+        sub: "April and May move the most energy in the year and are worth the least per MWh — spreads collapse when solar floods the middle of the day." })}
+<section class="panel" style="padding:24px 26px">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px">
-    <div>
-      <div class="band">Over time</div>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
-        <h2 class="t-sec">When moving energy actually earns</h2>${src("combined")}
-      </div>
+    <div style="min-width:0">
+      <h2 class="t-sec">When moving energy actually earns</h2>
       <p class="t-meta" style="margin-top:6px;font-size:12px;max-width:78ch">
         Revenue per MWh discharged, month by month, over the volume it was earned on.
-        April and May move the most energy in the year and are worth the least per MWh — spreads collapse when solar floods the middle of the day.
       </p>
     </div>
     <div style="flex:none">${legend([["Revenue / MWh discharged", "#6D5AC6"], ["GWh discharged", "rgba(37,99,235,.34)"]])}</div>
@@ -3084,7 +3104,7 @@ const homeSB = soloHome({
   split: [["Active", 12, "#0E9469"], ["Development", 3, "var(--warn)"], ["Draft", 1, "var(--run)"]],
   capLabel: "Installed capacity", capValue: "1.42 GW", capSub: "2.68 GWh storage", capSrc: src("suite"),
   kpis: kpi({ label: "Energy discharged", value: "386 GWh", source: src("storebrid"), delta: "+5.4%" })
-      + kpi({ label: "Average utilisation", value: "71%", source: src("storebrid"), delta: "+2 pt" })
+      + kpi({ label: "Average utilisation", value: "71%", source: src("storebrid"), delta: "+2 pp" })
       + kpi({ label: "Full cycles / yr", value: "318", source: src("storebrid"), delta: "+9" })
       + kpi({ label: "Simulations this month", value: "47", source: src("storebrid") }),
   chartTitle: "Energy discharged",
@@ -3116,9 +3136,9 @@ const homeRV = soloHome({
   count: 19, countSub: "€71.8M forecast revenue · 2026",
   split: [["Active", 14, "#0E9469"], ["Development", 4, "var(--warn)"], ["Draft", 1, "var(--run)"]],
   capLabel: "Annual revenue · 2026", capValue: "€71.8M", capSub: "58% contracted", capSrc: src("revenew"),
-  kpis: kpi({ label: "Portfolio IRR", value: "10.8%", source: src("revenew"), delta: "−0.3 pt" })
+  kpis: kpi({ label: "Portfolio IRR", value: "10.8%", source: src("revenew"), delta: "−0.3 pp" })
       + kpi({ label: "Capture price", value: "€112.4", source: src("revenew"), delta: "+3.8%" })
-      + kpi({ label: "Contracted share", value: "58%", source: src("revenew"), delta: "−4 pt" })
+      + kpi({ label: "Contracted share", value: "58%", source: src("revenew"), delta: "−4 pp" })
       + kpi({ label: "Financial scenarios", value: "34", source: src("revenew") }),
   chartTitle: "Revenue",
   chartNote: "Monthly forecast revenue across the portfolio. Spring dips as capture prices fall with midday solar.",
@@ -3588,8 +3608,8 @@ const valenciaSB = valenciaView({
   caps: "sb", h: 1300,
   kpis: kpi({ label: "Cycles / year", value: "326", source: src("storebrid"), delta: "+12" })
       + kpi({ label: "Energy discharged", value: "65.2 GWh", source: src("storebrid"), delta: "+4.1%" })
-      + kpi({ label: "Utilisation", value: "74%", source: src("storebrid"), delta: "+2 pt" })
-      + kpi({ label: "Round-trip efficiency", value: "88%", source: src("storebrid"), delta: "+1 pt" }),
+      + kpi({ label: "Utilisation", value: "74%", source: src("storebrid"), delta: "+2 pp" })
+      + kpi({ label: "Round-trip efficiency", value: "88%", source: src("storebrid"), delta: "+1 pp" }),
   band: perfBand({
     tone: "sb", band: "Technical performance", label: "What the asset does",
     sub: "Highest-spread day this month. The state of charge below is derived from the same schedule.",
@@ -3609,7 +3629,7 @@ writeFileSync("ProjectStoreBrid.dc.html", valenciaSB);
 
 const valenciaRV = valenciaView({
   caps: "rv", h: 1300, rvFocus: true,
-  kpis: kpi({ label: "IRR", value: "12.8%", source: src("revenew"), delta: "+0.4 pt" })
+  kpis: kpi({ label: "IRR", value: "12.8%", source: src("revenew"), delta: "+0.4 pp" })
       + kpi({ label: "Annual revenue", value: "€8.42M", source: src("revenew"), delta: "+3.1%" })
       + kpi({ label: "CAPEX", value: "€42.1M", source: src("revenew") })
       + kpi({ label: "Capture price", value: "€118.4", source: src("revenew"), delta: "+2.6%" }),
@@ -4744,7 +4764,7 @@ ${simTabs("results")}
 <div class="kpirow">
   ${kpi({ label: "Energy discharged", value: "65.2 GWh", source: src("storebrid"), delta: "+4.1%" })}
   ${kpi({ label: "Full cycles / year", value: "326", source: src("storebrid"), delta: "+12" })}
-  ${kpi({ label: "Utilisation", value: "74%", source: src("storebrid"), delta: "+2 pt" })}
+  ${kpi({ label: "Utilisation", value: "74%", source: src("storebrid"), delta: "+2 pp" })}
   ${kpi({ label: "Round-trip efficiency", value: "88%", source: src("storebrid") })}
   ${kpi({ label: "Capacity at year 15", value: "73%", source: src("storebrid"), delta: "−2.1 %/yr" })}
 </div>
@@ -4888,6 +4908,9 @@ const METKEYS = ["irr", "rev", "perMwh", "perCyc", "gwh", "capex"];
    or ReveNew already produced. Storage size, prices, curves and
    assumptions stay where they are edited.
    ═══════════════════════════════════════════════════════════════ */
+/* "IRR" and "CAPEX" are acronyms, not sentence-case words — lowercasing
+   them wholesale produced "What irr says about this project". */
+const inSentence = (s) => (/^[A-Z0-9]{2,}$/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1));
 const objectiveOf = (mk) => (MET[mk].lowerBetter ? "Minimise " : "Maximise ") + MET[mk].label;
 
 const bestBy = (mk, pool) => {
@@ -4915,7 +4938,7 @@ const deltaOf = (mk, c, base = BASE) => {
   if (Math.abs(v - b) < 1e-9) return { txt: "—", tone: "flat", t: 0 };
   const t = m.pt ? v - b : ((v - b) / b) * 100;
   const good = m.lowerBetter ? v < b : v > b;
-  return { txt: (t > 0 ? "+" : "−") + Math.abs(t).toFixed(1) + (m.pt ? " pt" : "%"), tone: good ? "up" : "down", t };
+  return { txt: (t > 0 ? "+" : "−") + Math.abs(t).toFixed(1) + (m.pt ? " pp" : "%"), tone: good ? "up" : "down", t };
 };
 const deltaChip = (d, size = 10.5, neutral) => d.tone === "flat"
   ? `<span style="font-size:${size}px;color:var(--s400)">—</span>`
@@ -4962,7 +4985,7 @@ ${caseBar({ tid: "base2h", sid: "high",
 ${sec({ label: "Key outcome", sub: "Absolute figures, with movement against the Base 2 h + Base market baseline." })}
 <div class="kpirow">
   ${kpi({ label: "Annual revenue", value: eurM(cd.rev), source: src("revenew"), delta: "+16.4% vs base market" })}
-  ${kpi({ label: "IRR", value: cd.irr.toFixed(1) + "%", source: src("combined"), combined: true, delta: "+0.6 pt",
+  ${kpi({ label: "IRR", value: cd.irr.toFixed(1) + "%", source: src("combined"), combined: true, delta: "+0.6 pp",
           formula: "Financial model · unchanged CAPEX" })}
   ${kpi({ label: "CAPEX", value: "€" + cd.t.capex.toFixed(1) + "M", source: src("storebrid") })}
   ${kpi({ label: "Revenue / MWh discharged", value: "€" + cd.perMwh.toFixed(1), source: src("combined"), combined: true,
@@ -5053,9 +5076,14 @@ const pct = (a, b) => ((a - b) / b) * 100;
 /* A highlight names the criterion it optimises. Some name a case;
    the trade-off cards name a relationship instead, because the honest
    answer to "which is best" is sometimes "that depends what you buy". */
+/* §7, §32 · These are SUPPORTING readings, so they sit on the flat wash
+   the design system already uses for secondary tiles. They used to carry
+   the same elevation as the matrix panel itself, which told the eye that
+   an aside mattered as much as the hero. Depth is hierarchy here: lift for
+   the one protagonist, panel for a section, wash for what supports it. */
 const hl = ({ label, tone, value, unit, c, meta, note }) => `
-<div class="glass-sm" style="flex:1;min-width:0;padding:17px 19px;
-     box-shadow:0 0 0 1px ${tone}2e, var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92)">
+<div class="wash" style="flex:1;min-width:0;padding:17px 19px;
+     box-shadow:inset 3px 0 0 ${tone}5c">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
     <span class="band" style="color:${tone};font-size:10px">${label}</span>
     ${c ? src("combined") : ""}
@@ -5139,8 +5167,8 @@ function tradeoff({ xOf, yOf, xTicks, yTicks, xFmt, yFmt, xLab, yLab, xSrc, ySrc
           stroke="rgba(109,90,198,.34)" stroke-width="2.5" stroke-linecap="round"/>
     <line x1="${cx.toFixed(1)}" y1="${(Y(g.lo) + 8).toFixed(1)}" x2="${lx.toFixed(1)}" y2="${(lane - 20).toFixed(1)}"
           stroke="rgba(30,58,138,.2)" stroke-width="1"/>
-    <text x="${lx.toFixed(1)}" y="${(lane - 6).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="700" fill="${INK}">${g.t.short}</text>
-    <text x="${lx.toFixed(1)}" y="${(lane + 8).toFixed(1)}" text-anchor="middle" font-size="10" fill="${AXIS}">${yFmt(g.lo)} – ${yFmt(g.hi)} across markets</text>`;
+    <text x="${lx.toFixed(1)}" y="${(lane - 6).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="700" fill="${INK}" ${KO}>${g.t.short}</text>
+    <text x="${lx.toFixed(1)}" y="${(lane + 8).toFixed(1)}" text-anchor="middle" font-size="10" fill="${AXIS}" ${KO}>${yFmt(g.lo)} – ${yFmt(g.hi)} across markets</text>`;
   }).join("");
   const marks = cs.map((c) => {
     const isBase = c.t.id === BASE.t.id && c.sc.id === BASE.sc.id;
@@ -5224,11 +5252,11 @@ const MX = {
     sub: (c) => `${eurM(c.rev)} revenue · €${c.t.capex.toFixed(1)}M CAPEX`,
     cards: () => [
       hl({ label: "Highest return", tone: "#5B4BB5", value: cVH.irr.toFixed(1) + "%", c: cVH,
-           meta: `€${cVH.t.capex.toFixed(1)}M invested · +${(cVH.irr - BASE.irr).toFixed(1)} pt vs baseline. The most return, and also the most capital at risk.` }),
+           meta: `€${cVH.t.capex.toFixed(1)}M invested · +${(cVH.irr - BASE.irr).toFixed(1)} pp vs baseline. The most return, and also the most capital at risk.` }),
       hl({ label: "Best return on the baseline investment", tone: "#0A6E77", value: cBH.irr.toFixed(1) + "%", c: cBH,
-           meta: `+${(cBH.irr - BASE.irr).toFixed(1)} pt for no additional CAPEX — the whole gain comes from the market, not from the asset.` }),
+           meta: `+${(cBH.irr - BASE.irr).toFixed(1)} pp for no additional CAPEX — the whole gain comes from the market, not from the asset.` }),
       hl({ label: "Weakest return", tone: "#9A6208", value: cLL.irr.toFixed(1) + "%", c: cLL,
-           meta: `${(cLL.irr - BASE.irr).toFixed(1)} pt vs baseline. A 3-point round-trip loss and the softest market compound.` }),
+           meta: `${signed(cLL.irr - BASE.irr, 1)} pp vs baseline. A 3 pp round-trip loss and the softest market compound.` }),
     ],
     chart: (sel) => tradeoff({
       xOf: (c) => c.t.capex, yOf: (c) => c.irr,
@@ -5321,7 +5349,7 @@ const MX = {
       hl({ label: "Energy for double the storage", tone: "#0A6E77", value: "+" + pct(V4H.gwh, B2H.gwh).toFixed(1) + "%", unit: "energy",
            note: `for +${pct(V4H.mwh, B2H.mwh).toFixed(0)}% storage capacity`,
            meta: `Doubling storage adds ${(V4H.gwh - B2H.gwh).toFixed(1)} GWh, not ${B2H.gwh}. Installed power and the export limit did not move, so the extra capacity can only discharge over more hours — never faster.` }),
-      hl({ label: "Cost of a round trip", tone: "#9A6208", value: (LRT.rte - B2H.rte) + " pt", unit: "round-trip",
+      hl({ label: "Cost of a round trip", tone: "#9A6208", value: (LRT.rte - B2H.rte) + " pp", unit: "round-trip",
            note: `Low RTE vs Base 2 h, both ${B2H.mwh} MWh`,
            meta: `Costs ${(B2H.gwh - LRT.gwh).toFixed(1)} GWh a year — energy the asset absorbs and never returns. Efficiency shows up here before it shows up in revenue.` }),
     ],
@@ -5344,9 +5372,9 @@ const MX = {
       hl({ label: "Highest investment", tone: "#1D4ED8", value: "€" + V4H.capex.toFixed(1) + "M", unit: "CAPEX",
            note: `4 h variant · ${V4H.mwh} MWh · ${V4H.dur.toFixed(1)} h`,
            meta: `+${pct(V4H.capex, B2H.capex).toFixed(1)}% for double the storage — not double the cost. Power conversion and the grid connection are already paid for.` }),
-      hl({ label: "Cheaper is not better here", tone: "#9A6208", value: (cLB.irr - BASE.irr).toFixed(1) + " pt", unit: "IRR",
+      hl({ label: "Cheaper is not better here", tone: "#9A6208", value: (cLB.irr - BASE.irr).toFixed(1) + " pp", unit: "IRR",
            note: "Low RTE vs Base 2 h, both on Base market",
-           meta: `Saving €${(B2H.capex - LRT.capex).toFixed(1)}M gives up ${Math.abs(cLB.irr - BASE.irr).toFixed(1)} pt of return. Nothing in this matrix costs less than the baseline and beats it.` }),
+           meta: `Saving €${(B2H.capex - LRT.capex).toFixed(1)}M gives up ${Math.abs(cLB.irr - BASE.irr).toFixed(1)} pp of return. Nothing in this matrix costs less than the baseline and beats it.` }),
     ],
     chart: (sel) => techBars({
       valueOf: (t) => t.capex, fmt: (t) => "€" + t.capex.toFixed(1) + "M", unit: "CAPEX",
@@ -5691,7 +5719,7 @@ const cellPreview = (sel, mk) => {
     <span style="width:1px;align-self:stretch;background:var(--hair);flex:none"></span>
     ${col("Combined outcome", "var(--su700)", src("combined"),
       [[sgn(npvOfCase(c) - npvOfCase(b), 1, "M NPV"), "net present value"],
-       [sgn(c.irr - b.irr, 1, " pt IRR"), "return on the money invested"]], "")}
+       [sgn(c.irr - b.irr, 1, " pp IRR"), "return on the money invested"]], "")}
   </div>
   <p class="t-meta" style="margin-top:14px;line-height:1.6">
     ${tMoved && fMoved
@@ -5723,7 +5751,7 @@ const EVALSTATE = { "lowrte|base": "calc", "base2h|low": "none", "lowrte|low": "
                     "v4h|base": "none", "lowrte|high": "none" };
 const evalOf = (tid, sid, on) => (on && !savedAs(tid, sid) ? (EVALSTATE[`${tid}|${sid}`] || "ok") : "ok");
 
-const perfView = ({ mk = "irr", sel, evalModel = false } = {}) => {
+const perfView = ({ mk = "irr", sel, evalModel = false, baselinePop } = {}) => {
   const m = MET[mk], x = MX[mk];
   return `${(() => {
   /* §2-§3, §9, §21 · Everything the matrix needs to be read, in one band
@@ -5745,7 +5773,7 @@ const perfView = ({ mk = "irr", sel, evalModel = false } = {}) => {
     </span>`;
   return `
 <section class="panel" style="display:flex;align-items:stretch;padding:0;margin-bottom:20px;flex-wrap:wrap">
-  <div style="flex:1.5;min-width:300px;padding:20px 24px">
+  <div style="flex:1.5;min-width:300px;padding:20px 24px;display:flex;flex-direction:column;justify-content:center">
     <div class="band">Evaluate combinations by</div>
     <div style="display:flex;align-items:baseline;gap:10px;margin-top:7px;flex-wrap:wrap">
       <h2 class="t-sec">${objectiveOf(mk)}</h2>
@@ -5766,9 +5794,27 @@ const perfView = ({ mk = "irr", sel, evalModel = false } = {}) => {
       }).join("") : `<span class="t-meta">None — all ${all.length} combinations evaluated</span>`}
     </div>
     ${CRITERIA.length ? `<div class="t-meta" style="margin-top:10px"><b style="font-weight:600;color:var(--s900)">${nOk} of ${all.length}</b> combinations meet them</div>` : ""}
+
+    <div style="margin-top:14px;padding-top:13px;border-top:1px solid var(--hair)">
+      <span class="band" style="font-size:10px">Analysis baseline</span>
+      <div style="margin-top:8px">
+        <button class="btn btn-secondary" style="height:32px;font-size:12.5px;${isProjectBase() ? "" : "box-shadow:0 0 0 1px rgba(14,157,168,.4), var(--sh-xs), inset 0 1px 0 rgba(255,255,255,.92)"}">
+          <i style="width:5px;height:5px;border-radius:50%;background:${SB};display:block"></i>${BASE.t.short}
+          <span style="color:var(--s400)">+</span>
+          <i style="width:5px;height:5px;border-radius:50%;background:${RN};display:block"></i>${BASE.sc.name}${ic("down", 14, 1.8)}
+        </button>
+        ${baselinePop ? baselineMenu(`${BASE.t.id}|${BASE.sc.id}`) : ""}
+      </div>
+      ${isProjectBase()
+        ? `<div class="t-meta" style="margin-top:8px;line-height:1.45">Every delta on this page is measured against it.</div>`
+        : `<div style="display:flex;align-items:center;gap:9px;margin-top:9px;flex-wrap:wrap">
+             <span class="cov" style="height:24px"><i style="background:${SU}"></i>Not the project baseline</span>
+             <a href="#" style="font-size:12px;font-weight:500;display:inline-flex;align-items:center;gap:5px">${ic("back", 13, 1.9)}Restore ${caseOf(PROJECT_BASE.tid, PROJECT_BASE.sid).t.short} + ${caseOf(PROJECT_BASE.tid, PROJECT_BASE.sid).sc.name}</a>
+           </div>`}
+    </div>
   </div>
   <div style="width:1px;background:var(--hair);flex:none"></div>
-  <div style="flex:1.5;min-width:340px;padding:20px 24px;display:flex;gap:20px;
+  <div style="flex:1.5;min-width:340px;padding:20px 24px;display:flex;gap:20px;align-items:center;
        background:linear-gradient(168deg,rgba(14,157,168,.045),rgba(255,255,255,0) 78%)">
     ${stat(CRITERIA.length ? (m.lowerBetter ? "Lowest within criteria" : "Highest within criteria") : (m.lowerBetter ? "Lowest" : "Highest"), win, "var(--su700)")}
     ${stat("Baseline", BASE)}
@@ -5803,7 +5849,7 @@ const perfView = ({ mk = "irr", sel, evalModel = false } = {}) => {
 <section class="panel" style="padding:24px 26px;margin-top:24px">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:16px">
     <div style="flex:1;min-width:0">
-      <div class="band">The trade-off behind ${m.label.toLowerCase()}</div>
+      <div class="band">The trade-off behind ${inSentence(m.label)}</div>
       <h2 class="t-sec" style="margin-top:8px">${x.chartTitle}</h2>
       <p class="t-meta" style="margin-top:7px;font-size:12px;line-height:1.6;max-width:96ch">${x.chartQ}</p>
     </div>
@@ -5811,11 +5857,6 @@ const perfView = ({ mk = "irr", sel, evalModel = false } = {}) => {
   </div>
   ${x.chart(sel)}
 </section>
-
-${sec({ label: "What " + m.label.toLowerCase() + " says about this project", source: src(m.from), top: 26,
-        sub: x.q })}
-<div style="display:flex;gap:18px">${x.cards().join("")}</div>
-
 
 ${(() => {
   /* §1 · the aggregate notice Compare already carries, at matrix scale.
@@ -5829,6 +5870,18 @@ ${(() => {
     body: `${out.length} of the ${ACASES.length} saved analysis cases ${one ? "is" : "are"} outdated — ${one ? `<b style="font-weight:600;color:var(--s900)">${out[0].name}</b> was priced` : "they were priced"} before the technical simulation changed. The other ${TECH.length * SCEN.length - ACASES.length} combinations are calculated live and are never outdated.`,
     cta: "Recalculate in ReveNew" });
 })()}
+${sec({ label: "Other ways to read the matrix", source: src("suite"), top: 26,
+        sub: "The same nine combinations, read against objectives other than the one selected above. Rankings, not recommendations — which objective matters is your decision." })}
+<section class="panel" style="padding:22px 26px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+    <h3 style="font-size:13.5px;font-weight:600;color:var(--s900);margin:0">What ${inSentence(m.label)} says about this project</h3>
+    ${src(m.from)}
+    <span style="flex:1"></span>
+    <span class="t-meta">${x.q}</span>
+  </div>
+  <div style="display:flex;gap:14px;margin-top:14px">${x.cards().join("")}</div>
+
+
 ${(() => {
   /* §8 · The matrix's own value proposition, stated before the grid: across
      every viable pairing, what leads on each objective. These are rankings,
@@ -5859,9 +5912,15 @@ ${(() => {
     ["Highest revenue / MWh", "perMwh", top((c) => c.perMwh, up, (v) => "€" + v.toFixed(1)), src("combined")],
   ].filter(([, key]) => key !== mk);
   return `
-<section class="panel" style="display:flex;align-items:stretch;padding:4px 0;margin-bottom:18px">
+<div style="display:flex;align-items:baseline;gap:12px;margin:22px 0 0;padding-top:18px;border-top:1px solid var(--hair);flex-wrap:wrap">
+  <h3 style="font-size:13.5px;font-weight:600;color:var(--s900);margin:0">Leaders on the other objectives</h3>
+  ${src("suite")}
+  <span style="flex:1"></span>
+  <span class="t-meta">Across all ${TECH.length * SCEN.length} pairings, saved or not · outdated results excluded</span>
+</div>
+<div style="display:flex;align-items:stretch;margin-top:4px">
   ${objectives.map(([label, , { c, v, out }, sr], i) => `
-    <div style="flex:1;min-width:0;padding:15px 22px;${i ? "border-left:1px solid var(--hair)" : ""}">
+    <div style="flex:1;min-width:0;padding:15px 22px 4px;${i ? "border-left:1px solid var(--hair)" : ""}">
       <div style="display:flex;align-items:center;gap:8px">
         <span class="band" style="font-size:10px">${label}${CRITERIA.length ? " within criteria" : ""}</span>${sr}
       </div>
@@ -5880,12 +5939,11 @@ ${(() => {
         <span style="color:${WARN.ink}">outside criteria</span>
       </div>` : ""}
     </div>`).join("")}
-</section>
-<p class="t-meta" style="margin:-8px 0 20px;line-height:1.5">
-  Leaders on the other objectives, across all ${TECH.length * SCEN.length} pairings, saved or not.
-  ${CRITERIA.length ? "Ranked within your criteria; where the outright leader is different it is shown too, because that gap is what the constraint costs you." : ""}
-  Each is a ranking on one objective — which objective matters is your decision, not the Suite's. Outdated results are excluded.
-</p>` ;
+</div>
+${CRITERIA.length ? `<p class="t-meta" style="margin:14px 0 0;padding-top:14px;border-top:1px solid var(--hair);line-height:1.5">
+  Ranked within your criteria. Where the outright leader is different it is shown too, because that gap is what the constraint costs you.
+</p>` : ""}
+</section>` ;
 })()}
 
 `;
@@ -5903,23 +5961,17 @@ ${head({
             <button class="btn btn-secondary">${ic("analytics", 16)}Compare analysis cases</button>`,
 })}
 
-${baselineBar({ pop: baselinePop })}
-
-<div style="display:flex;align-items:center;gap:12px;padding:13px 18px;margin-bottom:20px;border-radius:var(--r-xs);
-     background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 74%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.14)">
-  <span style="color:var(--su700);display:flex;flex:none">${ic("layers", 15)}</span>
-  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
-    ${TECH.length} technical simulations × ${SCEN.length} financial cases = <b style="font-weight:600">${TECH.length * SCEN.length} possible combinations</b>.
-    ${ACASES.length} are saved as analysis cases — a combination becomes one only when it is named.
-  </span>
-  <span class="t-meta" style="flex:none">Open a cell to save or compare it</span>
-</div>
-
+${/* §5 · Two rows used to sit between the title and the grid: a lone
+      baseline selector, and a strip doing the arithmetic the grid itself
+      performs (3 × 3 = 9). Both are gone. The baseline moved INTO the
+      control band, beside the objective and the criteria it belongs with,
+      and "a combination becomes an analysis case only when it is named"
+      already appears where it is actionable — inside an unsaved cell. */""}
 <div class="tabs" style="margin-bottom:20px">
   <a href="#" class="${view === "perf" ? "on" : ""}">Performance</a>
   <a href="#" class="${view === "robust" ? "on" : ""}">Robustness</a>
 </div>
-${view === "robust" ? robustView(mk) : perfView({ mk, sel, evalModel })}
+${view === "robust" ? robustView(mk) : perfView({ mk, sel, evalModel, baselinePop })}
 `;
 };
 
@@ -6000,10 +6052,10 @@ ${sec({ label: "Scenario sensitivity", source: src("combined"), top: 0,
         sub: `How far ${m.label} moves for each technical simulation as the financial case changes. The three financial cases are modelled views, not probabilities — this is a range, not a distribution.` })}
 <section class="panel" style="padding:26px 28px">
   <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
-    <span class="t-meta" style="flex:none;width:210px">Technical simulation${src("storebrid")}</span>
+    <span style="flex:none;width:210px;display:inline-flex;align-items:center;gap:7px"><span class="t-meta">Technical simulation</span>${src("storebrid")}</span>
     <span style="flex:1;min-width:0;display:flex;justify-content:space-between">
       <span class="t-meta">${axis(A)}</span>
-      <span class="t-meta">${m.label} across financial cases${src("revenew")}</span>
+      <span style="display:inline-flex;align-items:center;gap:7px"><span class="t-meta">${m.label} across financial cases</span>${src("revenew")}</span>
       <span class="t-meta">${axis(B)}</span>
     </span>
     <span class="t-meta" style="flex:none;width:96px;text-align:right">Spread</span>
@@ -6026,6 +6078,23 @@ ${sec({ label: "Scenario sensitivity", source: src("combined"), top: 0,
           <span style="position:absolute;inset:0"><title>${x.sc.name} — ${m.fmt(x.c)}</title></span></span>`).join("")}
       <span style="position:absolute;top:0;left:${pct(r.lo.v).toFixed(1)}%;margin-left:-6.5px;font-size:10.5px;color:var(--s500);white-space:nowrap">${m.fmt(r.lo.c)}</span>
       <span style="position:absolute;bottom:0;left:${pct(r.hi.v).toFixed(1)}%;margin-left:-6.5px;font-size:10.5px;font-weight:600;color:var(--s900);white-space:nowrap">${m.fmt(r.hi.c)}</span>
+      ${(() => {
+        /* §8 · Minimum, base and maximum all have to stay readable. The
+           middle marker carried its value only in a tooltip, so the one
+           figure the reader is measuring the range against was the one
+           they could not see. It sits under the marker, in the baseline's
+           own weight — and only when it is far enough from the ends not
+           to collide with them. */
+        const mid = r.vs.find((x) => x.sc.id === BASE.sc.id) || r.vs.find((x) => x.v !== r.hi.v && x.v !== r.lo.v);
+        if (!mid || mid.v === r.hi.v || mid.v === r.lo.v) return "";
+        /* the maximum's figure hangs BELOW the track and the minimum's
+           above it, so the only label this one can run into is the
+           minimum's */
+        const p = pct(mid.v);
+        if (Math.abs(p - pct(r.lo.v)) < 9) return "";
+        return `<span style="position:absolute;top:0;left:${p.toFixed(1)}%;transform:translateX(-50%);
+              font-size:10.5px;color:var(--s500);white-space:nowrap">${m.fmt(mid.c)}</span>`;
+      })()}
     </span>
     <span style="flex:none;width:96px;text-align:right;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${r.spread.toFixed(1)}${unit}</span>
   </div>`).join("")}
@@ -6037,7 +6106,10 @@ ${sec({ label: "Scenario sensitivity", source: src("combined"), top: 0,
   </div>
 </section>
 
-<div style="display:flex;gap:14px;margin-top:20px">
+${sec({ label: "What the ranges say", source: src("combined"), top: 24,
+        sub: "Three readings of the plot above. Which of upside, floor and stability matters depends on the decision being made — the Suite reports them, it does not rank them." })}
+<section class="panel" style="padding:20px 22px">
+<div style="display:flex;gap:14px">
   ${[["Highest upside", `${m.fmt(upside.hi.c)}`, `${upside.t.short} under ${upside.hi.sc.name}`,
       "The best result available anywhere in the matrix, and the financial case it depends on."],
      ["Highest floor", `${m.fmt(floor.lo.c)}`, `${floor.t.short} under ${floor.lo.sc.name}`,
@@ -6048,7 +6120,7 @@ ${sec({ label: "Scenario sensitivity", source: src("combined"), top: 0,
         ? "Two configurations move the same amount across the financial cases — neither is more exposed to the market view than the other."
         : "Moves least as the financial case changes: more of this result is decided by the asset than by the market."]]
     .map(([band, v, who, why]) => `
-    <div class="panel" style="flex:1;min-width:0;padding:20px 22px">
+    <div class="wash" style="flex:1;min-width:0;padding:17px 19px">
       <div style="display:flex;align-items:center;gap:8px">
         <span class="band" style="font-size:10px">${band}</span>${src("combined")}
       </div>
@@ -6057,10 +6129,7 @@ ${sec({ label: "Scenario sensitivity", source: src("combined"), top: 0,
       <p class="t-meta" style="margin-top:10px;line-height:1.55">${why}</p>
     </div>`).join("")}
 </div>
-<p class="t-meta" style="margin-top:16px;line-height:1.6;max-width:112ch">
-  These are readings of the numbers in the matrix, not a ranking of configurations. Which of upside, floor and stability
-  matters depends on the decision being made, and the Suite has no way to know that.
-</p>`;
+</section>`;
 };
 
 writeFileSync("CaseMatrixUnevaluated.dc.html", doc({ w: 1440, h: 3290, side: projectSide("cases"),
@@ -6197,7 +6266,7 @@ const outcomeRow = (label, mk, c, neutral) => {
   const abs = m.get(c) - m.get(BASE);
   const moved = Math.abs(abs) > 1e-9;
   const shown = !moved ? "unchanged"
-    : m.pt ? (abs > 0 ? "+" : "−") + Math.abs(abs).toFixed(1) + " pt"
+    : m.pt ? (abs > 0 ? "+" : "−") + Math.abs(abs).toFixed(1) + " pp"
     : mk === "rev" || mk === "capex" ? (abs > 0 ? "+" : "−") + "€" + Math.abs(abs).toFixed(2) + "M"
     : mk === "gwh" ? (abs > 0 ? "+" : "−") + Math.abs(abs).toFixed(1) + " GWh"
     : (abs > 0 ? "+" : "−") + "€" + Math.abs(abs).toFixed(1);
@@ -6262,7 +6331,7 @@ const keyChangeBlock = (c) => {
    so both are shown and the residual is named. The Suite reports the
    difference associated with each step; it never claims a cause. */
 const shortFmt = (mk, v, delta) => {
-  if (mk === "irr" || mk === "util") return v.toFixed(1) + (delta ? " pt" : "%");
+  if (mk === "irr" || mk === "util") return v.toFixed(1) + (delta ? " pp" : "%");
   if (mk === "rev" || mk === "capex") return "€" + v.toFixed(2) + "M";
   if (mk === "gwh") return v.toFixed(1) + " GWh";
   if (mk === "perCyc") return "€" + Math.round(v).toLocaleString("en-GB");
@@ -6775,9 +6844,17 @@ ${head({
   eyebrow: `<span style="display:inline-flex;align-items:center;gap:9px">Analysis ${src("suite")}</span>`,
   title: "Explain difference",
   meta: `Why <b style="font-weight:600;color:var(--s900)">${selLabel(sel)}</b> reads ${m.fmt(sel)} against <b style="font-weight:600;color:var(--s900)">${selLabel(base)}</b> at ${m.fmt(base)}.`,
-  actions: `<div style="display:flex;align-items:center;gap:10px">
-              <span class="t-meta">Explaining</span>${metricTabs(mk)}</div>`,
+  actions: `<button class="btn btn-secondary">${ic("back", 15, 1.9)}Back to comparison</button>`,
 })}
+${/* §14 · Six metric tabs in the header's action slot squeezed the title
+      column until the sentence underneath broke mid-phrase. The switcher
+      is a control over the whole screen, so it gets the full width — and
+      the header slot goes back to carrying the one action that returns the
+      user to where they came from (§21). */""}
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap">
+  <span class="t-meta" style="flex:none">Explaining</span>
+  ${metricTabs(mk)}
+</div>
 
 ${both ? `
 <div style="display:flex;align-items:center;gap:11px;padding:13px 18px;margin-bottom:22px;border-radius:var(--r-xs);
@@ -7279,7 +7356,7 @@ ${tileRow([
     <span class="t-card" style="font-size:14px">4 h variant</span>${SIMSTATE.completed}
   </div>
   <div style="display:flex;gap:14px;margin-top:14px">
-    ${[["Energy discharged", "92.4 GWh", "+41.7%"], ["Cycles / year", "231", "−95"], ["Utilisation", "79%", "+5 pt"]].map(([k, v, d]) => `
+    ${[["Energy discharged", "92.4 GWh", "+41.7%"], ["Cycles / year", "231", "−95"], ["Utilisation", "79%", "+5 pp"]].map(([k, v, d]) => `
       <span style="flex:1;min-width:0">
         <span class="t-meta" style="display:block;font-size:9.5px">${k}</span>
         <span style="display:block;font-size:15px;font-weight:700;color:var(--s900);margin-top:5px;font-variant-numeric:tabular-nums">${v}</span>
@@ -8795,9 +8872,9 @@ const COLX = [0, 1560, 3120];
 const PAGES = [
   { id: "page-1", name: "Project workspace", rows: [
     [["ProjectOverview.dc.html", 1440, 2670, "1 · Overview"],
-     ["CaseMatrix.dc.html", 1440, 3340, "2 · Case matrix"],
-     ["CaseMatrixRobustness.dc.html", 1440, 1180, "2b · Case matrix — robustness"],
-     ["CaseMatrixUnevaluated.dc.html", 1440, 3340, "2c · Case matrix — evaluation states"],
+     ["CaseMatrix.dc.html", 1440, 3370, "2 · Case matrix"],
+     ["CaseMatrixRobustness.dc.html", 1440, 1085, "2b · Case matrix — robustness"],
+     ["CaseMatrixUnevaluated.dc.html", 1440, 3370, "2c · Case matrix — evaluation states"],
      ["CompareAlternatives.dc.html", 1440, 2820, "3 · Compare"],
      ["CompareAllMetrics.dc.html", 1440, 3645, "3b · Compare — all metrics"],
      ["DecisionBrief.dc.html", 1440, 2820, "3c · Save decision brief"]],
@@ -8806,7 +8883,7 @@ const PAGES = [
      ["OverviewTechnical.dc.html", 1440, 2670, "6 · Technical details"]],
     [["FinancialDetails.dc.html", 1440, 1160, "7 · Financial details"],
      ["CreateAnalysisCase.dc.html", 1440, 2820, "8 · Create analysis case"],
-     ["CompareExplained.dc.html", 1440, 1630, "9 · Explain difference"]],
+     ["CompareExplained.dc.html", 1440, 1675, "9 · Explain difference"]],
     [["OverviewStale.dc.html", 1440, 2760, "10 · Financial results outdated"],
      ["EditProjectDetails.dc.html", 1440, 2670, "11 · Project details"]],
   ]},
@@ -8816,7 +8893,7 @@ const PAGES = [
     [["Main.dc.html", 1440, 2040, "Home"],
      ["Projects.dc.html", 1440, 800, "Projects"],
      ["CreateProject.dc.html", 1440, 1380, "Create project"]],
-    [["Analytics.dc.html", 1440, 3220, "Analytics"],
+    [["Analytics.dc.html", 1440, 3230, "Analytics"],
      ["Files.dc.html", 1440, 870, "Files"],
      ["Activity.dc.html", 1440, 1280, "Activity"]],
     [["Settings.dc.html", 1440, 1600, "Settings"],
@@ -8853,7 +8930,7 @@ const NOTES = {
   "VariantEvaluating.dc.html": ["n-vareval", "11 · VARIANT · PRICING\n\nNEW — the middle stage that was missing.\n\nThe technical run has landed, so the StoreBrid figures are real: 92.4 GWh, 231 cycles, 79% utilisation. ReveNew is now pricing that same energy against the project's three scenarios, and the cases are still waiting.\n\nThis is the stage that makes the dependency legible: one technical run, three commercial evaluations, three cases."],
   "CompareSave.dc.html": ["n-savecmp", "8 · SAVE COMPARISON\n\nA comparison is an analysis someone made, not disposable UI state. What is kept is the minimum that makes it reproducible: the cases, the baseline they were read against, the primary metric, and the name of the question.\n\nValues are NOT frozen. They are re-read from StoreBrid and ReveNew when the comparison is reopened, so a saved analysis follows its sources — which is also why Export decision brief sits beside it rather than instead of it."],
   "CompareExplained.dc.html": ["n-explained", "10 · EXPLAIN A DIFFERENCE\n\nA state of Compare, reached from a selected cell. Both dimensions moved between the baseline and this case, so the two combinations that isolate one change each were added from the matrix — nothing was calculated to do it.\n\nThe contribution panel shows both controlled orders and names the residual, because the split depends on which dimension moves first. The Suite reports the difference associated with each step; it never claims a cause.\n\nENTRY POINTS. Reached from a selected matrix cell or from a single delta block in Compare. Either way it opens with the comparison already assembled and the baseline preserved — the controlled intermediates are added from combinations that already exist, and they are never saved as analysis cases. Their use is explanatory; they leave when the explanation does."],
-  "CaseMatrixCapex.dc.html": ["n-mx-capex", "CAPEX — a StoreBrid output\n\nThe other row-constant metric, and the one where colour semantics had to be corrected: an earlier pass painted the cheapest cell green and the priciest red. Lower CAPEX is not better, it is only less. Markers, wash and deltas are all neutral here.\n\nThe third highlight is the honest finding: nothing in this matrix costs less than the baseline and beats it — Low RTE saves €0.9M and gives up 1.3 pt of return.\n\nThe chart's annotation is the reading that matters: €211/kWh installed at 2 h against €127/kWh at 4 h. Unit cost falls with duration because the power equipment and the grid connection are already paid for."],
+  "CaseMatrixCapex.dc.html": ["n-mx-capex", "CAPEX — a StoreBrid output\n\nThe other row-constant metric, and the one where colour semantics had to be corrected: an earlier pass painted the cheapest cell green and the priciest red. Lower CAPEX is not better, it is only less. Markers, wash and deltas are all neutral here.\n\nThe third highlight is the honest finding: nothing in this matrix costs less than the baseline and beats it — Low RTE saves €0.9M and gives up 1.3 pp of return.\n\nThe chart's annotation is the reading that matters: €211/kWh installed at 2 h against €127/kWh at 4 h. Unit cost falls with duration because the power equipment and the grid connection are already paid for."],
   "CaseMatrixEnergy.dc.html": ["n-mx-gwh", "ENERGY DISCHARGED — a StoreBrid output\n\nStructurally different, and deliberately so. This metric does not vary by financial scenario: these simulations were dispatched against one price signal and the Suite does not re-run them per scenario. So each row collapses to ONE value across all three columns, with a band saying why.\n\nNo invented scenario-dependent difference, and no green: the markers read Most and Least in slate, because more throughput is a fact, not a recommendation.\n\nThe reading worth having: doubling storage adds 41.7% more energy, not 100%. Power and the export limit did not move, so the extra capacity discharges over more hours — never faster."],
   "CaseMatrixPerCycle.dc.html": ["n-mx-cyc", "REVENUE / CYCLE\n\nThe bridge between the financial result and the cell replacement schedule: warranties and degradation curves are written against cycles, not against euros.\n\nThe third highlight is a warning rather than a winner. Per-cycle value is high on the 4 h variant mainly because each cycle is twice the size — not because the energy sells better. A battery that never cycles has infinite value per cycle and no revenue, which is why this is a supporting metric and never a ranking on its own."],
   "CaseMatrixPerMwh.dc.html": ["n-mx-mwh", "REVENUE / MWH DISCHARGED\n\nThe metric that separates a bigger asset from a better one, and the tab where the ranking flips: Base 2 h + High spread leads, and the revenue leader drops to third.\n\nA two-hour battery discharges only into the steepest part of the day. The 4 h variant reaches further down the price curve to place its extra energy, so it earns more in total and less for each MWh. Neither is wrong — they are different products, and the downward slope in the chart is that trade-off drawn once."],

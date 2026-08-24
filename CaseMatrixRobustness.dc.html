@@ -262,8 +262,8 @@ a.glass-sm:hover{
 .grid{display:grid;gap:20px}
 </style>
 </helmet>
-<div class="atmos" style="width:1440px;min-height:1180px;position:relative">
-  <div class="shell" style="min-height:1180px">
+<div class="atmos" style="width:1440px;min-height:1085px;position:relative">
+  <div class="shell" style="min-height:1085px">
     <aside class="side">
 
 <div class="brand">
@@ -343,29 +343,6 @@ a.glass-sm:hover{
 </div>
 
 
-<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:22px;flex-wrap:wrap">
-  <span class="t-lab" style="font-weight:600;color:var(--s700);padding-top:11px">Analysis baseline</span>
-  <div>
-    <button class="btn btn-secondary" style="">
-      <i style="width:5px;height:5px;border-radius:50%;background:#2563EB;display:block"></i>Base 2 h
-      <span style="color:var(--s400)">+</span>
-      <i style="width:5px;height:5px;border-radius:50%;background:#AF47B2;display:block"></i>Base market<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.2 8 4.8 4.6L14.8 8"/></svg>
-    </button>
-    
-  </div>
-  <span class="t-meta" style="padding-top:12px">Every delta on this page is measured against it.</span>
-</div>
-
-<div style="display:flex;align-items:center;gap:12px;padding:13px 18px;margin-bottom:20px;border-radius:var(--r-xs);
-     background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 74%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.14)">
-  <span style="color:var(--su700);display:flex;flex:none"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 3 6.8 3.6L10 10.2 3.2 6.6z"/><path d="m3.2 10.6 6.8 3.6 6.8-3.6"/></svg></span>
-  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
-    3 technical simulations × 3 financial cases = <b style="font-weight:600">9 possible combinations</b>.
-    3 are saved as analysis cases — a combination becomes one only when it is named.
-  </span>
-  <span class="t-meta" style="flex:none">Open a cell to save or compare it</span>
-</div>
-
 <div class="tabs" style="margin-bottom:20px">
   <a href="#" class="">Performance</a>
   <a href="#" class="on">Robustness</a>
@@ -384,10 +361,10 @@ a.glass-sm:hover{
 </div>
 <section class="panel" style="padding:26px 28px">
   <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
-    <span class="t-meta" style="flex:none;width:210px">Technical simulation<span class="src"><i style="background:#2563EB"></i>StoreBrid</span></span>
+    <span style="flex:none;width:210px;display:inline-flex;align-items:center;gap:7px"><span class="t-meta">Technical simulation</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span></span>
     <span style="flex:1;min-width:0;display:flex;justify-content:space-between">
       <span class="t-meta">7.7%</span>
-      <span class="t-meta">IRR across financial cases<span class="src"><i style="background:#AF47B2"></i>ReveNew</span></span>
+      <span style="display:inline-flex;align-items:center;gap:7px"><span class="t-meta">IRR across financial cases</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></span>
       <span class="t-meta">14.8%</span>
     </span>
     <span class="t-meta" style="flex:none;width:96px;text-align:right">Spread</span>
@@ -418,6 +395,8 @@ a.glass-sm:hover{
           <span style="position:absolute;inset:0"><title>Low spread — 9.6%</title></span></span>
       <span style="position:absolute;top:0;left:26.7%;margin-left:-6.5px;font-size:10.5px;color:var(--s500);white-space:nowrap">9.6%</span>
       <span style="position:absolute;bottom:0;left:80.4%;margin-left:-6.5px;font-size:10.5px;font-weight:600;color:var(--s900);white-space:nowrap">13.4%</span>
+      <span style="position:absolute;top:0;left:71.9%;transform:translateX(-50%);
+              font-size:10.5px;color:var(--s500);white-space:nowrap">12.8%</span>
     </span>
     <span style="flex:none;width:96px;text-align:right;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">3.8 pp</span>
   </div>
@@ -446,6 +425,8 @@ a.glass-sm:hover{
           <span style="position:absolute;inset:0"><title>Low spread — 10.0%</title></span></span>
       <span style="position:absolute;top:0;left:32.3%;margin-left:-6.5px;font-size:10.5px;color:var(--s500);white-space:nowrap">10.0%</span>
       <span style="position:absolute;bottom:0;left:90.3%;margin-left:-6.5px;font-size:10.5px;font-weight:600;color:var(--s900);white-space:nowrap">14.1%</span>
+      <span style="position:absolute;top:0;left:77.6%;transform:translateX(-50%);
+              font-size:10.5px;color:var(--s500);white-space:nowrap">13.2%</span>
     </span>
     <span style="flex:none;width:96px;text-align:right;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">4.1 pp</span>
   </div>
@@ -474,6 +455,8 @@ a.glass-sm:hover{
           <span style="position:absolute;inset:0"><title>Low spread — 8.4%</title></span></span>
       <span style="position:absolute;top:0;left:9.7%;margin-left:-6.5px;font-size:10.5px;color:var(--s500);white-space:nowrap">8.4%</span>
       <span style="position:absolute;bottom:0;left:63.4%;margin-left:-6.5px;font-size:10.5px;font-weight:600;color:var(--s900);white-space:nowrap">12.2%</span>
+      <span style="position:absolute;top:0;left:53.5%;transform:translateX(-50%);
+              font-size:10.5px;color:var(--s500);white-space:nowrap">11.5%</span>
     </span>
     <span style="flex:none;width:96px;text-align:right;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">3.8 pp</span>
   </div>
@@ -485,9 +468,21 @@ a.glass-sm:hover{
   </div>
 </section>
 
-<div style="display:flex;gap:14px;margin-top:20px">
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:24px 0 14px">
+  <div style="min-width:0">
+    
+    <div style="display:flex;align-items:center;gap:10px">
+      <h2 class="t-sec">What the ranges say</h2><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+    </div>
+    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">Three readings of the plot above. Which of upside, floor and stability matters depends on the decision being made — the Suite reports them, it does not rank them.</p>
+  </div>
   
-    <div class="panel" style="flex:1;min-width:0;padding:20px 22px">
+</div>
+<section class="panel" style="padding:20px 22px">
+<div style="display:flex;gap:14px">
+  
+    <div class="wash" style="flex:1;min-width:0;padding:17px 19px">
       <div style="display:flex;align-items:center;gap:8px">
         <span class="band" style="font-size:10px">Highest upside</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
       </div>
@@ -495,7 +490,7 @@ a.glass-sm:hover{
       <div style="font-size:13px;font-weight:500;color:var(--s700);margin-top:6px">4 h variant under High spread</div>
       <p class="t-meta" style="margin-top:10px;line-height:1.55">The best result available anywhere in the matrix, and the financial case it depends on.</p>
     </div>
-    <div class="panel" style="flex:1;min-width:0;padding:20px 22px">
+    <div class="wash" style="flex:1;min-width:0;padding:17px 19px">
       <div style="display:flex;align-items:center;gap:8px">
         <span class="band" style="font-size:10px">Highest floor</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
       </div>
@@ -503,7 +498,7 @@ a.glass-sm:hover{
       <div style="font-size:13px;font-weight:500;color:var(--s700);margin-top:6px">4 h variant under Low spread</div>
       <p class="t-meta" style="margin-top:10px;line-height:1.55">The strongest worst case. If the weakest financial view is the one that lands, this configuration gives up the least.</p>
     </div>
-    <div class="panel" style="flex:1;min-width:0;padding:20px 22px">
+    <div class="wash" style="flex:1;min-width:0;padding:17px 19px">
       <div style="display:flex;align-items:center;gap:8px">
         <span class="band" style="font-size:10px">Smallest variation</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
       </div>
@@ -512,17 +507,14 @@ a.glass-sm:hover{
       <p class="t-meta" style="margin-top:10px;line-height:1.55">Two configurations move the same amount across the financial cases — neither is more exposed to the market view than the other.</p>
     </div>
 </div>
-<p class="t-meta" style="margin-top:16px;line-height:1.6;max-width:112ch">
-  These are readings of the numbers in the matrix, not a ranking of configurations. Which of upside, floor and stability
-  matters depends on the decision being made, and the Suite has no way to know that.
-</p>
+</section>
 </div>
     </main>
   </div>
   
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":1180}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":1085}}'>
 class Component extends DCLogic {}
 </script>
 </body>

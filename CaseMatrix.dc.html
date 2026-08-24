@@ -262,8 +262,8 @@ a.glass-sm:hover{
 .grid{display:grid;gap:20px}
 </style>
 </helmet>
-<div class="atmos" style="width:1440px;min-height:3340px;position:relative">
-  <div class="shell" style="min-height:3340px">
+<div class="atmos" style="width:1440px;min-height:3370px;position:relative">
+  <div class="shell" style="min-height:3370px">
     <aside class="side">
 
 <div class="brand">
@@ -343,36 +343,13 @@ a.glass-sm:hover{
 </div>
 
 
-<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:22px;flex-wrap:wrap">
-  <span class="t-lab" style="font-weight:600;color:var(--s700);padding-top:11px">Analysis baseline</span>
-  <div>
-    <button class="btn btn-secondary" style="">
-      <i style="width:5px;height:5px;border-radius:50%;background:#2563EB;display:block"></i>Base 2 h
-      <span style="color:var(--s400)">+</span>
-      <i style="width:5px;height:5px;border-radius:50%;background:#AF47B2;display:block"></i>Base market<svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.2 8 4.8 4.6L14.8 8"/></svg>
-    </button>
-    
-  </div>
-  <span class="t-meta" style="padding-top:12px">Every delta on this page is measured against it.</span>
-</div>
-
-<div style="display:flex;align-items:center;gap:12px;padding:13px 18px;margin-bottom:20px;border-radius:var(--r-xs);
-     background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 74%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.14)">
-  <span style="color:var(--su700);display:flex;flex:none"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 3 6.8 3.6L10 10.2 3.2 6.6z"/><path d="m3.2 10.6 6.8 3.6 6.8-3.6"/></svg></span>
-  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
-    3 technical simulations × 3 financial cases = <b style="font-weight:600">9 possible combinations</b>.
-    3 are saved as analysis cases — a combination becomes one only when it is named.
-  </span>
-  <span class="t-meta" style="flex:none">Open a cell to save or compare it</span>
-</div>
-
 <div class="tabs" style="margin-bottom:20px">
   <a href="#" class="on">Performance</a>
   <a href="#" class="">Robustness</a>
 </div>
 
 <section class="panel" style="display:flex;align-items:stretch;padding:0;margin-bottom:20px;flex-wrap:wrap">
-  <div style="flex:1.5;min-width:300px;padding:20px 24px">
+  <div style="flex:1.5;min-width:300px;padding:20px 24px;display:flex;flex-direction:column;justify-content:center">
     <div class="band">Evaluate combinations by</div>
     <div style="display:flex;align-items:baseline;gap:10px;margin-top:7px;flex-wrap:wrap">
       <h2 class="t-sec">Maximise IRR</h2>
@@ -390,9 +367,22 @@ a.glass-sm:hover{
       <span class="cov" style="gap:6px"><span style="color:var(--s500)">CAPEX</span><b style="font-weight:600;color:var(--s900)">≤ €48.0M</b></span><span class="cov" style="gap:6px"><span style="color:var(--s500)">IRR</span><b style="font-weight:600;color:var(--s900)">≥ 12.0%</b></span>
     </div>
     <div class="t-meta" style="margin-top:10px"><b style="font-weight:600;color:var(--s900)">3 of 9</b> combinations meet them</div>
+
+    <div style="margin-top:14px;padding-top:13px;border-top:1px solid var(--hair)">
+      <span class="band" style="font-size:10px">Analysis baseline</span>
+      <div style="margin-top:8px">
+        <button class="btn btn-secondary" style="height:32px;font-size:12.5px;">
+          <i style="width:5px;height:5px;border-radius:50%;background:#2563EB;display:block"></i>Base 2 h
+          <span style="color:var(--s400)">+</span>
+          <i style="width:5px;height:5px;border-radius:50%;background:#AF47B2;display:block"></i>Base market<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.2 8 4.8 4.6L14.8 8"/></svg>
+        </button>
+        
+      </div>
+      <div class="t-meta" style="margin-top:8px;line-height:1.45">Every delta on this page is measured against it.</div>
+    </div>
   </div>
   <div style="width:1px;background:var(--hair);flex:none"></div>
-  <div style="flex:1.5;min-width:340px;padding:20px 24px;display:flex;gap:20px;
+  <div style="flex:1.5;min-width:340px;padding:20px 24px;display:flex;gap:20px;align-items:center;
        background:linear-gradient(168deg,rgba(14,157,168,.045),rgba(255,255,255,0) 78%)">
     
     <span style="flex:1;min-width:0">
@@ -484,7 +474,7 @@ a.glass-sm:hover{
                 color:var(--s900);font-variant-numeric:tabular-nums">13.4%</span>
           <span class="t-meta" style="display:block;margin-top:6px;line-height:1.5">€9.80M revenue · €42.1M CAPEX</span>
           <span style="display:block;margin-top:9px">
-            <span style="font-size:11px;font-weight:600;color:#0E9469">+0.6 pt</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
+            <span style="font-size:11px;font-weight:600;color:#0E9469">+0.6 pp</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
           </span>
           <span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--hair)">
             <span class="t-meta" style="opacity:.75">Not saved</span>
@@ -499,7 +489,7 @@ a.glass-sm:hover{
                 color:var(--s900);font-variant-numeric:tabular-nums">9.6%</span>
           <span class="t-meta" style="display:block;margin-top:6px;line-height:1.5">€6.91M revenue · €42.1M CAPEX</span>
           <span style="display:block;margin-top:9px">
-            <span style="font-size:11px;font-weight:600;color:#C22222">−3.2 pt</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
+            <span style="font-size:11px;font-weight:600;color:#C22222">−3.2 pp</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
           </span>
           <span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--hair)">
             <span class="t-meta" style="opacity:.75">Not saved</span>
@@ -529,7 +519,7 @@ a.glass-sm:hover{
                 color:var(--s900);font-variant-numeric:tabular-nums">13.2%</span>
           <span class="t-meta" style="display:block;margin-top:6px;line-height:1.5">€10.35M revenue · €50.7M CAPEX</span>
           <span style="display:block;margin-top:9px">
-            <span style="font-size:11px;font-weight:600;color:#0E9469">+0.4 pt</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
+            <span style="font-size:11px;font-weight:600;color:#0E9469">+0.4 pp</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
           </span>
           <span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--hair)">
             <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#0E9DA8;display:block"></i>
@@ -546,7 +536,7 @@ a.glass-sm:hover{
                 color:var(--s900);font-variant-numeric:tabular-nums">14.1%</span>
           <span class="t-meta" style="display:block;margin-top:6px;line-height:1.5">€12.05M revenue · €50.7M CAPEX</span>
           <span style="display:block;margin-top:9px">
-            <span style="font-size:11px;font-weight:600;color:#0E9469">+1.3 pt</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
+            <span style="font-size:11px;font-weight:600;color:#0E9469">+1.3 pp</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
           </span>
           <span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--hair)">
             <span class="t-meta" style="opacity:.75">Not saved</span>
@@ -562,7 +552,7 @@ a.glass-sm:hover{
                 color:var(--s500);font-variant-numeric:tabular-nums">10.0%</span>
           <span class="t-meta" style="display:block;margin-top:6px;line-height:1.5">€8.50M revenue · €50.7M CAPEX</span>
           <span style="display:block;margin-top:9px">
-            <span style="font-size:11px;font-weight:600;color:#C22222">−2.8 pt</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
+            <span style="font-size:11px;font-weight:600;color:#C22222">−2.8 pp</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
           </span>
           <span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--hair)">
             <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#0E9DA8;display:block"></i>
@@ -592,7 +582,7 @@ a.glass-sm:hover{
                 color:var(--s900);font-variant-numeric:tabular-nums">11.5%</span>
           <span class="t-meta" style="display:block;margin-top:6px;line-height:1.5">€7.96M revenue · €41.2M CAPEX</span>
           <span style="display:block;margin-top:9px">
-            <span style="font-size:11px;font-weight:600;color:#C22222">−1.3 pt</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
+            <span style="font-size:11px;font-weight:600;color:#C22222">−1.3 pp</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
           </span>
           <span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--hair)">
             <span class="t-meta" style="opacity:.75">Not saved</span>
@@ -607,7 +597,7 @@ a.glass-sm:hover{
                 color:var(--s900);font-variant-numeric:tabular-nums">12.2%</span>
           <span class="t-meta" style="display:block;margin-top:6px;line-height:1.5">€9.27M revenue · €41.2M CAPEX</span>
           <span style="display:block;margin-top:9px">
-            <span style="font-size:11px;font-weight:600;color:#C22222">−0.6 pt</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
+            <span style="font-size:11px;font-weight:600;color:#C22222">−0.6 pp</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
           </span>
           <span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--hair)">
             <span class="t-meta" style="opacity:.75">Not saved</span>
@@ -623,7 +613,7 @@ a.glass-sm:hover{
                 color:var(--s900);font-variant-numeric:tabular-nums">8.4%</span>
           <span class="t-meta" style="display:block;margin-top:6px;line-height:1.5">€6.54M revenue · €41.2M CAPEX</span>
           <span style="display:block;margin-top:9px">
-            <span style="font-size:11px;font-weight:600;color:#C22222">−4.4 pt</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
+            <span style="font-size:11px;font-weight:600;color:#C22222">−4.4 pp</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
           </span>
           <span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--hair)">
             <span class="t-meta" style="opacity:.75">Not saved</span>
@@ -729,7 +719,7 @@ a.glass-sm:hover{
                 background:#0E9DA8;opacity:.62"></span>
         </span>
         <span style="flex:none;width:118px;text-align:right">
-          <span style="display:block"><span style="font-size:11px;font-weight:600;color:#0E9469">+1.3 pt</span></span>
+          <span style="display:block"><span style="font-size:11px;font-weight:600;color:#0E9469">+1.3 pp</span></span>
         </span>
         <span style="flex:none;width:92px"><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span></span>
       </div>
@@ -799,7 +789,7 @@ a.glass-sm:hover{
             <span class="t-meta" style="display:block;margin-top:2px">net present value</span>
           </div>
           <div style="margin-top:11px">
-            <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">+1.3 pt IRR</span>
+            <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">+1.3 pp IRR</span>
             <span class="t-meta" style="display:block;margin-top:2px">return on the money invested</span>
           </div>
       </div>
@@ -828,7 +818,7 @@ a.glass-sm:hover{
 <section class="panel" style="padding:24px 26px;margin-top:24px">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:16px">
     <div style="flex:1;min-width:0">
-      <div class="band">The trade-off behind irr</div>
+      <div class="band">The trade-off behind IRR</div>
       <h2 class="t-sec" style="margin-top:8px">Return against investment</h2>
       <p class="t-meta" style="margin-top:7px;font-size:12px;line-height:1.6;max-width:96ch">Within a cluster only the market moved, so the vertical spread is what a financial scenario is worth at fixed investment. Moving right costs capital.</p>
     </div>
@@ -849,20 +839,20 @@ a.glass-sm:hover{
           stroke="rgba(109,90,198,.34)" stroke-width="2.5" stroke-linecap="round"/>
     <line x1="211.8" y1="248.4" x2="211.8" y2="278.0"
           stroke="rgba(30,58,138,.2)" stroke-width="1"/>
-    <text x="211.8" y="292.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Low RTE</text>
-    <text x="211.8" y="306.0" text-anchor="middle" font-size="10" fill="#5F6C82">8.4% – 12.2% across markets</text>
+    <text x="211.8" y="292.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A" paint-order="stroke" stroke="#fff" stroke-width="3.4" stroke-linejoin="round">Low RTE</text>
+    <text x="211.8" y="306.0" text-anchor="middle" font-size="10" fill="#5F6C82" paint-order="stroke" stroke="#fff" stroke-width="3.4" stroke-linejoin="round">8.4% – 12.2% across markets</text>
     <line x1="292.1" y1="204.0" x2="292.1" y2="88.8"
           stroke="rgba(109,90,198,.34)" stroke-width="2.5" stroke-linecap="round"/>
     <line x1="292.1" y1="212.0" x2="379.8" y2="278.0"
           stroke="rgba(30,58,138,.2)" stroke-width="1"/>
-    <text x="379.8" y="292.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">Base 2 h</text>
-    <text x="379.8" y="306.0" text-anchor="middle" font-size="10" fill="#5F6C82">9.6% – 13.4% across markets</text>
+    <text x="379.8" y="292.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A" paint-order="stroke" stroke="#fff" stroke-width="3.4" stroke-linejoin="round">Base 2 h</text>
+    <text x="379.8" y="306.0" text-anchor="middle" font-size="10" fill="#5F6C82" paint-order="stroke" stroke="#fff" stroke-width="3.4" stroke-linejoin="round">9.6% – 13.4% across markets</text>
     <line x1="1060.2" y1="191.9" x2="1060.2" y2="67.6"
           stroke="rgba(109,90,198,.34)" stroke-width="2.5" stroke-linecap="round"/>
     <line x1="1060.2" y1="199.9" x2="1060.2" y2="278.0"
           stroke="rgba(30,58,138,.2)" stroke-width="1"/>
-    <text x="1060.2" y="292.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A">4 h variant</text>
-    <text x="1060.2" y="306.0" text-anchor="middle" font-size="10" fill="#5F6C82">10% – 14.1% across markets</text>
+    <text x="1060.2" y="292.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0F172A" paint-order="stroke" stroke="#fff" stroke-width="3.4" stroke-linejoin="round">4 h variant</text>
+    <text x="1060.2" y="306.0" text-anchor="middle" font-size="10" fill="#5F6C82" paint-order="stroke" stroke="#fff" stroke-width="3.4" stroke-linejoin="round">10% – 14.1% across markets</text>
     <circle cx="292.1" cy="107.0" r="13" fill="none" stroke="#0E9DA8" stroke-width="1.6" stroke-dasharray="3 3"/>
     <circle cx="292.1" cy="107.0" r="7.5" fill="#6D5AC6" fill-opacity="1" stroke="#fff" stroke-width="2"><title>Base 2 h + Base market — 12.8%</title></circle>
     <text x="311.1" y="111.0" font-size="10.5" font-weight="600" fill="#0F172A"
@@ -929,19 +919,38 @@ a.glass-sm:hover{
 </section>
 
 
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;
+     padding:12px 16px;border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(245,158,11,0.08),rgba(255,255,255,0) 70%);box-shadow:inset 0 0 0 1px rgba(245,158,11,0.2)">
+  <span style="color:#9A6208;display:flex;flex:none;"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
+  <span style="flex:1;min-width:0">
+    
+    <span class="t-meta" style="display:block;line-height:1.55;font-size:12.5px">1 of the 3 saved analysis cases is outdated — <b style="font-weight:600;color:var(--s900)">Stress test</b> was priced before the technical simulation changed. The other 6 combinations are calculated live and are never outdated.</span>
+  </span>
+  <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Recalculate in ReveNew<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
+  
+</div>
+
 <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:26px 0 14px">
   <div style="min-width:0">
     
     <div style="display:flex;align-items:center;gap:10px">
-      <h2 class="t-sec">What irr says about this project</h2><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+      <h2 class="t-sec">Other ways to read the matrix</h2><span class="src"><i style="background:#0E9DA8"></i>Suite</span>
     </div>
-    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">Which combination of asset and market produces the strongest return on the money invested?</p>
+    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">The same nine combinations, read against objectives other than the one selected above. Rankings, not recommendations — which objective matters is your decision.</p>
   </div>
   
 </div>
-<div style="display:flex;gap:18px">
-<div class="glass-sm" style="flex:1;min-width:0;padding:17px 19px;
-     box-shadow:0 0 0 1px #5B4BB52e, var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92)">
+<section class="panel" style="padding:22px 26px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+    <h3 style="font-size:13.5px;font-weight:600;color:var(--s900);margin:0">What IRR says about this project</h3>
+    <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+    <span style="flex:1"></span>
+    <span class="t-meta">Which combination of asset and market produces the strongest return on the money invested?</span>
+  </div>
+  <div style="display:flex;gap:14px;margin-top:14px">
+<div class="wash" style="flex:1;min-width:0;padding:17px 19px;
+     box-shadow:inset 3px 0 0 #5B4BB55c">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
     <span class="band" style="color:#5B4BB5;font-size:10px">Highest return</span>
     <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
@@ -962,10 +971,10 @@ a.glass-sm:hover{
       <span style="font-size:12px;font-weight:500;color:var(--s700)">High spread</span>
     </span>
   </div>
-  <div class="t-meta" style="margin-top:8px;line-height:1.5">€50.7M invested · +1.3 pt vs baseline. The most return, and also the most capital at risk.</div>
+  <div class="t-meta" style="margin-top:8px;line-height:1.5">€50.7M invested · +1.3 pp vs baseline. The most return, and also the most capital at risk.</div>
 </div>
-<div class="glass-sm" style="flex:1;min-width:0;padding:17px 19px;
-     box-shadow:0 0 0 1px #0A6E772e, var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92)">
+<div class="wash" style="flex:1;min-width:0;padding:17px 19px;
+     box-shadow:inset 3px 0 0 #0A6E775c">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
     <span class="band" style="color:#0A6E77;font-size:10px">Best return on the baseline investment</span>
     <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
@@ -986,10 +995,10 @@ a.glass-sm:hover{
       <span style="font-size:12px;font-weight:500;color:var(--s700)">High spread</span>
     </span>
   </div>
-  <div class="t-meta" style="margin-top:8px;line-height:1.5">+0.6 pt for no additional CAPEX — the whole gain comes from the market, not from the asset.</div>
+  <div class="t-meta" style="margin-top:8px;line-height:1.5">+0.6 pp for no additional CAPEX — the whole gain comes from the market, not from the asset.</div>
 </div>
-<div class="glass-sm" style="flex:1;min-width:0;padding:17px 19px;
-     box-shadow:0 0 0 1px #9A62082e, var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92)">
+<div class="wash" style="flex:1;min-width:0;padding:17px 19px;
+     box-shadow:inset 3px 0 0 #9A62085c">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
     <span class="band" style="color:#9A6208;font-size:10px">Weakest return</span>
     <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
@@ -1010,26 +1019,20 @@ a.glass-sm:hover{
       <span style="font-size:12px;font-weight:500;color:var(--s700)">Low spread</span>
     </span>
   </div>
-  <div class="t-meta" style="margin-top:8px;line-height:1.5">-4.4 pt vs baseline. A 3-point round-trip loss and the softest market compound.</div>
+  <div class="t-meta" style="margin-top:8px;line-height:1.5">−4.4 pp vs baseline. A 3 pp round-trip loss and the softest market compound.</div>
 </div></div>
 
 
 
-<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;
-     padding:12px 16px;border-radius:var(--r-xs);
-     background:linear-gradient(168deg,rgba(245,158,11,0.08),rgba(255,255,255,0) 70%);box-shadow:inset 0 0 0 1px rgba(245,158,11,0.2)">
-  <span style="color:#9A6208;display:flex;flex:none;"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
-  <span style="flex:1;min-width:0">
-    
-    <span class="t-meta" style="display:block;line-height:1.55;font-size:12.5px">1 of the 3 saved analysis cases is outdated — <b style="font-weight:600;color:var(--s900)">Stress test</b> was priced before the technical simulation changed. The other 6 combinations are calculated live and are never outdated.</span>
-  </span>
-  <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Recalculate in ReveNew<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
-  
+<div style="display:flex;align-items:baseline;gap:12px;margin:22px 0 0;padding-top:18px;border-top:1px solid var(--hair);flex-wrap:wrap">
+  <h3 style="font-size:13.5px;font-weight:600;color:var(--s900);margin:0">Leaders on the other objectives</h3>
+  <span class="src"><i style="background:#0E9DA8"></i>Suite</span>
+  <span style="flex:1"></span>
+  <span class="t-meta">Across all 9 pairings, saved or not · outdated results excluded</span>
 </div>
-
-<section class="panel" style="display:flex;align-items:stretch;padding:4px 0;margin-bottom:18px">
+<div style="display:flex;align-items:stretch;margin-top:4px">
   
-    <div style="flex:1;min-width:0;padding:15px 22px;">
+    <div style="flex:1;min-width:0;padding:15px 22px 4px;">
       <div style="display:flex;align-items:center;gap:8px">
         <span class="band" style="font-size:10px">Highest NPV within criteria</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
       </div>
@@ -1048,7 +1051,7 @@ a.glass-sm:hover{
         <span style="color:#9A6208">outside criteria</span>
       </div>
     </div>
-    <div style="flex:1;min-width:0;padding:15px 22px;border-left:1px solid var(--hair)">
+    <div style="flex:1;min-width:0;padding:15px 22px 4px;border-left:1px solid var(--hair)">
       <div style="display:flex;align-items:center;gap:8px">
         <span class="band" style="font-size:10px">Lowest CAPEX within criteria</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
       </div>
@@ -1064,7 +1067,7 @@ a.glass-sm:hover{
       </div>
       
     </div>
-    <div style="flex:1;min-width:0;padding:15px 22px;border-left:1px solid var(--hair)">
+    <div style="flex:1;min-width:0;padding:15px 22px 4px;border-left:1px solid var(--hair)">
       <div style="display:flex;align-items:center;gap:8px">
         <span class="band" style="font-size:10px">Highest revenue / MWh within criteria</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
       </div>
@@ -1080,12 +1083,11 @@ a.glass-sm:hover{
       </div>
       
     </div>
-</section>
-<p class="t-meta" style="margin:-8px 0 20px;line-height:1.5">
-  Leaders on the other objectives, across all 9 pairings, saved or not.
-  Ranked within your criteria; where the outright leader is different it is shown too, because that gap is what the constraint costs you.
-  Each is a ranking on one objective — which objective matters is your decision, not the Suite's. Outdated results are excluded.
+</div>
+<p class="t-meta" style="margin:14px 0 0;padding-top:14px;border-top:1px solid var(--hair);line-height:1.5">
+  Ranked within your criteria. Where the outright leader is different it is shown too, because that gap is what the constraint costs you.
 </p>
+</section>
 
 
 </div>
@@ -1094,7 +1096,7 @@ a.glass-sm:hover{
   
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":3340}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":3370}}'>
 class Component extends DCLogic {}
 </script>
 </body>

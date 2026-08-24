@@ -65,6 +65,10 @@ export const NAV = {
   "Add to comparison": "CompareAlternatives",
   "Add case": "CompareAlternatives",
   "Explain difference": "CompareExplained",
+  /* §21 · Explain difference is arrived at FROM a comparison, so it has to
+     lead back to the one that was open — the selection is carried, not
+     rebuilt. */
+  "Back to comparison": "CompareAlternatives",
   "Show all metrics": "CompareAllMetrics",
   "Hide all metrics": "CompareAlternatives",
   "Saved comparisons": "CompareAlternatives",
