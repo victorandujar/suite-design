@@ -262,8 +262,8 @@ a.glass-sm:hover{
 .grid{display:grid;gap:20px}
 </style>
 </helmet>
-<div class="atmos" style="width:1440px;min-height:3060px;position:relative">
-  <div class="shell" style="min-height:3060px">
+<div class="atmos" style="width:1440px;min-height:3200px;position:relative">
+  <div class="shell" style="min-height:3200px">
     <aside class="side">
 
 <div class="brand">
@@ -558,10 +558,18 @@ a.glass-sm:hover{
 <div style="display:flex;flex-direction:column;gap:18px">
   
 <section class="panel" style="padding:24px 26px">
-  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
     <span class="t-card" style="font-size:16px">High storage</span>
     <span class="t-meta">vs Base case</span>
     <span class="cov"><i style="background:#2563EB"></i>Technical only</span>
+    <span style="flex:1"></span>
+    <span style="display:inline-flex;align-items:center;gap:10px">
+      <span class="t-meta">Requires</span>
+      <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">+€8.6M</b>
+      <span style="color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+      <span class="t-meta">Produces</span>
+      <b style="font-size:13.5px;font-weight:600;color:#0E9469;font-variant-numeric:tabular-nums">+€3.0M NPV</b>
+    </span>
   </div>
   <div style="display:flex;gap:16px;align-items:stretch">
     
@@ -639,13 +647,26 @@ a.glass-sm:hover{
   </div>
   </div>
   </div>
+  <div style="display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)">
+    <span class="band" style="flex:none;color:var(--su700);padding-top:2px">Trade-off</span>
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.6">The extra €8.6M adds €3.0M of absolute value but improves return on capital by only 0.4 pp. Higher storage increases what the project is worth without materially changing how hard the money works — whether that trade is worth making is the decision.</span>
+    <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+  </div>
 </section>
   
 <section class="panel" style="padding:24px 26px">
-  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
     <span class="t-card" style="font-size:16px">Stress test</span>
     <span class="t-meta">vs High storage</span>
     <span class="cov"><i style="background:#AF47B2"></i>Financial only</span>
+    <span style="flex:1"></span>
+    <span style="display:inline-flex;align-items:center;gap:10px">
+      <span class="t-meta">Requires</span>
+      <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">no new capital</b>
+      <span style="color:var(--s400);display:flex"><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></span>
+      <span class="t-meta">Produces</span>
+      <b style="font-size:13.5px;font-weight:600;color:#C22222;font-variant-numeric:tabular-nums">−€9.8M NPV</b>
+    </span>
   </div>
   <div style="display:flex;gap:16px;align-items:stretch">
     
@@ -702,6 +723,11 @@ a.glass-sm:hover{
     <span style="flex:none;width:78px;text-align:right;font-size:12.5px;font-weight:600;color:#C22222">+1.2 y</span>
   </div>
   </div>
+  </div>
+  <div style="display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)">
+    <span class="band" style="flex:none;color:var(--su700);padding-top:2px">Trade-off</span>
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.6">No additional capital is committed. The whole difference is what this market view is worth on the asset already built — value lost without rebuilding anything.</span>
+    <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
   </div>
 </section>
 </div>
@@ -882,7 +908,7 @@ a.glass-sm:hover{
   
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":3060}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":3200}}'>
 class Component extends DCLogic {}
 </script>
 </body>

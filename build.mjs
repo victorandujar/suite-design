@@ -566,10 +566,13 @@ const sec = ({ label, source, sub, right, band, top = 28 }) => `
   ${right ? `<div style="flex:none">${right}</div>` : ""}
 </div>`;
 
-const kpi = ({ label, value, source, delta, formula, combined, warn }) => `
+/* `quiet` is for inventory counts — how many things exist. They belong on the
+   page but must not compete with what needs a decision (§4), so they keep the
+   same anatomy at a smaller weight rather than becoming a different component. */
+const kpi = ({ label, value, source, delta, formula, combined, warn, quiet }) => `
 <div style="${combined ? "background:linear-gradient(158deg,rgba(6,182,212,.10),rgba(6,182,212,.03));border-radius:12px" : ""}">
-  <div class="kpi-lab">${label}</div>
-  <div class="kpi-val">${value}</div>
+  <div class="kpi-lab"${quiet ? ' style="font-size:10.5px"' : ""}>${label}</div>
+  <div class="kpi-val"${quiet ? ' style="font-size:21px;margin-top:7px"' : ""}>${value}</div>
   ${formula ? `<div class="t-meta" style="margin-top:7px;font-size:10.5px;line-height:1.45">${formula}</div>` : ""}
   <div class="kpi-foot">${source}${delta ? `<span class="delta ${delta[0] === "−" ? "down" : "up"}">${delta}</span>` : ""}</div>
   ${warn ? `<a href="#" style="display:inline-flex;align-items:center;gap:7px;margin-top:9px;text-decoration:none">
@@ -1094,6 +1097,30 @@ const activityRow = ({ what, project, source, when }) => `
   <span class="t-meta" style="width:74px;flex:none;text-align:right">${when}</span>
 </div>`;
 
+/* §4 · What the portfolio needs from the user, not what it contains.
+   Every card is a deterministic reading of figures that already exist:
+   an observation, the two numbers that support it, and what it may mean.
+   Nothing here is generated, ranked or recommended. */
+const attnCard = ({ subject, verdict, tone, readings, implication, action }) => `
+<a href="#" class="panel" style="flex:1;min-width:0;display:flex;flex-direction:column;padding:18px 20px;text-decoration:none">
+  <span style="display:flex;align-items:center;gap:8px">
+    <i style="width:6px;height:6px;flex:none;border-radius:50%;display:block;background:${tone}"></i>
+    <span class="t-meta" style="font-size:11.5px">${verdict}</span>
+  </span>
+  <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);margin-top:9px">${subject}</span>
+  <span style="display:flex;gap:22px;margin-top:13px">
+    ${readings.map(([v, l, sr]) => `
+      <span style="min-width:0">
+        <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.022em;color:var(--s900);font-variant-numeric:tabular-nums">${v}</span>
+        <span style="display:flex;align-items:center;gap:6px;margin-top:4px"><span class="t-meta">${l}</span>${sr}</span>
+      </span>`).join("")}
+  </span>
+  <span style="display:block;font-size:12.5px;color:var(--s500);line-height:1.55;margin-top:13px;flex:1">${implication}</span>
+  <span style="display:inline-flex;align-items:center;gap:5px;margin-top:14px;font-size:12.5px;font-weight:500;color:var(--b700)">
+    ${action}${ic("right", 13, 2)}
+  </span>
+</a>`;
+
 const insightCard = ({ verdict, tone, body, action, source }) => `
 <a href="#" class="glass-sm" style="display:block;padding:15px 17px;text-decoration:none">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
@@ -1110,7 +1137,7 @@ const insightCard = ({ verdict, tone, body, action, source }) => `
 </a>`;
 
 const home = doc({
-  w: 1440, h: 1420, side: rootSide("home"),
+  w: 1440, h: 1710, side: rootSide("home"),
   body: `
 ${head({
   eyebrow: "Friday, 21 August · Sunveon Energy",
@@ -1141,14 +1168,35 @@ ${head({
   </div>
   <div class="hr" style="margin:24px 0 20px"></div>
   <div class="kpirow">
-    ${kpi({ label: "Financial cases", value: "21", source: src("revenew"), formula: "across 19 projects · 3 in draft" })}
-    ${kpi({ label: "Simulations", value: "68", source: src("storebrid"), delta: "+6 this week" })}
-    ${kpi({ label: "Analysis cases", value: "54", source: src("suite"), formula: "simulation + financial case pairings",
+    ${kpi({ quiet: 1, label: "Financial cases", value: "21", source: src("revenew"), formula: "across 19 projects · 3 in draft" })}
+    ${kpi({ quiet: 1, label: "Simulations", value: "68", source: src("storebrid"), delta: "+6 this week" })}
+    ${kpi({ quiet: 1, label: "Analysis cases", value: "54", source: src("suite"), formula: "simulation + financial case pairings",
             warn: `${STALE_PORTFOLIO} need recalculation` })}
-    ${kpi({ label: "Energy discharged", value: "512 GWh", source: src("storebrid"), delta: "+6.2%" })}
-    ${kpi({ label: "Annual revenue", value: "€63.4M", source: src("revenew"), delta: "+4.1%" })}
+    ${kpi({ quiet: 1, label: "Energy discharged", value: "512 GWh", source: src("storebrid"), delta: "+6.2%" })}
+    ${kpi({ quiet: 1, label: "Annual revenue", value: "€63.4M", source: src("revenew"), delta: "+4.1%" })}
   </div>
 </section>
+
+${sec({ label: "Needs your attention", top: 30,
+        sub: "Deterministic readings of figures that already exist — a technical number against a financial one. The Suite states what it sees; the judgement is yours.",
+        right: `<a href="#" style="font-size:13px;font-weight:500">All insights</a>` })}
+<div style="display:flex;gap:14px;align-items:stretch">
+  ${attnCard({
+    subject: "Almería BESS", verdict: "High utilisation · low return", tone: "var(--warn)",
+    readings: [["81%", "utilisation", src("storebrid")], ["9.4%", "IRR", src("combined")]],
+    implication: "The hardest-cycled asset in the portfolio sits second from bottom on return. High technical usage is not translating into equivalent financial performance.",
+    action: "Review project" })}
+  ${attnCard({
+    subject: `${STALE_PORTFOLIO} analysis cases outdated`, verdict: "Financial results predate the asset", tone: WARN.ink,
+    readings: [[String(STALE_PORTFOLIO), "cases affected", src("suite")], ["12 min", "since the last re-run", src("storebrid")]],
+    implication: "Their technical simulations were re-run after the financial result was calculated, so those cases are excluded from portfolio conclusions until they are recalculated.",
+    action: "Review affected cases" })}
+  ${attnCard({
+    subject: "Cádiz Storage", verdict: "Low utilisation · low return", tone: "var(--warn)",
+    readings: [["52%", "utilisation", src("storebrid")], ["7.8%", "IRR", src("combined")]],
+    implication: "Least-used asset in the portfolio. Its export limit in the plant configuration sits below the grid offer on file, which caps what the market case can earn.",
+    action: "Review project" })}
+</div>
 
 <div style="display:flex;gap:26px;margin-top:34px;align-items:flex-start">
   <section style="flex:1;min-width:0">
@@ -1188,11 +1236,8 @@ ${head({
   </section>
 
   <section style="flex:1;min-width:0">
-    ${sec({ label: "Portfolio insights", top: 0, right: `<a href="#" style="font-size:13px;font-weight:500">View all</a>` })}
+    ${sec({ label: "Portfolio conditions", top: 0, right: `<a href="#" style="font-size:13px;font-weight:500">View all</a>` })}
     <div style="display:flex;flex-direction:column;gap:12px">
-      ${insightCard({ verdict: "High utilisation · low return", tone: "var(--warn)", source: src("combined"),
-        body: "Almería BESS cycles hardest in the portfolio at 81% utilisation, while its 9.4% IRR stays below median.",
-        action: "Review project" })}
       ${insightCard({ verdict: "Contracted share falling", tone: "var(--b500)", source: src("revenew"),
         body: "Across the portfolio, contracted revenue drops from 58% to 34% by 2031 as three PPAs reach their end date.",
         action: "Review contracts" })}
@@ -1455,8 +1500,8 @@ const exploreStrip = ({ label, tone, items, href, count }) => `
 </div>`;
 
 const exploreBlock = () => `
-${sec({ label: "What this project has to combine", source: src("suite"),
-        sub: "What this project already has on each side. Choosing one changes the current analysis.",
+${sec({ label: "Explore alternatives", source: src("suite"),
+        sub: "What this project already has on each side. Choosing one changes the current analysis — nothing is modelled here.",
         right: `<button class="btn btn-secondary" style="height:34px;font-size:12.5px">${ic("plus", 15, 1.9)}Create analysis case</button>` })}
 <section class="panel" style="padding:22px 26px;display:flex;gap:40px">
   ${exploreStrip({ label: "Technical simulations", tone: "var(--b700)", count: TECH.length, href: "Change simulation →",
@@ -1533,6 +1578,29 @@ ${stale ? staleNotice({
     ${src("combined")}
   </div>
 </section>
+
+${(() => {
+  /* §5 · Level 1 of the page: what this pairing MEANS, in one deterministic
+     sentence, before the two performance blocks give the evidence. Every
+     figure is derived, so the sentence cannot drift from the cards below.
+     Deliberately not a KPI row — NPV, IRR, GWh and utilisation all appear
+     within 300px of here, and restating them is the repetition §17 warns
+     against. What is missing between the pairing and the evidence is the
+     reading, not more numbers. */
+  const perEur = m.npv / m.capex;
+  return `
+<div style="display:flex;align-items:center;gap:20px;margin-top:14px;padding:15px 20px;border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(14,157,168,.055),rgba(255,255,255,0) 78%);
+     box-shadow:inset 0 0 0 1px rgba(14,157,168,.13)">
+  <span class="band" style="flex:none;color:var(--su700)">Reading</span>
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);line-height:1.6">
+    This configuration turns <b style="font-weight:600;color:var(--s900)">€${m.capex.toFixed(1)}M</b> of CAPEX costed in StoreBrid into
+    <b style="font-weight:600;color:var(--s900)">${eurMs(m.npv)}</b> of NPV modelled in ReveNew, while discharging
+    <b style="font-weight:600;color:var(--s900)">${c.t.gwh} GWh</b> a year — <b style="font-weight:600;color:var(--s900)">€${perEur.toFixed(2)}</b> of NPV per euro invested.
+  </span>
+  <a href="#" style="flex:none;font-size:12.5px;font-weight:500;white-space:nowrap">Explain${ic("right", 12, 2)}</a>
+</div>`;
+})()}
 
 <div style="display:flex;gap:22px;margin-top:26px;align-items:stretch">
   ${perfBlock({ band: "Technical performance", tone: "var(--b700)", source: src("storebrid"),
@@ -4809,6 +4877,56 @@ const cellPreview = (sel, mk) => {
   </div>
   <p class="t-meta" style="margin-top:16px;line-height:1.6">${note}${
     k.key === "both" ? ` <b style="font-weight:600;color:var(--s700)">Explain difference</b> opens it with ${caseOf(BASE.t.id, c.sc.id).t.short} + ${c.sc.name} and ${caseOf(c.t.id, BASE.sc.id).t.short} + ${BASE.sc.name} already in place — the two cells that isolate one dimension each.` : ""}</p>
+  ${(() => {
+    /* §9 · Why this cell reads differently, decomposed the way the domain
+       splits: what StoreBrid changed, what ReveNew changed, and what came
+       out of the two together. Each line is a subtraction between this
+       pairing and the baseline — the Suite reports the difference attached
+       to each step and never claims one caused the other. When only one
+       dimension moved, the other column says so instead of inventing a
+       contribution. Level 2 evidence; Compare holds the full path. */
+    if (k.key === "same") return "";
+    const b = BASE, sgn = (v, d = 1, u = "") => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(d) + u;
+    const tMoved = c.t.id !== b.t.id, fMoved = c.sc.id !== b.sc.id;
+    const col = (band, tone, sr, rows, none) => `
+      <div style="flex:1;min-width:0;padding:0 20px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="band" style="font-size:10px;color:${tone}">${band}</span>${sr}
+        </div>
+        ${rows.length ? rows.map(([v, l]) => `
+          <div style="margin-top:11px">
+            <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${v}</span>
+            <span class="t-meta" style="display:block;margin-top:2px">${l}</span>
+          </div>`).join("")
+        : `<p class="t-meta" style="margin-top:11px;line-height:1.55">${none}</p>`}
+      </div>`;
+    return `
+<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--hair)">
+  <span class="band" style="color:var(--su700)">Why this pairing reads differently</span>
+  <div style="display:flex;align-items:flex-start;margin-top:12px">
+    ${col("Technical contribution", "var(--b700)", src("storebrid"),
+      tMoved ? [[sgn(c.t.mwh - b.t.mwh, 0, " MWh"), "storage capacity"],
+                [sgn(c.t.gwh - b.t.gwh, 1, " GWh/yr"), "energy discharged"]] : [],
+      "Same StoreBrid simulation as the baseline — the asset is unchanged.")}
+    <span style="width:1px;align-self:stretch;background:var(--hair);flex:none"></span>
+    ${col("Financial contribution", "var(--rv600)", src("revenew"),
+      fMoved ? [[sgn(c.sc.capture - b.sc.capture, 1, "/MWh"), "capture price"],
+                [sgn(c.rev - b.rev, 2, "M/yr"), "annual revenue"]] : [],
+      "Same ReveNew financial case as the baseline — the market view is unchanged.")}
+    <span style="width:1px;align-self:stretch;background:var(--hair);flex:none"></span>
+    ${col("Combined outcome", "var(--su700)", src("combined"),
+      [[sgn(npvOfCase(c) - npvOfCase(b), 1, "M NPV"), "net present value"],
+       [sgn(c.irr - b.irr, 1, " pt IRR"), "return on the money invested"]], "")}
+  </div>
+  <p class="t-meta" style="margin-top:14px;line-height:1.6">
+    ${tMoved && fMoved
+      ? `Both dimensions moved, so these two contributions cannot be added into a causal split — the share each takes depends on which one moves first. <b style="font-weight:600;color:var(--s700)">Explain difference</b> builds both controlled orders and names the residual.`
+      : tMoved
+        ? "Only the asset changed, so the whole difference is attached to the technical step at a fixed market view."
+        : "Only the market view changed, so the whole difference is attached to the financial step on the asset already committed."}
+  </p>
+</div>`;
+  })()}
   ${savedAs(sel.tid, sel.sid) ? "" : `<div style="margin-top:14px">${nameItHint({
     body: `Right now this pairing exists only while the cell is selected. Give it a name and it becomes an analysis case — it can be set as the current analysis, pulled into Compare, and reopened later with its figures re-read from both products.`,
     cta: "" })}</div>`}
@@ -4851,6 +4969,56 @@ ${(() => {
     body: `${out.length} of the ${ACASES.length} saved analysis cases ${one ? "is" : "are"} outdated — ${one ? `<b style="font-weight:600;color:var(--s900)">${out[0].name}</b> was priced` : "they were priced"} before the technical simulation changed. The other ${TECH.length * SCEN.length - ACASES.length} combinations are calculated live and are never outdated.`,
     cta: "Recalculate in ReveNew" });
 })()}
+${(() => {
+  /* §8 · The matrix's own value proposition, stated before the grid: across
+     every viable pairing, what leads on each objective. These are rankings,
+     not recommendations — the label names the objective, never a preference,
+     and the user picks which objective matters. Outdated results are excluded
+     from every claim, the same rule Compare applies. */
+  const all = TECH.flatMap((t) => SCEN.map((sc) => caseOf(t.id, sc.id)))
+                  .filter((c) => !isStale(c.t.id, c.sc.id));
+  const top = (f, better, fmt) => {
+    const w = all.reduce((x, y) => (better(f(y), f(x)) ? y : x));
+    return { c: w, v: fmt(f(w)) };
+  };
+  const up = (x, y) => x > y, down = (x, y) => x < y;
+  /* The metric cards under the tabs already lead on whichever metric is
+     selected, so the strip drops that objective and shows the others.
+     Repeating the same figure 250px apart is the noise §17 warns about;
+     what the user cannot see anywhere else is how the OTHER objectives
+     rank — which is the question the matrix exists to answer. */
+  const objectives = [
+    ["Highest IRR", "irr", top((c) => c.irr, up, (v) => v.toFixed(1) + "%"), src("combined")],
+    ["Highest NPV", null, top((c) => npvOfCase(c), up, eurMs), src("revenew")],
+    ["Lowest CAPEX", "capex", top((c) => c.t.capex, down, (v) => "€" + v.toFixed(1) + "M"), src("storebrid")],
+    ["Highest revenue / MWh", "perMwh", top((c) => c.perMwh, up, (v) => "€" + v.toFixed(1)), src("combined")],
+  ].filter(([, key]) => key !== mk);
+  return `
+<section class="panel" style="display:flex;align-items:stretch;padding:4px 0;margin-bottom:18px">
+  ${objectives.map(([label, , { c, v }, sr], i) => `
+    <div style="flex:1;min-width:0;padding:15px 22px;${i ? "border-left:1px solid var(--hair)" : ""}">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="band" style="font-size:10px">${label}</span>${sr}
+      </div>
+      <div style="font-size:21px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:8px;font-variant-numeric:tabular-nums">${v}</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:${SB};display:block"></i>
+          <span class="t-meta">${c.t.short}</span></span>
+        <span style="font-size:11px;color:var(--s400)">×</span>
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:${RN};display:block"></i>
+          <span class="t-meta">${c.sc.name}</span></span>
+      </div>
+    </div>`).join("")}
+</section>
+<p class="t-meta" style="margin:-8px 0 20px;line-height:1.5">
+  Leaders on the other objectives, across all ${TECH.length * SCEN.length} pairings, saved or not.
+  Each is a ranking on one objective — which objective matters is your decision, not the Suite's.
+  Outdated results are excluded.
+</p>` ;
+})()}
+
 <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:16px;flex-wrap:wrap">
   <div style="flex:1;min-width:0">
     <div class="band">Showing</div>
@@ -4933,7 +5101,7 @@ const SELCASE = { tid: "v4h", sid: "high" };
 /* The nine-cell matrix survives as ONE state of Compare — the surface
    for exploring combinations behind the named alternatives, not eight
    navigational destinations. */
-writeFileSync("CaseMatrix.dc.html", doc({ w: 1440, h: 2390, side: projectSide("cases"),
+writeFileSync("CaseMatrix.dc.html", doc({ w: 1440, h: 2760, side: projectSide("cases"),
   body: casesBody({ mk: "irr", sel: { tid: "v4h", sid: "high" } }) }));
 console.log("Compare · all combinations");
 
@@ -6514,12 +6682,36 @@ const impactBlock = (fromId, toId) => {
     </div>
     ${rows}
   </div>`;
+  /* §10 · "What did I have to change and what did I get in return?" — the
+     shortest form of the trade-off, in the header, before the evidence.
+     The sentence underneath is selected from the figures, never written:
+     it reads the sign of the NPV move against the size of the IRR move,
+     so it cannot claim more than the numbers support. */
+  const dCap = B.capex - A.capex, dNpv = B.npv - A.npv, dIrr = B.irr - A.irr;
+  const capital = Math.abs(dCap) >= 0.05;
+  const tradeOff = !capital
+    ? `No additional capital is committed. The whole difference is what this market view is worth on the asset already built — ${dNpv >= 0 ? "value gained" : "value lost"} without rebuilding anything.`
+    : dNpv <= 0
+      ? `The extra €${Math.abs(dCap).toFixed(1)}M does not pay for itself at this market view: NPV falls by ${eurMs(Math.abs(dNpv))}. The additional capacity earns less than the capital it consumes.`
+      : dIrr >= 0.5
+        ? `The extra €${Math.abs(dCap).toFixed(1)}M both adds ${eurMs(dNpv)} of value and earns a better return than the money already committed — return on capital rises ${dIrr.toFixed(1)} pp.`
+        : dIrr > 0
+          ? `The extra €${Math.abs(dCap).toFixed(1)}M adds ${eurMs(dNpv)} of absolute value but improves return on capital by only ${dIrr.toFixed(1)} pp. Higher storage increases what the project is worth without materially changing how hard the money works — whether that trade is worth making is the decision.`
+          : `The extra €${Math.abs(dCap).toFixed(1)}M adds ${eurMs(dNpv)} of absolute value while diluting return on capital by ${Math.abs(dIrr).toFixed(1)} pp. The project becomes larger, not more efficient.`;
   return `
 <section class="panel" style="padding:24px 26px">
-  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
     <span class="t-card" style="font-size:16px">${AC(toId).name}</span>
     <span class="t-meta">vs ${AC(fromId).name}</span>
     <span class="cov"><i style="background:${k.dot}"></i>${k.label}</span>
+    <span style="flex:1"></span>
+    <span style="display:inline-flex;align-items:center;gap:10px">
+      <span class="t-meta">Requires</span>
+      <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${capital ? (dCap >= 0 ? "+" : "−") + "€" + Math.abs(dCap).toFixed(1) + "M" : "no new capital"}</b>
+      <span style="color:var(--s400);display:flex">${ic("right", 13, 2)}</span>
+      <span class="t-meta">Produces</span>
+      <b style="font-size:13.5px;font-weight:600;color:${dNpv >= 0 ? "#0E9469" : "#C22222"};font-variant-numeric:tabular-nums">${(dNpv >= 0 ? "+" : "−") + eurMs(Math.abs(dNpv))} NPV</b>
+    </span>
   </div>
   <div style="display:flex;gap:16px;align-items:stretch">
     ${side("Technical change", "sb", src("storebrid"), A.c.t.id === B.c.t.id
@@ -6534,6 +6726,11 @@ const impactBlock = (fromId, toId) => {
       row("NPV", eurMs(A.npv), eurMs(B.npv), (B.npv - A.npv >= 0 ? "+" : "−") + "€" + Math.abs(B.npv - A.npv).toFixed(1) + "M", B.npv >= A.npv) +
       row("IRR", A.irr.toFixed(1) + "%", B.irr.toFixed(1) + "%", (B.irr - A.irr >= 0 ? "+" : "−") + Math.abs(B.irr - A.irr).toFixed(1) + " pp", B.irr >= A.irr) +
       row("Payback", A.pb.toFixed(1) + " y", B.pb.toFixed(1) + " y", (B.pb - A.pb >= 0 ? "+" : "−") + Math.abs(B.pb - A.pb).toFixed(1) + " y", B.pb <= A.pb))}
+  </div>
+  <div style="display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)">
+    <span class="band" style="flex:none;color:var(--su700);padding-top:2px">Trade-off</span>
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.6">${tradeOff}</span>
+    ${src("combined")}
   </div>
 </section>`;
 };
@@ -6743,10 +6940,10 @@ const createAC = () => {
   });
 };
 writeFileSync("CreateAnalysisCase.dc.html",
-  doc({ w: 1440, h: 2240, side: projectSide("compare"), body: alternativesBody(), overlay: createAC() }));
+  doc({ w: 1440, h: 2380, side: projectSide("compare"), body: alternativesBody(), overlay: createAC() }));
 
 writeFileSync("CompareAlternatives.dc.html",
-  doc({ w: 1440, h: 2240, side: projectSide("compare"), body: alternativesBody() }));
+  doc({ w: 1440, h: 2380, side: projectSide("compare"), body: alternativesBody() }));
 
 /* ═══════════════════════════════════════════════════════════════
    §3 · SIGN IN — the way into the Suite
@@ -6879,7 +7076,7 @@ console.log("Login.dc.html", login.length);
 
 /* §2 · the full table as its own destination, one level below Compare. */
 writeFileSync("CompareAllMetrics.dc.html",
-  doc({ w: 1440, h: 3060, side: projectSide("compare"), body: alternativesBody({ detail: true }) }));
+  doc({ w: 1440, h: 3200, side: projectSide("compare"), body: alternativesBody({ detail: true }) }));
 console.log("CompareAllMetrics.dc.html");
 
 /* ═══════════════════════════════════════════════════════════════
@@ -7022,22 +7219,22 @@ console.log("deck slides -> export/slides");
 const COLX = [0, 1560, 3120];
 const PAGES = [
   { id: "page-1", name: "Project workspace", rows: [
-    [["ProjectOverview.dc.html", 1440, 2100, "1 · Overview"],
-     ["CaseMatrix.dc.html", 1440, 2390, "2 · Case matrix"],
-     ["CompareAlternatives.dc.html", 1440, 2240, "3 · Compare"],
-     ["CompareAllMetrics.dc.html", 1440, 3060, "3b · Compare — all metrics"]],
-    [["OverviewChangeSim.dc.html", 1440, 2100, "4 · Change technical simulation"],
-     ["OverviewChangeScenario.dc.html", 1440, 2100, "5 · Change financial case"],
-     ["OverviewTechnical.dc.html", 1440, 2100, "6 · Technical details"]],
+    [["ProjectOverview.dc.html", 1440, 2190, "1 · Overview"],
+     ["CaseMatrix.dc.html", 1440, 2760, "2 · Case matrix"],
+     ["CompareAlternatives.dc.html", 1440, 2380, "3 · Compare"],
+     ["CompareAllMetrics.dc.html", 1440, 3200, "3b · Compare — all metrics"]],
+    [["OverviewChangeSim.dc.html", 1440, 2190, "4 · Change technical simulation"],
+     ["OverviewChangeScenario.dc.html", 1440, 2190, "5 · Change financial case"],
+     ["OverviewTechnical.dc.html", 1440, 2190, "6 · Technical details"]],
     [["FinancialDetails.dc.html", 1440, 1160, "7 · Financial details"],
-     ["CreateAnalysisCase.dc.html", 1440, 2240, "8 · Create analysis case"],
+     ["CreateAnalysisCase.dc.html", 1440, 2380, "8 · Create analysis case"],
      ["CompareExplained.dc.html", 1440, 4910, "9 · Explain difference"]],
-    [["OverviewStale.dc.html", 1440, 2190, "10 · Financial results outdated"],
-     ["EditProjectDetails.dc.html", 1440, 2100, "11 · Project details"]],
+    [["OverviewStale.dc.html", 1440, 2280, "10 · Financial results outdated"],
+     ["EditProjectDetails.dc.html", 1440, 2190, "11 · Project details"]],
   ]},
   { id: "page-2", name: "Suite", rows: [
     [["Login.dc.html", 1440, 900, "Sign in"]],
-    [["Main.dc.html", 1440, 1450, "Home"],
+    [["Main.dc.html", 1440, 1710, "Home"],
      ["Projects.dc.html", 1440, 800, "Projects"],
      ["CreateProject.dc.html", 1440, 1380, "Create project"]],
     [["Analytics.dc.html", 1440, 1990, "Analytics"],
@@ -7063,7 +7260,7 @@ const NOTES = {
   "OverviewTechnical.dc.html": ["n-techdet", "4 · TECHNICAL DETAILS\n\nProgressive disclosure instead of a Technical Results page. Configuration, operation, degradation and the dispatch chart — read-only, one level down from the KPIs that prompted the question.\n\nThe rule this drawer encodes: the Suite shows enough to understand why you might open StoreBrid. It does not try to be StoreBrid."],
   "FinancialDetails.dc.html": ["n-findet", "5 · FINANCIAL BREAKDOWN\n\nThe financial counterpart: Forecast, Energy, Revenue, Costs and Financial Model in one read-only drawer.\n\nThis is where ReveNew's internal structure is allowed to appear — as supporting detail explaining a number, never as navigation. Nothing here is editable; the only action is Open in ReveNew."],
   "CreateAnalysisCase.dc.html": ["n-createac", "8 · CREATE ALTERNATIVE\n\nA name and two selectors. The summary is read live from both products.\n\nAn analysis case is the only object the Suite owns, and it is deliberately thin — no wizard, no CRUD module, no navigation section. It is a saved combination, nothing more."],
-  "CompareAlternatives.dc.html": ["n-compare", "3 · COMPARE — where the decision is made\n\nRestructured for hierarchy: decision summary, deltas, technical → financial decomposition. The full metrics table is no longer part of this page — it is collapsed behind \"Show all metrics\" and opens as its own detail level. Nothing analytical was removed; the competition for the reader's attention was.\n\nThe freshness rule matters most here. Stress test's financial result predates the technical change, so it carries an Outdated tag, is excluded from the deterministic Best NPV / Best IRR / Lowest CAPEX conclusions, and the amber line says so. A stale result is never quietly labelled best.\n\n\"Use as current analysis\" appears when a case is selected — compare, choose, and Overview follows."],
+  "CompareAlternatives.dc.html": ["n-compare", "3 · COMPARE — where the decision is made\n\nRestructured for hierarchy: decision summary, deltas, technical → financial decomposition. The full metrics table is no longer part of this page — it is collapsed behind \"Show all metrics\" and opens as its own detail level. Nothing analytical was removed; the competition for the reader's attention was.\n\nThe freshness rule matters most here. Stress test's financial result predates the technical change, so it carries an Outdated tag, is excluded from the deterministic Best NPV / Best IRR / Lowest CAPEX conclusions, and the amber line says so. A stale result is never quietly labelled best.\n\n\"Use as current analysis\" appears when a case is selected — compare, choose, and Overview follows\n\nCHANGED. Each comparison block now opens with the trade-off in its shortest form — Requires −> Produces — and closes with a TRADE-OFF reading selected from the figures, never written: it tests the sign of the NPV move against the size of the IRR move, so it cannot claim more than the numbers support.\n\nFor High storage it reads that the extra capital adds absolute value without materially changing how hard the money works. For Stress test, that no capital is committed at all and the whole difference is what the market view is worth on the asset already built."],
   "ProjectFinancial.dc.html": ["n-projfin", "4 · FINANCIALS\n\nScenarios became Financials. ReveNew has Forecast, Energy, Revenue, DevEx, CapEx, OpEx and Financial Model scenarios inside it; exposing that structure in the Suite would have been reproducing ReveNew.\n\nInstead: the five decision figures at the top, the financial case switcher above them, and CASE COMPOSITION underneath — the ReveNew scenarios this case selects, read-only, so a number can be traced without opening the model.\n\nThe line under the KPIs is the cross-product point: this result is priced against Base case 2027. A different simulation gives a different CAPEX and a different NPV."],
   "CasesBaseline.dc.html": ["n-casesbase", "ANALYSIS BASELINE MOVED\n\nThe same nine cases, read from 4 h variant + High spread instead of the project's own case.\n\nNothing was re-run, no scenario was edited and no value moved — only the reference the deltas count from. Every delta has flipped sign, and the question the page answers has flipped with it: not \"what does the 4 h buy us\" but \"what do we give up by not building it\".\n\nThe control says it is not the project baseline and offers the way back. That is the whole safety model for this feature."],
   "VariantEvaluating.dc.html": ["n-vareval", "11 · VARIANT · PRICING\n\nNEW — the middle stage that was missing.\n\nThe technical run has landed, so the StoreBrid figures are real: 92.4 GWh, 231 cycles, 79% utilisation. ReveNew is now pricing that same energy against the project's three scenarios, and the cases are still waiting.\n\nThis is the stage that makes the dependency legible: one technical run, three commercial evaluations, three cases."],
@@ -7074,19 +7271,19 @@ const NOTES = {
   "CaseMatrixPerCycle.dc.html": ["n-mx-cyc", "REVENUE / CYCLE\n\nThe bridge between the financial result and the cell replacement schedule: warranties and degradation curves are written against cycles, not against euros.\n\nThe third highlight is a warning rather than a winner. Per-cycle value is high on the 4 h variant mainly because each cycle is twice the size — not because the energy sells better. A battery that never cycles has infinite value per cycle and no revenue, which is why this is a supporting metric and never a ranking on its own."],
   "CaseMatrixPerMwh.dc.html": ["n-mx-mwh", "REVENUE / MWH DISCHARGED\n\nThe metric that separates a bigger asset from a better one, and the tab where the ranking flips: Base 2 h + High spread leads, and the revenue leader drops to third.\n\nA two-hour battery discharges only into the steepest part of the day. The 4 h variant reaches further down the price curve to place its extra energy, so it earns more in total and less for each MWh. Neither is wrong — they are different products, and the downward slope in the chart is that trade-off drawn once."],
   "CaseMatrixRevenue.dc.html": ["n-mx-rev", "ANNUAL REVENUE\n\nA pure ReveNew figure, and the one most likely to be misread — which is why the third highlight is not a case at all but a price tag: the revenue leader costs €8.6M more to build.\n\nRevenue rises with duration and with spread, but only one of those was bought. A configuration can lead this tab simply by being larger. The chart plots revenue against CAPEX for exactly that reason: high AND far right means the revenue was bought with capital."],
-  "ProjectOverview.dc.html": ["n-overview", "1 · OVERVIEW — what am I currently analysing?\n\nThe current analysis case, its two halves with their provenance and freshness, and the result they produce together.\n\nCAPEX now shows lineage rather than a single owner: costed in StoreBrid, consumed by the ReveNew financial model. Both products touch it, and the UI stops pretending otherwise.\n\nThe chart title changed from \"Does more storage improve the return?\" to \"Storage investment against return\". The three analysis cases do not hold the financial case constant, so a causal question would be claiming more than the data supports."],
+  "ProjectOverview.dc.html": ["n-overview", "1 · OVERVIEW — what am I currently analysing?\n\nThe current analysis case, its two halves with their provenance and freshness, and the result they produce together.\n\nCAPEX now shows lineage rather than a single owner: costed in StoreBrid, consumed by the ReveNew financial model. Both products touch it, and the UI stops pretending otherwise.\n\nThe chart title changed from \"Does more storage improve the return?\" to \"Storage investment against return\". The three analysis cases do not hold the financial case constant, so a causal question would be claiming more than the data supports\n\nCHANGED. A READING band now sits between the pairing and the evidence: one deterministic sentence turning CAPEX, NPV and energy discharged into what the configuration actually does with money. Every figure in it is derived, so it cannot drift from the cards below.\n\nIt is deliberately not another KPI row — NPV, IRR, GWh and utilisation all appear within 300px of it. What was missing between the pairing and the evidence was the reading, not more numbers.\n\n\"What this project has to combine\" became EXPLORE ALTERNATIVES: named by what the user does there, not by what the data is."],
   "SimulationOverview.dc.html": ["n-simov", "2 · SIMULATION OVERVIEW\n\nOpening a simulation from the Suite does not open the StoreBrid wizard. Six values define the technical case; layout, losses, degradation curves and dispatch strategy stay in StoreBrid.\n\nUnderneath: core results, then the same technical case against three ReveNew scenarios. Each pairing is a case.\n\nCHANGED. The technical KPI deltas now declare their referent — the previous run of this simulation, or for a variant, the simulation it was created from. This screen is now one component with three lifecycle states; artboards 10 and 11 are the other two."],
   "Results.dc.html": ["n-results", "3 · TECHNICAL RESULTS — three views, not thirty\n\nPower and state of charge; the energy balance; degradation. Daily graphs, heat maps, tables and CSV exports stay in StoreBrid.\n\nCHANGED. A FINANCIAL SUMMARY now sits under the technical results: the NPV, IRR and CAPEX of this same simulation under the current ReveNew scenario, with the scenario named and switchable.\n\nThat panel is the whole argument for a Suite in one screen — 65.2 GWh discharged is what earns €8.42M, and you can see both without changing application. Change the scenario and only the financial half moves."],
   "CommercialScenarios.dc.html": ["n-scen", "4 · COMMERCIAL SCENARIOS\n\nOne technical case, three ReveNew scenarios, read as a strip before any card is opened. The constant is stated: 65.2 GWh in every column, because the technical case does not change.\n\nCHANGED. The picker now has the action it was missing — Add selected — plus a scenario that cannot be evaluated at all, because it has no price curve in ReveNew. It is shown rather than hidden, and the fix links to where the fix lives. IRR moved into the Combined rows here too."],
   "CaseDetail.dc.html": ["n-casedet", "5 · CASE DETAIL — Base case 2027 + High spread\n\nThree columns: TECHNICAL CONTEXT, COMMERCIAL OUTCOME, COMBINED METRICS. Not \"cause\" and \"effect\" — the Suite states the pairing, it does not claim one produces the other.\n\nCHANGED. IRR left the ReveNew column and joined Combined, alongside Revenue / CAPEX; Merchant share took its place on the financial side. A freshness line at the top states when each side was last calculated, because two systems means two clocks."],
-  "CaseMatrix.dc.html": ["n-matrix", "2 · CASE MATRIX — explore the combinations\n\nRenamed from \"Cases\", which collided with Financial Case and Analysis Case.\n\nThe distinction it now carries is the important one: 3 simulations × 3 financial cases = 9 POSSIBLE COMBINATIONS, of which 3 are saved as analysis cases. A combination becomes an analysis case only when someone names it. Every cell says which it is — the case name, or \"Not saved\" — and the selected cell offers \"Save as analysis case\" or, if it already is one, \"Use as current analysis\".\n\nThat second action is what closes the loop back to Overview.\n\nThe outdated cell is marked and greyed rather than shown as a valid result.\n\nCHANGED. The aggregate freshness notice Compare already carried now appears here too, under the header summary and before the grid: how many SAVED analysis cases are outdated, which one, and the deep link that fixes it. It also states the rule the empty cells depend on — the other six combinations are calculated live when a cell is opened, so they have no age to be stale against and are never marked."],
+  "CaseMatrix.dc.html": ["n-matrix", "2 · CASE MATRIX — explore the combinations\n\nRenamed from \"Cases\", which collided with Financial Case and Analysis Case.\n\nThe distinction it now carries is the important one: 3 simulations × 3 financial cases = 9 POSSIBLE COMBINATIONS, of which 3 are saved as analysis cases. A combination becomes an analysis case only when someone names it. Every cell says which it is — the case name, or \"Not saved\" — and the selected cell offers \"Save as analysis case\" or, if it already is one, \"Use as current analysis\".\n\nThat second action is what closes the loop back to Overview.\n\nThe outdated cell is marked and greyed rather than shown as a valid result.\n\nCHANGED. The aggregate freshness notice Compare already carried now appears here too, under the header summary and before the grid: how many SAVED analysis cases are outdated, which one, and the deep link that fixes it. It also states the rule the empty cells depend on — the other six combinations are calculated live when a cell is opened, so they have no age to be stale against and are never marked\n\nCHANGED. Two additions make the matrix state its own value proposition. Above the grid, the leaders on the objectives NOT currently selected — highest NPV, lowest CAPEX, highest revenue per MWh — across all nine pairings, saved or not, outdated ones excluded. They are rankings, never preferences: the label names the objective and the user decides which objective matters.\n\nBelow the selected cell, WHY THIS PAIRING READS DIFFERENTLY decomposes the difference the way the domain splits it: what StoreBrid changed, what ReveNew changed, what came out of both. When only one dimension moved, the other column says so rather than inventing a contribution. When both moved, the panel refuses to split the cause and hands that to Explain difference, which builds the two controlled orders."],
   "CaseMatrixCell.dc.html": ["n-matrixcell", "IRR · A CASE SELECTED\n\nClicking a cell does not leave the page. The panel opens under the grid with the five figures that matter, and three actions that each mean something different: make this the analysis baseline, add it to a comparison, or explain the difference.\n\nEXPLAIN DIFFERENCE is the important one. Both dimensions differ from the baseline here, so the panel refuses to attribute — and instead names the two cells that would isolate each change, which is exactly what the action opens Compare with.\n\nThe selection is a case, not a number, so it survives every metric change."],
   "CompareCases.dc.html": ["n-compcases", "8 · COMPARE CASES — the decision cockpit\n\nCHANGED SUBSTANTIALLY. The baseline and the metric are now real controls, not labels. Both are read by everything below them: change the baseline and every delta, the key changes, the bridge and the wording of the summary follow; change the metric and the bridge and the bar comparison follow with it.\n\nTHE SUMMARY IS GENERATED from the same figures the page shows, so it cannot describe a comparison that is not on screen.\n\nTHE BRIDGE IS NO LONGER IRR-ONLY and no longer hard-coded. It reads the selected metric, and it is drawn only when each step moved one dimension. Select two cases that differ on both and it refuses, in words, and says what to add.\n\nIncremental economics is unchanged in spirit and now derived: +€8.6M of CAPEX buys +27.2 GWh and +€2.25M a year, 3.8 years undiscounted. The data table is regrouped as Technical — StoreBrid / Financial — ReveNew / Combined — Suite, with CAPEX moved to Technical where it belongs and IRR to Combined."],
   "QuickVariant.dc.html": ["n-variant", "9 · CREATE TECHNICAL VARIANT\n\nFive levers, never the wizard. It states its own changes — storage 200 → 400 MWh, duration 2.0 → 4.0 h — and names everything that carries over untouched.\n\nThat matters because the whole comparison model rests on it: the original simulation is never modified, so every case already built on it stays valid."],
   "VariantRunning.dc.html": ["n-varrun", "10 · VARIANT · RUNNING\n\nThe pipeline, as operational status rather than a wizard: technical simulation → commercial evaluation → cases.\n\nStoreBrid is running. ReveNew cannot start — there is no energy to price yet — and the cases cannot exist until both are done. The KPIs below are skeletons, not stale numbers."],
   "VariantReady.dc.html": ["n-varready", "12 · VARIANT · CASES READY\n\nAll three stages complete. The primary action is now Explore 3 new cases, because that is what a variant actually produces — one simulation priced against every financial scenario in the project.\n\nThe deltas are measured against Base case 2027, the simulation this variant came from, not against a previous run it never had."],
   "EmbeddedWorkflow.dc.html": ["n-embed", "12 · EDIT FORECAST — the commercial equivalent of the variant\n\nThe ReveNew-owned capability the Suite hosts. Suite glass, ReveNew as provenance and accent; the shell, background and project context never move.\n\nCHANGED. It now edits a COMMERCIAL SCENARIO — High spread — rather than something confusingly named after a technical simulation. The footer states what the save does: it writes to ReveNew, and marks every case built on that scenario for recalculation. It does not touch StoreBrid, because the dependency only points one way."],
-  "Main.dc.html": ["n-home", "HOME\n\nCHANGED. ReveNew is no longer represented through scenarios. The KPI row now counts the objects people actually work with — portfolios, simulations, financial models — alongside the two output figures.\n\n\"Portfolio\" was the word this page used for the whole organisation. That word now belongs to a real entity, so the panel is Workspace and RECENT PORTFOLIOS sits under Recent projects. Both levels of work, on the page you land on\n\nCHANGED. One portfolio-level freshness counter, inside the Analysis cases figure rather than beside it: the same amber badge the matrix cell and the Compare row use, reading \"3 need recalculation\", with a link to the filtered list. No project names here — a count and a way in, so the landing page does not turn into a work queue."],
+  "Main.dc.html": ["n-home", "HOME\n\nCHANGED. ReveNew is no longer represented through scenarios. The KPI row now counts the objects people actually work with — portfolios, simulations, financial models — alongside the two output figures.\n\n\"Portfolio\" was the word this page used for the whole organisation. That word now belongs to a real entity, so the panel is Workspace and RECENT PORTFOLIOS sits under Recent projects. Both levels of work, on the page you land on\n\nCHANGED. One portfolio-level freshness counter, inside the Analysis cases figure rather than beside it: the same amber badge the matrix cell and the Compare row use, reading \"3 need recalculation\", with a link to the filtered list. No project names here — a count and a way in, so the landing page does not turn into a work queue\n\nCHANGED. Home was a KPI dashboard: five inventory counts at equal weight, and the observations that actually need a decision tucked into a bottom corner. The counts now step back and NEEDS YOUR ATTENTION sits directly under Workspace, full width.\n\nEach card is an observation, the two figures that support it, and what it may mean — one technical number read against one financial number. Nothing is generated or recommended; they are subtractions over data that already exists. Conditions that need watching but no decision stay below as Portfolio conditions."],
   "Projects.dc.html": ["n-projects", "PROJECTS\n\nOne registry. The column is CAPABILITIES, never connection status."],
   "CreateProject.dc.html": ["n-create", "CREATE PROJECT\n\nThe Suite owns the shared context — name, type, currency, coordinates. The map is drawn, not tiled; an artboard has no network."],
   "Analytics.dc.html": ["n-analytics", "ANALYTICS — portfolio level\n\nAcross projects, where Cases work within one. The scatter neither product can draw, and the monthly view of when moving energy actually earns.\n\nCHANGED. The bubbles were all one colour, which stops being readable somewhere around fifteen projects — and a real portfolio has more. The field is now neutral and the Combined accent is spent only on the two or three assets Performance insights is actually reading out beside the chart. Colour stopped being decoration and became the pointer; the same rule now governs the compared-cases scatter.\n\nCHANGED. A portfolio-scale freshness notice sits under the KPI row, in the same component Compare and the case matrix use. It says how many analysis cases are outdated and that they are excluded from the figures above — which matters, because a portfolio average quietly computed over stale results is the failure this whole vocabulary exists to prevent."],

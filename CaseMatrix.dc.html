@@ -262,8 +262,8 @@ a.glass-sm:hover{
 .grid{display:grid;gap:20px}
 </style>
 </helmet>
-<div class="atmos" style="width:1440px;min-height:2390px;position:relative">
-  <div class="shell" style="min-height:2390px">
+<div class="atmos" style="width:1440px;min-height:2760px;position:relative">
+  <div class="shell" style="min-height:2760px">
     <aside class="side">
 
 <div class="brand">
@@ -367,6 +367,61 @@ a.glass-sm:hover{
   <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Recalculate in ReveNew<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
   
 </div>
+
+<section class="panel" style="display:flex;align-items:stretch;padding:4px 0;margin-bottom:18px">
+  
+    <div style="flex:1;min-width:0;padding:15px 22px;">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="band" style="font-size:10px">Highest NPV</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+      </div>
+      <div style="font-size:21px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:8px;font-variant-numeric:tabular-nums">€14.2M</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#2563EB;display:block"></i>
+          <span class="t-meta">4 h variant</span></span>
+        <span style="font-size:11px;color:var(--s400)">×</span>
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#AF47B2;display:block"></i>
+          <span class="t-meta">High spread</span></span>
+      </div>
+    </div>
+    <div style="flex:1;min-width:0;padding:15px 22px;border-left:1px solid var(--hair)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="band" style="font-size:10px">Lowest CAPEX</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+      </div>
+      <div style="font-size:21px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:8px;font-variant-numeric:tabular-nums">€41.2M</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#2563EB;display:block"></i>
+          <span class="t-meta">Low RTE</span></span>
+        <span style="font-size:11px;color:var(--s400)">×</span>
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#AF47B2;display:block"></i>
+          <span class="t-meta">Base market</span></span>
+      </div>
+    </div>
+    <div style="flex:1;min-width:0;padding:15px 22px;border-left:1px solid var(--hair)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="band" style="font-size:10px">Highest revenue / MWh</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+      </div>
+      <div style="font-size:21px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:8px;font-variant-numeric:tabular-nums">€150.3</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#2563EB;display:block"></i>
+          <span class="t-meta">Base 2 h</span></span>
+        <span style="font-size:11px;color:var(--s400)">×</span>
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#AF47B2;display:block"></i>
+          <span class="t-meta">High spread</span></span>
+      </div>
+    </div>
+</section>
+<p class="t-meta" style="margin:-8px 0 20px;line-height:1.5">
+  Leaders on the other objectives, across all 9 pairings, saved or not.
+  Each is a ranking on one objective — which objective matters is your decision, not the Suite's.
+  Outdated results are excluded.
+</p>
+
 <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:16px;flex-wrap:wrap">
   <div style="flex:1;min-width:0">
     <div class="band">Showing</div>
@@ -706,6 +761,62 @@ a.glass-sm:hover{
     </span>
   </div>
   <p class="t-meta" style="margin-top:16px;line-height:1.6">Both dimensions differ from the baseline. Explaining the split needs two controlled steps — Compare builds them. <b style="font-weight:600;color:var(--s700)">Explain difference</b> opens it with Base 2 h + High spread and 4 h variant + Base market already in place — the two cells that isolate one dimension each.</p>
+  
+<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--hair)">
+  <span class="band" style="color:var(--su700)">Why this pairing reads differently</span>
+  <div style="display:flex;align-items:flex-start;margin-top:12px">
+    
+      <div style="flex:1;min-width:0;padding:0 20px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="band" style="font-size:10px;color:var(--b700)">Technical contribution</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+        </div>
+        
+          <div style="margin-top:11px">
+            <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">+200 MWh</span>
+            <span class="t-meta" style="display:block;margin-top:2px">storage capacity</span>
+          </div>
+          <div style="margin-top:11px">
+            <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">+27.2 GWh/yr</span>
+            <span class="t-meta" style="display:block;margin-top:2px">energy discharged</span>
+          </div>
+      </div>
+    <span style="width:1px;align-self:stretch;background:var(--hair);flex:none"></span>
+    
+      <div style="flex:1;min-width:0;padding:0 20px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="band" style="font-size:10px;color:var(--rv600)">Financial contribution</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+        </div>
+        
+          <div style="margin-top:11px">
+            <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">+19.6/MWh</span>
+            <span class="t-meta" style="display:block;margin-top:2px">capture price</span>
+          </div>
+          <div style="margin-top:11px">
+            <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">+3.63M/yr</span>
+            <span class="t-meta" style="display:block;margin-top:2px">annual revenue</span>
+          </div>
+      </div>
+    <span style="width:1px;align-self:stretch;background:var(--hair);flex:none"></span>
+    
+      <div style="flex:1;min-width:0;padding:0 20px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="band" style="font-size:10px;color:var(--su700)">Combined outcome</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+        </div>
+        
+          <div style="margin-top:11px">
+            <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">+5.9M NPV</span>
+            <span class="t-meta" style="display:block;margin-top:2px">net present value</span>
+          </div>
+          <div style="margin-top:11px">
+            <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">+1.3 pt IRR</span>
+            <span class="t-meta" style="display:block;margin-top:2px">return on the money invested</span>
+          </div>
+      </div>
+  </div>
+  <p class="t-meta" style="margin-top:14px;line-height:1.6">
+    Both dimensions moved, so these two contributions cannot be added into a causal split — the share each takes depends on which one moves first. <b style="font-weight:600;color:var(--s700)">Explain difference</b> builds both controlled orders and names the residual.
+  </p>
+</div>
   <div style="margin-top:14px">
 <div style="display:flex;align-items:center;gap:11px;padding:10px 15px;border-radius:var(--r-xs);
      background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 78%);
@@ -830,7 +941,7 @@ a.glass-sm:hover{
   
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":2390}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":2760}}'>
 class Component extends DCLogic {}
 </script>
 </body>

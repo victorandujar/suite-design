@@ -262,8 +262,8 @@ a.glass-sm:hover{
 .grid{display:grid;gap:20px}
 </style>
 </helmet>
-<div class="atmos" style="width:1440px;min-height:2100px;position:relative">
-  <div class="shell" style="min-height:2100px">
+<div class="atmos" style="width:1440px;min-height:2190px;position:relative">
+  <div class="shell" style="min-height:2190px">
     <aside class="side">
 
 <div class="brand">
@@ -379,6 +379,19 @@ a.glass-sm:hover{
     <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
   </div>
 </section>
+
+
+<div style="display:flex;align-items:center;gap:20px;margin-top:14px;padding:15px 20px;border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(14,157,168,.055),rgba(255,255,255,0) 78%);
+     box-shadow:inset 0 0 0 1px rgba(14,157,168,.13)">
+  <span class="band" style="flex:none;color:var(--su700)">Reading</span>
+  <span style="flex:1;min-width:0;font-size:13px;color:var(--s700);line-height:1.6">
+    This configuration turns <b style="font-weight:600;color:var(--s900)">€42.1M</b> of CAPEX costed in StoreBrid into
+    <b style="font-weight:600;color:var(--s900)">€8.3M</b> of NPV modelled in ReveNew, while discharging
+    <b style="font-weight:600;color:var(--s900)">65.2 GWh</b> a year — <b style="font-weight:600;color:var(--s900)">€0.20</b> of NPV per euro invested.
+  </span>
+  <a href="#" style="flex:none;font-size:12.5px;font-weight:500;white-space:nowrap">Explain<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></a>
+</div>
 
 <div style="display:flex;gap:22px;margin-top:26px;align-items:stretch">
   
@@ -572,9 +585,9 @@ a.glass-sm:hover{
   <div style="min-width:0">
     
     <div style="display:flex;align-items:center;gap:10px">
-      <h2 class="t-sec">What this project has to combine</h2><span class="src"><i style="background:#0E9DA8"></i>Suite</span>
+      <h2 class="t-sec">Explore alternatives</h2><span class="src"><i style="background:#0E9DA8"></i>Suite</span>
     </div>
-    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">What this project already has on each side. Choosing one changes the current analysis.</p>
+    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">What this project already has on each side. Choosing one changes the current analysis — nothing is modelled here.</p>
   </div>
   <div style="flex:none"><button class="btn btn-secondary" style="height:34px;font-size:12.5px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4.6v10.8M4.6 10h10.8"/></svg>Create analysis case</button></div>
 </div>
@@ -862,7 +875,7 @@ a.glass-sm:hover{
 </aside>
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":2100}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":2190}}'>
 class Component extends DCLogic {}
 </script>
 </body>
