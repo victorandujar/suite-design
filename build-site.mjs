@@ -84,15 +84,23 @@ const CHROME = `
   @media print{.dcbar{display:none}}
 `;
 
-/* Escala el artboard de ancho fijo para que quepa en pantallas estrechas. */
+/* Ajusta el artboard de ancho fijo al viewport: reduce en pantallas estrechas y
+   AMPLÍA en las anchas, que es el caso habitual — los artboards se maquetan a
+   1440 y casi todo el mundo revisa esto a 1920. Sin ampliar, la pantalla queda
+   pegada a la izquierda con una banda muerta a la derecha.
+   El tope evita que un monitor de 2560+ infle el texto a tamaño de cartel; la
+   holgura que sobra por encima del tope se reparte a los dos lados. */
+const MAX_ZOOM = 1.5;
 const FIT = w => `
 <script>
 (function(){
-  var W=${w}, box=document.querySelector('.dcfit'), s=document.querySelector('.dcstage'), h=0;
+  var W=${w}, MAX=${MAX_ZOOM}, box=document.querySelector('.dcfit'), s=document.querySelector('.dcstage'), h=0;
   function fit(){
     if(!h) h=s.offsetHeight;
-    var k=Math.min(1,(box.clientWidth||window.innerWidth)/W);
-    s.style.transform = k<1 ? 'scale('+k+')' : 'none';
+    var bw=box.clientWidth||window.innerWidth;
+    var k=Math.min(MAX,bw/W);
+    var dx=Math.max(0,(bw-W*k)/2);
+    s.style.transform='translateX('+dx+'px) scale('+k+')';
     box.style.height=(h*k)+'px';
   }
   addEventListener('resize',fit);
