@@ -1036,7 +1036,10 @@ const coverageBar = () => {
    Two measures of different scale, one axis: both indexed to January.
    Derived from the same monthly figures Analytics plots.            */
 function portfolioTrend(w = 566) {
-  const H = 224, L = 34, R = 44, T = 16, B = 26;
+  /* R has to clear the widest end-of-line label: "Revenue" at 10px semibold
+     is ~45px, and the labels start 7px inside the margin. At 44 it was
+     clipped mid-word at every viewport width. */
+  const H = 224, L = 34, R = 58, T = 16, B = 26;
   const pw = w - L - R, ph = H - T - B;
   const rev = GWH.map((g, i) => (g * EUR_MWH[i]) / 1000);
   const idx = (a) => a.map((v) => (v / a[0]) * 100);

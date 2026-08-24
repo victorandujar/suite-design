@@ -84,23 +84,29 @@ const CHROME = `
   @media print{.dcbar{display:none}}
 `;
 
-/* Ajusta el artboard de ancho fijo al viewport: reduce en pantallas estrechas y
-   AMPLÍA en las anchas, que es el caso habitual — los artboards se maquetan a
-   1440 y casi todo el mundo revisa esto a 1920. Sin ampliar, la pantalla queda
-   pegada a la izquierda con una banda muerta a la derecha.
-   El tope evita que un monitor de 2560+ infle el texto a tamaño de cartel; la
-   holgura que sobra por encima del tope se reparte a los dos lados. */
-const MAX_ZOOM = 1.5;
+/* Por encima del ancho de diseño el artboard NO se amplía: escalarlo agranda
+   también la tipografía y la pantalla acaba pareciendo una maqueta ampliada en
+   vez de una aplicación. En su lugar se deja fluir — la barra lateral se queda
+   en su ancho y la columna de contenido ocupa lo que sobra, que es lo que haría
+   la app real. Por debajo del ancho de diseño sí se reduce a escala, porque ahí
+   el layout no tiene sitio donde encoger.
+   Las hojas estrechas (documentos, no pantallas de app) se centran en vez de
+   estirarse: una columna de texto de 860 px a 1920 no se lee. */
+const FLUID_MIN = 1200;
+const stageCss = w => w >= FLUID_MIN
+  ? `.dcstage .atmos{width:auto !important;min-width:${w}px}`
+  : `.dcstage{display:flex;justify-content:center}`;
+
 const FIT = w => `
 <script>
 (function(){
-  var W=${w}, MAX=${MAX_ZOOM}, box=document.querySelector('.dcfit'), s=document.querySelector('.dcstage'), h=0;
+  var W=${w}, box=document.querySelector('.dcfit'), s=document.querySelector('.dcstage'), h=0;
   function fit(){
-    if(!h) h=s.offsetHeight;
     var bw=box.clientWidth||window.innerWidth;
-    var k=Math.min(MAX,bw/W);
-    var dx=Math.max(0,(bw-W*k)/2);
-    s.style.transform='translateX('+dx+'px) scale('+k+')';
+    var k=Math.min(1,bw/W);
+    if(k===1){ s.style.transform='none'; box.style.height=''; h=0; return; }
+    if(!h) h=s.offsetHeight;
+    s.style.transform='scale('+k+')';
     box.style.height=(h*k)+'px';
   }
   addEventListener('resize',fit);
@@ -151,7 +157,7 @@ for (const b of boards) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(b.title)} · Sunveon Suite</title>
 ${head}
-<style>${CHROME}</style>
+<style>${CHROME}${stageCss(b.w)}</style>
 </head>
 <body>
 <div class="dcbar">
