@@ -6478,11 +6478,217 @@ const saveDialog = () => capabilityModal({
 });
 
 
+/* ═══════════════════════════════════════════════════════════════
+   EXPLAIN DIFFERENCE — rebuilt around the decomposition itself
+   The analytical logic is untouched: same controlled cases, same
+   contributions, same refusal to name a single causal split. What
+   changed is that the reader now SEES it before reading anything.
+
+   The two paths are the hero because they are the argument. Everything
+   that was primary before them — the prose decision summary, three
+   key-change blocks, a scatter, a metric bar chart, the full table —
+   was either restating the paths or belonged to Compare. It is kept,
+   one level down, where it verifies rather than competes.
+   ═══════════════════════════════════════════════════════════════ */
+const pathNode = ({ c, role, mk, big }) => {
+  const m = MET[mk];
+  return `
+<div style="padding:${big ? "15px 17px" : "13px 16px"};border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(255,255,255,${big ? ".78" : ".55"}),rgba(255,255,255,${big ? ".5" : ".3"}));
+     box-shadow:inset 0 0 0 1px ${big ? "rgba(14,157,168,.24)" : "var(--hair)"}">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+    <span class="band" style="font-size:9.5px">${role}</span>
+    <b style="font-size:${big ? "21" : "18"}px;font-weight:700;letter-spacing:-.022em;color:var(--s900);font-variant-numeric:tabular-nums">${m.fmt(c)}</b>
+  </div>
+  <div style="display:flex;align-items:center;gap:7px;margin-top:7px;flex-wrap:wrap">
+    <span style="display:inline-flex;align-items:center;gap:5px">
+      <i style="width:4px;height:4px;flex:none;border-radius:50%;background:${SB};display:block"></i>
+      <span class="t-meta">${c.t.short}</span></span>
+    <span style="font-size:10px;color:var(--s400)">×</span>
+    <span style="display:inline-flex;align-items:center;gap:5px">
+      <i style="width:4px;height:4px;flex:none;border-radius:50%;background:${RN};display:block"></i>
+      <span class="t-meta">${c.sc.name}</span></span>
+  </div>
+</div>`;
+};
+
+/* The step between two nodes: what moved, which product owns it, how much. */
+const pathStep = ({ from, to, kind, delta, mk }) => {
+  const sb = kind === "sb", col = sb ? SB : RN;
+  return `
+<div style="display:flex;align-items:center;gap:12px;padding:11px 16px 11px 0">
+  <span style="flex:none;width:2px;height:34px;margin-left:22px;border-radius:1px;
+        background:linear-gradient(180deg,${col}55,${col}22);display:block"></span>
+  <span style="flex:1;min-width:0">
+    <span style="display:flex;align-items:center;gap:7px">
+      <i style="width:5px;height:5px;flex:none;border-radius:50%;background:${col};display:block"></i>
+      <span class="band" style="font-size:9.5px;color:${sb ? "var(--b700)" : "var(--rv600)"}">${sb ? "Technical change" : "Financial change"}</span>
+    </span>
+    <span class="t-meta" style="display:block;margin-top:4px">${from} → ${to}</span>
+  </span>
+  <b style="flex:none;font-size:14.5px;font-weight:700;color:${delta >= 0 ? "#0E9469" : "#C22222"};font-variant-numeric:tabular-nums">
+    ${delta >= 0 ? "+" : "−"}${shortFmt(mk, Math.abs(delta), true)}</b>
+</div>`;
+};
+
+const pathColumn = ({ title, note, cases, steps, mk }) => `
+<div style="flex:1;min-width:0">
+  <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:12px">
+    <span style="font-size:13px;font-weight:600;color:var(--s900)">${title}</span>
+    <span class="t-meta">${note}</span>
+  </div>
+  ${cases.map((c, i) => `
+    ${pathNode({ c, mk, role: i === 0 ? "Baseline" : i === cases.length - 1 ? "Selected" : "Controlled case", big: i === 0 || i === cases.length - 1 })}
+    ${i < steps.length ? pathStep({ ...steps[i], mk }) : ""}`).join("")}
+</div>`;
+
+const explainBody = ({ mk = "irr" } = {}) => {
+  const sel = SEL[SEL.length - 1], base = BASE;
+  const cn = contributions(mk, base, sel), m = MET[mk];
+  const B = caseOf(base.t.id, sel.sc.id), C = caseOf(sel.t.id, base.sc.id);
+  const both = !cn.simple;
+  const same = both && Math.abs(cn.interaction) < Math.abs(cn.total) * 0.04;
+
+  /* §10 · Each effect as a pair of bars, so "it depends" is something you
+     see rather than something you are told. */
+  const swing = (label, a, b, ctxA, ctxB, col) => {
+    const mx = Math.max(Math.abs(a), Math.abs(b), 0.0001);
+    const row = (v, ctx) => `
+      <div style="display:flex;align-items:center;gap:12px;padding:5px 0">
+        <span class="t-meta" style="flex:none;width:150px">${ctx}</span>
+        <span style="flex:1;min-width:0;height:12px;display:block;position:relative">
+          <span style="position:absolute;left:0;top:2px;height:8px;width:${((Math.abs(v) / mx) * 100).toFixed(1)}%;
+                border-radius:3px;background:${col};opacity:.55;display:block"></span>
+        </span>
+        <b style="flex:none;width:66px;text-align:right;font-size:12.5px;font-weight:700;color:var(--s900);font-variant-numeric:tabular-nums">
+          ${v >= 0 ? "+" : "−"}${shortFmt(mk, Math.abs(v), true)}</b>
+      </div>`;
+    return `
+    <div style="flex:1;min-width:0">
+      <span class="band" style="font-size:10px">${label}</span>
+      <div style="margin-top:8px">${row(a, ctxA)}${row(b, ctxB)}</div>
+    </div>`;
+  };
+
+  return `
+${head({
+  crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Projects</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Valencia BESS</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Compare</a><span class="sep">${ic("right", 12, 2)}</span><b>Explain difference</b>`,
+  eyebrow: `<span style="display:inline-flex;align-items:center;gap:9px">Analysis ${src("suite")}</span>`,
+  title: "Explain difference",
+  meta: `Why <b style="font-weight:600;color:var(--s900)">${selLabel(sel)}</b> reads ${m.fmt(sel)} against <b style="font-weight:600;color:var(--s900)">${selLabel(base)}</b> at ${m.fmt(base)}.`,
+  actions: `<div style="display:flex;align-items:center;gap:10px">
+              <span class="t-meta">Explaining</span>${metricTabs(mk)}</div>`,
+})}
+
+${both ? `
+<div style="display:flex;align-items:center;gap:11px;padding:13px 18px;margin-bottom:22px;border-radius:var(--r-xs);
+     background:linear-gradient(122deg,rgba(37,99,235,.06),rgba(175,71,178,.05));box-shadow:inset 0 0 0 1px rgba(37,99,235,.1)">
+  <span style="color:var(--cmb);display:flex;flex:none">${ic("analytics", 15)}</span>
+  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
+    Both dimensions moved, so there is no single order to read this in. The two controlled paths below use combinations that already exist — nothing was calculated to build them.
+  </span>
+</div>` : ""}
+
+<section class="panel lift" style="padding:26px 28px">
+  <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+    <h2 class="t-sec">${both ? "Two controlled paths, one destination" : "One controlled step"}</h2>${src("combined")}
+    <span style="flex:1"></span>
+    <span class="t-meta">Each step moves one dimension and holds the other</span>
+  </div>
+  <div style="display:flex;gap:${both ? "34" : "0"}px;align-items:flex-start">
+    ${both ? `
+    ${pathColumn({ title: "Financial first", note: "market moves, then the asset", mk, cases: [base, B, sel],
+      steps: [{ kind: "rv", from: base.sc.name, to: sel.sc.name, delta: cn.commercialFirst.commercial },
+              { kind: "sb", from: base.t.short, to: sel.t.short, delta: cn.commercialFirst.technical }] })}
+    <span style="width:1px;align-self:stretch;background:var(--hair);flex:none"></span>
+    ${pathColumn({ title: "Technical first", note: "asset moves, then the market", mk, cases: [base, C, sel],
+      steps: [{ kind: "sb", from: base.t.short, to: sel.t.short, delta: cn.technicalFirst.technical },
+              { kind: "rv", from: base.sc.name, to: sel.sc.name, delta: cn.technicalFirst.commercial }] })}`
+    : pathColumn({ title: cn.kind.key === "sb" ? "Technical change only" : "Financial change only",
+      note: cn.kind.key === "sb" ? "the market view is unchanged" : "the asset is unchanged", mk,
+      cases: [base, sel],
+      steps: [{ kind: cn.kind.key === "sb" ? "sb" : "rv",
+                from: cn.kind.key === "sb" ? base.t.short : base.sc.name,
+                to: cn.kind.key === "sb" ? sel.t.short : sel.sc.name, delta: cn.total }] })}
+  </div>
+</section>
+
+${both ? `
+<section class="panel" style="padding:24px 26px;margin-top:20px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+    <h2 class="t-sec">${same ? "The effects are independent" : "The effects interact"}</h2>${src("combined")}
+    <span style="flex:1"></span>
+    <b style="font-size:15px;font-weight:700;color:var(--s900);font-variant-numeric:tabular-nums">
+      ${cn.total >= 0 ? "+" : "−"}${shortFmt(mk, Math.abs(cn.total), true)} either way</b>
+  </div>
+  <div style="display:flex;gap:34px;margin-top:16px;flex-wrap:wrap">
+    ${swing("Technical contribution", cn.technicalFirst.technical, cn.commercialFirst.technical,
+      `on ${base.sc.name}`, `on ${sel.sc.name}`, SB)}
+    ${swing("Financial contribution", cn.commercialFirst.commercial, cn.technicalFirst.commercial,
+      `on ${base.t.short}`, `on ${sel.t.short}`, RN)}
+  </div>
+  <p style="font-size:12.5px;color:var(--s700);line-height:1.6;margin:16px 0 0">
+    ${same
+      ? "The two changes barely affect each other on this metric, so either order can be quoted."
+      : "Neither change has a single universal contribution — its impact depends on the other side of the analysis case."}
+  </p>
+</section>` : ""}
+
+${sec({ label: "What the change is worth", source: src("combined"),
+        sub: `${selLabel(sel)} against ${selLabel(base)}, in the units the decision is made in.` })}
+<section class="panel lift" style="padding:24px 26px">
+  ${(() => {
+    const keys = ["capex", "gwh", "rev", "irr"];
+    const rows = keys.map((kk) => {
+      const mm = MET[kk], b0 = mm.get(base), v = mm.get(sel), d = v - b0;
+      return { kk, mm, v, d, rel: d / (Math.abs(b0) || 1), good: d === 0 ? null : (mm.lowerBetter ? d < 0 : d > 0) };
+    });
+    const npvD = npvOfCase(sel) - npvOfCase(base);
+    const gmax = Math.max(...rows.map((r) => Math.abs(r.rel)), Math.abs(npvD / npvOfCase(base)), 0.0001);
+    const bar = (label, val, rel, good, fmtD, from) => `
+      <div style="display:flex;align-items:center;gap:16px;padding:10px 0">
+        <span style="flex:none;width:168px;min-width:0">
+          <span style="display:block;font-size:12px;color:var(--s500)">${label}</span>
+          <span style="display:block;font-size:15px;font-weight:600;color:var(--s900);margin-top:2px;font-variant-numeric:tabular-nums">${val}</span>
+        </span>
+        <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
+          <span style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(30,58,138,.16);display:block"></span>
+          <span style="position:absolute;top:5px;height:10px;border-radius:3px;display:block;
+                ${good ? `left:50%;width:${((Math.abs(rel) / gmax) * 48).toFixed(1)}%` : `right:50%;width:${((Math.abs(rel) / gmax) * 48).toFixed(1)}%`};
+                background:${good ? SU : WARN.ink};opacity:.6"></span>
+        </span>
+        <b style="flex:none;width:104px;text-align:right;font-size:13px;font-weight:700;color:${good ? "#0E9469" : "#C22222"};font-variant-numeric:tabular-nums">${fmtD}</b>
+        <span style="flex:none;width:92px">${src(from)}</span>
+      </div>`;
+    return rows.map((r) => bar(r.mm.label, r.mm.fmt(sel), r.rel, r.good,
+        (r.d >= 0 ? "+" : "−") + shortFmt(r.kk, Math.abs(r.d), true), r.mm.from)).join("")
+      + bar("NPV", eurMs(npvOfCase(sel)), npvD / npvOfCase(base), npvD >= 0,
+        (npvD >= 0 ? "+" : "−") + eurMs(Math.abs(npvD)), "revenew");
+  })()}
+  <div style="display:flex;align-items:center;gap:14px;margin-top:14px;padding-top:12px;border-top:1px solid var(--hair)">
+    <span class="t-meta" style="flex:1;min-width:0">Bar length is relative change; the figure is the actual difference. Direction means better or worse, not sign.</span>
+    <span class="t-meta">← worse</span><span class="t-meta">better →</span>
+  </div>
+</section>
+
+<div style="display:flex;align-items:center;gap:14px;margin:26px 0 0">
+  <span class="hr" style="flex:1"></span>
+  <button class="btn btn-secondary">Technical details${ic("down", 15, 1.9)}</button>
+  <button class="btn btn-secondary">Financial details${ic("down", 15, 1.9)}</button>
+  <button class="btn btn-secondary">How this explanation works${ic("down", 15, 1.9)}</button>
+  <span class="hr" style="flex:1"></span>
+</div>
+<p class="t-meta" style="text-align:center;margin-top:13px;line-height:1.6;max-width:104ch;margin-left:auto;margin-right:auto">
+  Exact before-and-after values for every technical and financial figure, and why a controlled path is needed at all,
+  are one level down. The caveat that matters stays here: no single split of the total is correct, so none is quoted.
+</p>`;
+};
+
 /* §3 · arrived at from Explain difference: four cases, two of them the
    controlled intermediates the matrix already held. */
 SEL = explainSet(BASE, caseOf("v4h", "high")).cases;
-writeFileSync("CompareExplained.dc.html", doc({ w: 1440, h: 5060, side: projectSide("compare"),
-  body: compareBody({ mk: "irr", explained: true }) }));
+writeFileSync("CompareExplained.dc.html", doc({ w: 1440, h: 1630, side: projectSide("compare"),
+  body: explainBody({ mk: "irr" }) }));
 SEL = [caseOf("base2h", "base"), caseOf("base2h", "high"), caseOf("v4h", "high")];
 
 console.log("Compare cases reworked · decision cockpit");
@@ -8321,7 +8527,7 @@ const PAGES = [
      ["OverviewTechnical.dc.html", 1440, 2380, "6 · Technical details"]],
     [["FinancialDetails.dc.html", 1440, 1160, "7 · Financial details"],
      ["CreateAnalysisCase.dc.html", 1440, 2700, "8 · Create analysis case"],
-     ["CompareExplained.dc.html", 1440, 5060, "9 · Explain difference"]],
+     ["CompareExplained.dc.html", 1440, 1630, "9 · Explain difference"]],
     [["OverviewStale.dc.html", 1440, 2470, "10 · Financial results outdated"],
      ["EditProjectDetails.dc.html", 1440, 2380, "11 · Project details"]],
   ]},
