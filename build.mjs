@@ -5355,6 +5355,41 @@ const baselineBar = ({ pop } = {}) => `
 const cellPreview = (sel, mk) => {
   const c = caseOf(sel.tid, sel.sid);
   const k = diffKind(BASE, c);
+  /* §11 · Selected against baseline, read as movement rather than as five
+     numbers to subtract by eye. The bar is relative change so metrics in
+     different units sit on one scale; the figure stays absolute. Direction
+     means better or worse, never sign — a lower CAPEX points the same way
+     as a higher NPV. */
+  const bars = () => {
+    const keys = ["capex", "gwh", "rev", "irr", "perMwh"];
+    const rows = keys.map((kk) => {
+      const mm = MET[kk], base = mm.get(BASE), v = mm.get(c);
+      const d = v - base, rel = d / (Math.abs(base) || 1);
+      return { kk, mm, d, rel, good: d === 0 ? null : (mm.lowerBetter ? d < 0 : d > 0) };
+    });
+    const gmax = Math.max(...rows.map((r) => Math.abs(r.rel)), 0.0001);
+    return rows.map((r) => {
+      const on = r.kk === mk, w = (Math.abs(r.rel) / gmax) * 50;
+      const dd = deltaOf(r.kk, c);
+      return `
+      <div style="display:flex;align-items:center;gap:14px;padding:9px 0;${on ? "box-shadow:inset 2px 0 0 " + SU : ""}">
+        <span style="flex:none;width:${on ? "150" : "162"}px;${on ? "padding-left:12px" : ""};min-width:0">
+          <span style="display:block;font-size:12px;color:var(--s500)">${r.mm.label}</span>
+          <span style="display:block;font-size:14.5px;font-weight:600;color:var(--s900);margin-top:2px;font-variant-numeric:tabular-nums">${r.mm.fmt(c)}</span>
+        </span>
+        <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
+          <span style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(30,58,138,.16);display:block"></span>
+          <span class="mk" style="position:absolute;top:5px;height:10px;border-radius:3px;display:block;
+                ${r.good ? `left:50%;width:${w.toFixed(1)}%` : `right:50%;width:${w.toFixed(1)}%`};
+                background:${isNeutral(r.kk) ? FIELD : r.good ? SU : WARN.ink};opacity:${r.good === null ? ".25" : ".62"}"></span>
+        </span>
+        <span style="flex:none;width:118px;text-align:right">
+          <span style="display:block">${deltaChip(dd, 11, isNeutral(r.kk))}</span>
+        </span>
+        <span style="flex:none;width:92px">${src(r.mm.from)}</span>
+      </div>`;
+    }).join("");
+  };
   const stat = (kk, label) => {
     const m = MET[kk], d = deltaOf(kk, c), on = kk === mk;
     return `
@@ -5413,11 +5448,17 @@ const cellPreview = (sel, mk) => {
     ${k.key === "same" ? "" : `<button class="btn btn-primary" style="height:34px;font-size:12.5px">${ic("analytics", 15)}Explain difference${ic("right", 14, 2)}</button>`}
   </div>
   <div style="display:flex;gap:26px;margin-top:18px;padding-top:16px;border-top:1px solid var(--hair)">
-    ${stat("irr", "IRR")}${stat("rev", "Annual revenue")}${stat("perMwh", "Revenue / MWh")}
-    ${stat("gwh", "Energy discharged")}${stat("capex", "CAPEX")}
+    <span style="flex:1;min-width:0">
+      <span style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+        <span class="band" style="font-size:10px">Selected against ${AC("base").name}</span>
+        <span class="hr" style="flex:1"></span>
+        <span class="t-meta">← worse</span>
+        <span class="t-meta">better →</span>
+      </span>
+      ${bars()}
+    </span>
   </div>
-  <p class="t-meta" style="margin-top:16px;line-height:1.6">${note}${
-    k.key === "both" ? ` <b style="font-weight:600;color:var(--s700)">Explain difference</b> opens it with ${caseOf(BASE.t.id, c.sc.id).t.short} + ${c.sc.name} and ${caseOf(c.t.id, BASE.sc.id).t.short} + ${BASE.sc.name} already in place — the two cells that isolate one dimension each.` : ""}</p>
+  ${k.key === "both" ? "" : `<p class="t-meta" style="margin-top:16px;line-height:1.6">${note}</p>`}
   ${(() => {
     /* §9 · Why this cell reads differently, decomposed the way the domain
        splits: what StoreBrid changed, what ReveNew changed, and what came
@@ -5492,6 +5533,92 @@ const evalOf = (tid, sid, on) => (on && !savedAs(tid, sid) ? (EVALSTATE[`${tid}|
 const perfView = ({ mk = "irr", sel, evalModel = false } = {}) => {
   const m = MET[mk], x = MX[mk];
   return `${(() => {
+  /* §2-§3, §9, §21 · Everything the matrix needs to be read, in one band
+     above it: what is being optimised, what will not be accepted, and the
+     three numbers that frame the grid. It replaces a metric header, a
+     criteria section and three large ranking cards that together pushed
+     the hero below the fold. Nothing was deleted — the per-metric cards
+     and the other objectives now sit AFTER the thing they describe. */
+  const all = ALLCOMBOS(), pool = claimable();
+  const nOk = all.filter((c) => eligible(c)).length;
+  const fresh = all.filter((c) => !isStale(c.t.id, c.sc.id));
+  const win = bestBy(mk, CRITERIA.length ? pool : fresh);
+  const worst = fresh.reduce((a, b) => (m.lowerBetter ? (m.get(b) > m.get(a) ? b : a) : (m.get(b) < m.get(a) ? b : a)));
+  const stat = (label, c, tone) => `
+    <span style="flex:1;min-width:0">
+      <span class="band" style="font-size:10px;${tone ? `color:${tone}` : ""}">${label}</span>
+      <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.022em;color:var(--s900);margin-top:6px;font-variant-numeric:tabular-nums">${c ? m.fmt(c) : "—"}</span>
+      <span class="t-meta" style="display:block;margin-top:4px;line-height:1.4">${c ? `${c.t.short} × ${c.sc.name}` : "no case within criteria"}</span>
+    </span>`;
+  return `
+<section class="panel" style="display:flex;align-items:stretch;padding:0;margin-bottom:20px;flex-wrap:wrap">
+  <div style="flex:1.5;min-width:300px;padding:20px 24px">
+    <div class="band">Evaluate combinations by</div>
+    <div style="display:flex;align-items:baseline;gap:10px;margin-top:7px;flex-wrap:wrap">
+      <h2 class="t-sec">${objectiveOf(mk)}</h2>
+      <span class="t-meta">${x.unit}</span>${src(m.from)}
+    </div>
+    <div style="margin-top:12px">${metricTabs(mk)}</div>
+  </div>
+  <div style="width:1px;background:var(--hair);flex:none"></div>
+  <div style="flex:1;min-width:250px;padding:20px 24px">
+    <div style="display:flex;align-items:center;gap:9px">
+      <span class="band" style="font-size:10px">Decision criteria</span>
+      <a href="#" style="font-size:11.5px;font-weight:500">Edit</a>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap">
+      ${CRITERIA.length ? CRITERIA.map(({ key, target }) => {
+        const k = CRIT_SPEC[key];
+        return `<span class="cov" style="gap:6px"><span style="color:var(--s500)">${k.label}</span><b style="font-weight:600;color:var(--s900)">${k.op} ${k.fmt(target)}</b></span>`;
+      }).join("") : `<span class="t-meta">None — all ${all.length} combinations evaluated</span>`}
+    </div>
+    ${CRITERIA.length ? `<div class="t-meta" style="margin-top:10px"><b style="font-weight:600;color:var(--s900)">${nOk} of ${all.length}</b> combinations meet them</div>` : ""}
+  </div>
+  <div style="width:1px;background:var(--hair);flex:none"></div>
+  <div style="flex:1.5;min-width:340px;padding:20px 24px;display:flex;gap:20px;
+       background:linear-gradient(168deg,rgba(14,157,168,.045),rgba(255,255,255,0) 78%)">
+    ${stat(CRITERIA.length ? (m.lowerBetter ? "Lowest within criteria" : "Highest within criteria") : (m.lowerBetter ? "Lowest" : "Highest"), win, "var(--su700)")}
+    ${stat("Baseline", BASE)}
+    ${stat(m.lowerBetter ? "Highest" : "Lowest", worst)}
+  </div>
+</section>`;
+})()}
+
+<section class="panel lift" style="padding:26px 28px;margin-top:24px">
+  ${matrixGrid(mk, sel, evalModel)}
+  ${sel ? cellPreview(sel, mk) : `
+  <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;margin-top:4px;border-radius:var(--r-xs);
+       background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 72%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.14)">
+    <span style="color:var(--su700);display:flex;flex:none">${ic("layers", 16)}</span>
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
+      Open a cell to read the case against the baseline, send it to Compare, or make it the analysis baseline.
+    </span>
+  </div>`}
+</section>
+
+<div style="display:flex;align-items:flex-start;gap:12px;margin-top:16px">
+  <span style="flex:none;margin-top:1px">${src(m.from)}</span>
+  <p class="t-meta" style="line-height:1.65;max-width:114ch;margin:0;font-size:11.5px">${x.read}</p>
+</div>
+
+<section class="panel" style="padding:24px 26px;margin-top:24px">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:16px">
+    <div style="flex:1;min-width:0">
+      <div class="band">The trade-off behind ${m.label.toLowerCase()}</div>
+      <h2 class="t-sec" style="margin-top:8px">${x.chartTitle}</h2>
+      <p class="t-meta" style="margin-top:7px;font-size:12px;line-height:1.6;max-width:96ch">${x.chartQ}</p>
+    </div>
+    ${src(m.from)}
+  </div>
+  ${x.chart(sel)}
+</section>
+
+${sec({ label: "What " + m.label.toLowerCase() + " says about this project", source: src(m.from), top: 26,
+        sub: x.q })}
+<div style="display:flex;gap:18px">${x.cards().join("")}</div>
+
+
+${(() => {
   /* §1 · the aggregate notice Compare already carries, at matrix scale.
      Only SAVED analysis cases can be outdated — an unsaved combination is
      calculated live when the cell is opened, so it has no age to be stale
@@ -5562,124 +5689,7 @@ ${(() => {
 </p>` ;
 })()}
 
-${(() => {
-  /* §3-§6 · Constraints on results, never on models. Optional: with none
-     set the band is a single line and an Add control, and the matrix
-     behaves exactly as before. With criteria set, the Suite may make a
-     bounded deterministic claim — "highest NPV within your criteria" is
-     answerable because the user defined the criteria. Stale results are
-     excluded from that claim (§14); they stay visible and marked. */
-  const all = ALLCOMBOS(), pool = claimable();
-  const nOk = all.filter((c) => eligible(c)).length;
-  const win = bestBy(mk, pool);
-  const outrightWin = bestBy(mk, all.filter((c) => !isStale(c.t.id, c.sc.id)));
-  const beaten = outrightWin && !eligible(outrightWin) ? outrightWin : null;
-  if (!CRITERIA.length) return `
-<div style="display:flex;align-items:center;gap:12px;padding:12px 18px;margin-bottom:20px;border-radius:var(--r-xs);
-     background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.3));box-shadow:inset 0 0 0 1px var(--hair)">
-  <span class="band" style="flex:none">Decision criteria</span>
-  <span class="t-meta" style="flex:1;min-width:0">None. All ${all.length} combinations are evaluated.</span>
-  <button class="btn btn-secondary" style="height:30px;font-size:12px">${ic("plus", 14, 1.9)}Add criteria</button>
-</div>`;
-  const chip = ({ key, target }) => {
-    const k = CRIT_SPEC[key];
-    return `<span class="cov" style="gap:7px"><span style="color:var(--s500)">${k.label}</span>
-      <b style="font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${k.op} ${k.fmt(target)}</b>${src(k.from)}</span>`;
-  };
-  return `
-<section class="panel" style="padding:0;margin-bottom:20px;overflow:hidden">
-  <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;flex-wrap:wrap">
-    <span class="band" style="flex:none">Decision criteria</span>
-    ${CRITERIA.map(chip).join("")}
-    <span style="flex:1"></span>
-    <span class="t-meta"><b style="font-weight:600;color:var(--s900)">${nOk} of ${all.length}</b> combinations meet your criteria</span>
-    <button class="btn btn-ghost" style="height:30px;font-size:12px">${ic("sliders", 14)}Edit</button>
-  </div>
-  ${win ? `
-  <div style="display:flex;align-items:stretch;border-top:1px solid var(--hair);
-       background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 78%)">
-    <div style="flex:1;min-width:0;padding:16px 20px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="band" style="font-size:10px;color:var(--su700)">${MET[mk].lowerBetter ? "Lowest" : "Highest"} ${MET[mk].label} within criteria</span>${src(MET[mk].from)}
-      </div>
-      <div style="display:flex;align-items:baseline;gap:14px;margin-top:9px;flex-wrap:wrap">
-        <span style="font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);font-variant-numeric:tabular-nums">${MET[mk].fmt(win)}</span>
-        <span style="display:inline-flex;align-items:center;gap:7px">
-          <i style="width:5px;height:5px;flex:none;border-radius:50%;background:${SB};display:block"></i>
-          <span style="font-size:13px;font-weight:500;color:var(--s700)">${win.t.short}</span>
-          <span style="font-size:12px;color:var(--s400)">×</span>
-          <i style="width:5px;height:5px;flex:none;border-radius:50%;background:${RN};display:block"></i>
-          <span style="font-size:13px;font-weight:500;color:var(--s700)">${win.sc.name}</span>
-        </span>
-      </div>
-      <div style="display:flex;gap:18px;margin-top:10px;flex-wrap:wrap">
-        ${[["CAPEX", "€" + win.t.capex.toFixed(1) + "M"], ["NPV", eurMs(npvOfCase(win))],
-           ["IRR", win.irr.toFixed(1) + "%"], ["Payback", paybackOfCase(win).toFixed(1) + " yrs"]]
-          .map(([l, v]) => `<span class="t-meta">${l} <b style="font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${v}</b></span>`).join("")}
-      </div>
-    </div>
-    ${beaten ? `
-    <div style="width:1px;background:var(--hair);flex:none"></div>
-    <div style="flex:none;width:290px;padding:16px 20px">
-      <span class="band" style="font-size:10px">${MET[mk].lowerBetter ? "Lowest" : "Highest"} ${MET[mk].label} overall</span>
-      <div style="display:flex;align-items:baseline;gap:12px;margin-top:9px">
-        <span style="font-size:19px;font-weight:600;color:var(--s500);font-variant-numeric:tabular-nums">${MET[mk].fmt(beaten)}</span>
-        <span class="t-meta">${beaten.t.short} × ${beaten.sc.name}</span>
-      </div>
-      <div style="margin-top:9px">${staleTag(failsOf(beaten)[0].k.label + " " + (failsOf(beaten)[0].k.op === "≤" ? "over" : "under") + " limit")}</div>
-      <p class="t-meta" style="margin-top:9px;line-height:1.5">Ruled out by your criteria, not by its result. This is the trade-off the constraint is buying.</p>
-    </div>` : ""}
-  </div>` : `
-  <div style="padding:16px 20px;border-top:1px solid var(--hair)">
-    <p class="t-meta" style="line-height:1.55">No combination satisfies all criteria. Loosen one, or open the two that come closest below.</p>
-  </div>`}
-</section>`;
-})()}
-
-<div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:16px;flex-wrap:wrap">
-  <div style="flex:1;min-width:0">
-    <div class="band">Evaluate combinations by</div>
-    <h2 class="t-sec" style="margin-top:7px">${objectiveOf(mk)}<span style="font-size:13px;font-weight:500;color:var(--s400);margin-left:9px">${x.unit}</span></h2>
-    <p class="t-meta" style="margin-top:7px;font-size:12.5px;line-height:1.55;max-width:88ch">${x.q}</p>
-  </div>
-  <div style="text-align:right">
-    ${metricTabs(mk)}
-    <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:9px">
-      <span class="t-meta">this metric comes from</span>${src(m.from)}
-    </div>
-  </div>
-</div>
-
-<div style="display:flex;gap:18px">${x.cards().join("")}</div>
-
-<section class="panel lift" style="padding:26px 28px;margin-top:24px">
-  ${matrixGrid(mk, sel, evalModel)}
-  ${sel ? cellPreview(sel, mk) : `
-  <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;margin-top:4px;border-radius:var(--r-xs);
-       background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 72%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.14)">
-    <span style="color:var(--su700);display:flex;flex:none">${ic("layers", 16)}</span>
-    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
-      Open a cell to read the case against the baseline, send it to Compare, or make it the analysis baseline.
-    </span>
-  </div>`}
-</section>
-
-<div style="display:flex;align-items:flex-start;gap:12px;margin-top:16px">
-  <span style="flex:none;margin-top:1px">${src(m.from)}</span>
-  <p class="t-meta" style="line-height:1.65;max-width:114ch;margin:0;font-size:11.5px">${x.read}</p>
-</div>
-
-<section class="panel" style="padding:24px 26px;margin-top:24px">
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:16px">
-    <div style="flex:1;min-width:0">
-      <div class="band">The trade-off behind ${m.label.toLowerCase()}</div>
-      <h2 class="t-sec" style="margin-top:8px">${x.chartTitle}</h2>
-      <p class="t-meta" style="margin-top:7px;font-size:12px;line-height:1.6;max-width:96ch">${x.chartQ}</p>
-    </div>
-    ${src(m.from)}
-  </div>
-  ${x.chart(sel)}
-</section>`;
+`;
 };
 
 const casesBody = ({ mk = "irr", sel, baselinePop, view = "perf", evalModel = false } = {}) => {
@@ -5854,7 +5864,7 @@ ${sec({ label: "Scenario sensitivity", source: src("combined"), top: 0,
 </p>`;
 };
 
-writeFileSync("CaseMatrixUnevaluated.dc.html", doc({ w: 1440, h: 3190, side: projectSide("cases"),
+writeFileSync("CaseMatrixUnevaluated.dc.html", doc({ w: 1440, h: 3290, side: projectSide("cases"),
   body: casesBody({ mk: "irr", sel: { tid: "v4h", sid: "high" }, evalModel: true }) }));
 console.log("CaseMatrixUnevaluated.dc.html");
 
@@ -5862,7 +5872,7 @@ writeFileSync("CaseMatrixRobustness.dc.html", doc({ w: 1440, h: 1180, side: proj
   body: casesBody({ mk: "irr", view: "robust" }) }));
 console.log("CaseMatrixRobustness.dc.html");
 
-writeFileSync("CaseMatrix.dc.html", doc({ w: 1440, h: 3190, side: projectSide("cases"),
+writeFileSync("CaseMatrix.dc.html", doc({ w: 1440, h: 3290, side: projectSide("cases"),
   body: casesBody({ mk: "irr", sel: { tid: "v4h", sid: "high" } }) }));
 console.log("Compare · all combinations");
 
@@ -8300,9 +8310,9 @@ const COLX = [0, 1560, 3120];
 const PAGES = [
   { id: "page-1", name: "Project workspace", rows: [
     [["ProjectOverview.dc.html", 1440, 2380, "1 · Overview"],
-     ["CaseMatrix.dc.html", 1440, 3190, "2 · Case matrix"],
+     ["CaseMatrix.dc.html", 1440, 3290, "2 · Case matrix"],
      ["CaseMatrixRobustness.dc.html", 1440, 1180, "2b · Case matrix — robustness"],
-     ["CaseMatrixUnevaluated.dc.html", 1440, 3190, "2c · Case matrix — evaluation states"],
+     ["CaseMatrixUnevaluated.dc.html", 1440, 3290, "2c · Case matrix — evaluation states"],
      ["CompareAlternatives.dc.html", 1440, 2700, "3 · Compare"],
      ["CompareAllMetrics.dc.html", 1440, 3520, "3b · Compare — all metrics"],
      ["DecisionBrief.dc.html", 1440, 2700, "3c · Save decision brief"]],

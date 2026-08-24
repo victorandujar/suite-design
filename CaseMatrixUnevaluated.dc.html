@@ -262,8 +262,8 @@ a.glass-sm:hover{
 .grid{display:grid;gap:20px}
 </style>
 </helmet>
-<div class="atmos" style="width:1440px;min-height:3190px;position:relative">
-  <div class="shell" style="min-height:3190px">
+<div class="atmos" style="width:1440px;min-height:3290px;position:relative">
+  <div class="shell" style="min-height:3290px">
     <aside class="side">
 
 <div class="brand">
@@ -371,213 +371,50 @@ a.glass-sm:hover{
   <a href="#" class="">Robustness</a>
 </div>
 
-<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;
-     padding:12px 16px;border-radius:var(--r-xs);
-     background:linear-gradient(168deg,rgba(245,158,11,0.08),rgba(255,255,255,0) 70%);box-shadow:inset 0 0 0 1px rgba(245,158,11,0.2)">
-  <span style="color:#9A6208;display:flex;flex:none;"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
-  <span style="flex:1;min-width:0">
-    
-    <span class="t-meta" style="display:block;line-height:1.55;font-size:12.5px">1 of the 3 saved analysis cases is outdated — <b style="font-weight:600;color:var(--s900)">Stress test</b> was priced before the technical simulation changed. The other 6 combinations are calculated live and are never outdated.</span>
-  </span>
-  <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Recalculate in ReveNew<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
-  
-</div>
-
-<section class="panel" style="display:flex;align-items:stretch;padding:4px 0;margin-bottom:18px">
-  
-    <div style="flex:1;min-width:0;padding:15px 22px;">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="band" style="font-size:10px">Highest NPV within criteria</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
-      </div>
-      <div style="font-size:21px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:8px;font-variant-numeric:tabular-nums">€9.9M</div>
-      <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
-        <span style="display:inline-flex;align-items:center;gap:5px">
-          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#2563EB;display:block"></i>
-          <span class="t-meta">Base 2 h</span></span>
-        <span style="font-size:11px;color:var(--s400)">×</span>
-        <span style="display:inline-flex;align-items:center;gap:5px">
-          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#AF47B2;display:block"></i>
-          <span class="t-meta">High spread</span></span>
-      </div>
-      <div class="t-meta" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--hair);line-height:1.45">
-        <b style="font-weight:600;color:var(--s500)">€14.2M</b> overall — 4 h variant × High spread,
-        <span style="color:#9A6208">outside criteria</span>
-      </div>
-    </div>
-    <div style="flex:1;min-width:0;padding:15px 22px;border-left:1px solid var(--hair)">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="band" style="font-size:10px">Lowest CAPEX within criteria</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
-      </div>
-      <div style="font-size:21px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:8px;font-variant-numeric:tabular-nums">€41.2M</div>
-      <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
-        <span style="display:inline-flex;align-items:center;gap:5px">
-          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#2563EB;display:block"></i>
-          <span class="t-meta">Low RTE</span></span>
-        <span style="font-size:11px;color:var(--s400)">×</span>
-        <span style="display:inline-flex;align-items:center;gap:5px">
-          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#AF47B2;display:block"></i>
-          <span class="t-meta">High spread</span></span>
-      </div>
-      
-    </div>
-    <div style="flex:1;min-width:0;padding:15px 22px;border-left:1px solid var(--hair)">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="band" style="font-size:10px">Highest revenue / MWh within criteria</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
-      </div>
-      <div style="font-size:21px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:8px;font-variant-numeric:tabular-nums">€150.3</div>
-      <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
-        <span style="display:inline-flex;align-items:center;gap:5px">
-          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#2563EB;display:block"></i>
-          <span class="t-meta">Base 2 h</span></span>
-        <span style="font-size:11px;color:var(--s400)">×</span>
-        <span style="display:inline-flex;align-items:center;gap:5px">
-          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#AF47B2;display:block"></i>
-          <span class="t-meta">High spread</span></span>
-      </div>
-      
-    </div>
-</section>
-<p class="t-meta" style="margin:-8px 0 20px;line-height:1.5">
-  Leaders on the other objectives, across all 9 pairings, saved or not.
-  Ranked within your criteria; where the outright leader is different it is shown too, because that gap is what the constraint costs you.
-  Each is a ranking on one objective — which objective matters is your decision, not the Suite's. Outdated results are excluded.
-</p>
-
-
-<section class="panel" style="padding:0;margin-bottom:20px;overflow:hidden">
-  <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;flex-wrap:wrap">
-    <span class="band" style="flex:none">Decision criteria</span>
-    <span class="cov" style="gap:7px"><span style="color:var(--s500)">CAPEX</span>
-      <b style="font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">≤ €48.0M</b><span class="src"><i style="background:#2563EB"></i>StoreBrid</span></span><span class="cov" style="gap:7px"><span style="color:var(--s500)">IRR</span>
-      <b style="font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">≥ 12.0%</b><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span></span>
-    <span style="flex:1"></span>
-    <span class="t-meta"><b style="font-weight:600;color:var(--s900)">3 of 9</b> combinations meet your criteria</span>
-    <button class="btn btn-ghost" style="height:30px;font-size:12px"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.4 16.2V11M4.4 7.8V3.8M10 16.2v-6.4M10 6.6V3.8M15.6 16.2v-3.8M15.6 9.2V3.8"/><path d="M2.4 11h4M8 6.6h4M13.6 12.4h4"/></svg>Edit</button>
-  </div>
-  
-  <div style="display:flex;align-items:stretch;border-top:1px solid var(--hair);
-       background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 78%)">
-    <div style="flex:1;min-width:0;padding:16px 20px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="band" style="font-size:10px;color:var(--su700)">Highest IRR within criteria</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:14px;margin-top:9px;flex-wrap:wrap">
-        <span style="font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);font-variant-numeric:tabular-nums">13.4%</span>
-        <span style="display:inline-flex;align-items:center;gap:7px">
-          <i style="width:5px;height:5px;flex:none;border-radius:50%;background:#2563EB;display:block"></i>
-          <span style="font-size:13px;font-weight:500;color:var(--s700)">Base 2 h</span>
-          <span style="font-size:12px;color:var(--s400)">×</span>
-          <i style="width:5px;height:5px;flex:none;border-radius:50%;background:#AF47B2;display:block"></i>
-          <span style="font-size:13px;font-weight:500;color:var(--s700)">High spread</span>
-        </span>
-      </div>
-      <div style="display:flex;gap:18px;margin-top:10px;flex-wrap:wrap">
-        <span class="t-meta">CAPEX <b style="font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€42.1M</b></span><span class="t-meta">NPV <b style="font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€9.9M</b></span><span class="t-meta">IRR <b style="font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">13.4%</b></span><span class="t-meta">Payback <b style="font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">6.1 yrs</b></span>
-      </div>
-    </div>
-    
-    <div style="width:1px;background:var(--hair);flex:none"></div>
-    <div style="flex:none;width:290px;padding:16px 20px">
-      <span class="band" style="font-size:10px">Highest IRR overall</span>
-      <div style="display:flex;align-items:baseline;gap:12px;margin-top:9px">
-        <span style="font-size:19px;font-weight:600;color:var(--s500);font-variant-numeric:tabular-nums">14.1%</span>
-        <span class="t-meta">4 h variant × High spread</span>
-      </div>
-      <div style="margin-top:9px"><span class="cov" style="background:linear-gradient(168deg,rgba(245,158,11,.14),rgba(245,158,11,.07));border-color:rgba(245,158,11,.3);color:#9A6208">
-     <i style="background:#9A6208"></i>CAPEX over limit</span></div>
-      <p class="t-meta" style="margin-top:9px;line-height:1.5">Ruled out by your criteria, not by its result. This is the trade-off the constraint is buying.</p>
-    </div>
-  </div>
-</section>
-
-<div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:16px;flex-wrap:wrap">
-  <div style="flex:1;min-width:0">
+<section class="panel" style="display:flex;align-items:stretch;padding:0;margin-bottom:20px;flex-wrap:wrap">
+  <div style="flex:1.5;min-width:300px;padding:20px 24px">
     <div class="band">Evaluate combinations by</div>
-    <h2 class="t-sec" style="margin-top:7px">Maximise IRR<span style="font-size:13px;font-weight:500;color:var(--s400);margin-left:9px">per cent</span></h2>
-    <p class="t-meta" style="margin-top:7px;font-size:12.5px;line-height:1.55;max-width:88ch">Which combination of asset and market produces the strongest return on the money invested?</p>
-  </div>
-  <div style="text-align:right">
-    
-<div class="tabs"><a href="#" class="on">IRR</a><a href="#" class="">Annual revenue</a><a href="#" class="">Revenue / MWh</a><a href="#" class="">Revenue / cycle</a><a href="#" class="">Energy discharged</a><a href="#" class="">CAPEX</a></div>
-    <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:9px">
-      <span class="t-meta">this metric comes from</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+    <div style="display:flex;align-items:baseline;gap:10px;margin-top:7px;flex-wrap:wrap">
+      <h2 class="t-sec">Maximise IRR</h2>
+      <span class="t-meta">per cent</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
     </div>
+    <div style="margin-top:12px">
+<div class="tabs"><a href="#" class="on">IRR</a><a href="#" class="">Annual revenue</a><a href="#" class="">Revenue / MWh</a><a href="#" class="">Revenue / cycle</a><a href="#" class="">Energy discharged</a><a href="#" class="">CAPEX</a></div></div>
   </div>
-</div>
-
-<div style="display:flex;gap:18px">
-<div class="glass-sm" style="flex:1;min-width:0;padding:17px 19px;
-     box-shadow:0 0 0 1px #5B4BB52e, var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92)">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-    <span class="band" style="color:#5B4BB5;font-size:10px">Highest return</span>
-    <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+  <div style="width:1px;background:var(--hair);flex:none"></div>
+  <div style="flex:1;min-width:250px;padding:20px 24px">
+    <div style="display:flex;align-items:center;gap:9px">
+      <span class="band" style="font-size:10px">Decision criteria</span>
+      <a href="#" style="font-size:11.5px;font-weight:500">Edit</a>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap">
+      <span class="cov" style="gap:6px"><span style="color:var(--s500)">CAPEX</span><b style="font-weight:600;color:var(--s900)">≤ €48.0M</b></span><span class="cov" style="gap:6px"><span style="color:var(--s500)">IRR</span><b style="font-weight:600;color:var(--s900)">≥ 12.0%</b></span>
+    </div>
+    <div class="t-meta" style="margin-top:10px"><b style="font-weight:600;color:var(--s900)">3 of 9</b> combinations meet them</div>
   </div>
-  <div style="display:flex;align-items:baseline;gap:7px;margin-top:10px">
-    <span style="font-size:25px;font-weight:700;letter-spacing:-.026em;color:var(--s900);font-variant-numeric:tabular-nums">14.1%</span>
+  <div style="width:1px;background:var(--hair);flex:none"></div>
+  <div style="flex:1.5;min-width:340px;padding:20px 24px;display:flex;gap:20px;
+       background:linear-gradient(168deg,rgba(14,157,168,.045),rgba(255,255,255,0) 78%)">
     
-  </div>
-  
-  <div style="display:flex;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap">
-    <span style="display:inline-flex;align-items:center;gap:5px">
-      <i style="width:4px;height:4px;border-radius:50%;background:#2563EB;display:block"></i>
-      <span style="font-size:12px;font-weight:500;color:var(--s700)">4 h variant</span>
+    <span style="flex:1;min-width:0">
+      <span class="band" style="font-size:10px;color:var(--su700)">Highest within criteria</span>
+      <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.022em;color:var(--s900);margin-top:6px;font-variant-numeric:tabular-nums">13.4%</span>
+      <span class="t-meta" style="display:block;margin-top:4px;line-height:1.4">Base 2 h × High spread</span>
     </span>
-    <span style="font-size:11px;color:var(--s400)">+</span>
-    <span style="display:inline-flex;align-items:center;gap:5px">
-      <i style="width:4px;height:4px;border-radius:50%;background:#AF47B2;display:block"></i>
-      <span style="font-size:12px;font-weight:500;color:var(--s700)">High spread</span>
-    </span>
-  </div>
-  <div class="t-meta" style="margin-top:8px;line-height:1.5">€50.7M invested · +1.3 pt vs baseline. The most return, and also the most capital at risk.</div>
-</div>
-<div class="glass-sm" style="flex:1;min-width:0;padding:17px 19px;
-     box-shadow:0 0 0 1px #0A6E772e, var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92)">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-    <span class="band" style="color:#0A6E77;font-size:10px">Best return on the baseline investment</span>
-    <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
-  </div>
-  <div style="display:flex;align-items:baseline;gap:7px;margin-top:10px">
-    <span style="font-size:25px;font-weight:700;letter-spacing:-.026em;color:var(--s900);font-variant-numeric:tabular-nums">13.4%</span>
     
-  </div>
-  
-  <div style="display:flex;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap">
-    <span style="display:inline-flex;align-items:center;gap:5px">
-      <i style="width:4px;height:4px;border-radius:50%;background:#2563EB;display:block"></i>
-      <span style="font-size:12px;font-weight:500;color:var(--s700)">Base 2 h</span>
+    <span style="flex:1;min-width:0">
+      <span class="band" style="font-size:10px;">Baseline</span>
+      <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.022em;color:var(--s900);margin-top:6px;font-variant-numeric:tabular-nums">12.8%</span>
+      <span class="t-meta" style="display:block;margin-top:4px;line-height:1.4">Base 2 h × Base market</span>
     </span>
-    <span style="font-size:11px;color:var(--s400)">+</span>
-    <span style="display:inline-flex;align-items:center;gap:5px">
-      <i style="width:4px;height:4px;border-radius:50%;background:#AF47B2;display:block"></i>
-      <span style="font-size:12px;font-weight:500;color:var(--s700)">High spread</span>
-    </span>
-  </div>
-  <div class="t-meta" style="margin-top:8px;line-height:1.5">+0.6 pt for no additional CAPEX — the whole gain comes from the market, not from the asset.</div>
-</div>
-<div class="glass-sm" style="flex:1;min-width:0;padding:17px 19px;
-     box-shadow:0 0 0 1px #9A62082e, var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92)">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-    <span class="band" style="color:#9A6208;font-size:10px">Weakest return</span>
-    <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
-  </div>
-  <div style="display:flex;align-items:baseline;gap:7px;margin-top:10px">
-    <span style="font-size:25px;font-weight:700;letter-spacing:-.026em;color:var(--s900);font-variant-numeric:tabular-nums">8.4%</span>
     
-  </div>
-  
-  <div style="display:flex;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap">
-    <span style="display:inline-flex;align-items:center;gap:5px">
-      <i style="width:4px;height:4px;border-radius:50%;background:#2563EB;display:block"></i>
-      <span style="font-size:12px;font-weight:500;color:var(--s700)">Low RTE</span>
-    </span>
-    <span style="font-size:11px;color:var(--s400)">+</span>
-    <span style="display:inline-flex;align-items:center;gap:5px">
-      <i style="width:4px;height:4px;border-radius:50%;background:#AF47B2;display:block"></i>
-      <span style="font-size:12px;font-weight:500;color:var(--s700)">Low spread</span>
+    <span style="flex:1;min-width:0">
+      <span class="band" style="font-size:10px;">Lowest</span>
+      <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.022em;color:var(--s900);margin-top:6px;font-variant-numeric:tabular-nums">8.4%</span>
+      <span class="t-meta" style="display:block;margin-top:4px;line-height:1.4">Low RTE × Low spread</span>
     </span>
   </div>
-  <div class="t-meta" style="margin-top:8px;line-height:1.5">-4.4 pt vs baseline. A 3-point round-trip loss and the softest market compound.</div>
-</div></div>
+</section>
 
 <section class="panel lift" style="padding:26px 28px;margin-top:24px">
   
@@ -813,46 +650,97 @@ a.glass-sm:hover{
     <button class="btn btn-primary" style="height:34px;font-size:12.5px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Explain difference<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></button>
   </div>
   <div style="display:flex;gap:26px;margin-top:18px;padding-top:16px;border-top:1px solid var(--hair)">
-    
-    <span style="flex:1;min-width:0;box-shadow:inset 2px 0 0 #0E9DA8;padding-left:13px">
-      <span style="display:flex;align-items:center;gap:7px">
-        <span class="t-meta">IRR</span><span style="display:inline-flex;align-items:center;gap:4px;height:18px;padding:0 7px;border-radius:6px;
-     font-size:10px;font-weight:600;letter-spacing:.02em;background:rgba(14,157,168,.12);color:#0A6E77">On the matrix</span>
+    <span style="flex:1;min-width:0">
+      <span style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+        <span class="band" style="font-size:10px">Selected against Base case</span>
+        <span class="hr" style="flex:1"></span>
+        <span class="t-meta">← worse</span>
+        <span class="t-meta">better →</span>
       </span>
-      <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.02em;color:var(--s900);margin-top:5px;font-variant-numeric:tabular-nums">14.1%</span>
-      <span style="display:flex;align-items:center;gap:7px;margin-top:6px"><span style="font-size:11px;font-weight:600;color:#0E9469">+1.3 pt</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span></span>
-    </span>
-    <span style="flex:1;min-width:0;">
-      <span style="display:flex;align-items:center;gap:7px">
-        <span class="t-meta">Annual revenue</span>
-      </span>
-      <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.02em;color:var(--s900);margin-top:5px;font-variant-numeric:tabular-nums">€12.05M</span>
-      <span style="display:flex;align-items:center;gap:7px;margin-top:6px"><span style="font-size:11px;font-weight:600;color:#0E9469">+43.1%</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></span>
-    </span>
-    <span style="flex:1;min-width:0;">
-      <span style="display:flex;align-items:center;gap:7px">
-        <span class="t-meta">Revenue / MWh</span>
-      </span>
-      <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.02em;color:var(--s900);margin-top:5px;font-variant-numeric:tabular-nums">€130.4</span>
-      <span style="display:flex;align-items:center;gap:7px;margin-top:6px"><span style="font-size:11px;font-weight:600;color:#0E9469">+1.0%</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span></span>
-    </span>
-    
-    <span style="flex:1;min-width:0;">
-      <span style="display:flex;align-items:center;gap:7px">
-        <span class="t-meta">Energy discharged</span>
-      </span>
-      <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.02em;color:var(--s900);margin-top:5px;font-variant-numeric:tabular-nums">92.4 GWh</span>
-      <span style="display:flex;align-items:center;gap:7px;margin-top:6px"><span style="font-size:11px;font-weight:600;color:var(--s700)">+41.7%</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span></span>
-    </span>
-    <span style="flex:1;min-width:0;">
-      <span style="display:flex;align-items:center;gap:7px">
-        <span class="t-meta">CAPEX</span>
-      </span>
-      <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.02em;color:var(--s900);margin-top:5px;font-variant-numeric:tabular-nums">€50.7M</span>
-      <span style="display:flex;align-items:center;gap:7px;margin-top:6px"><span style="font-size:11px;font-weight:600;color:var(--s700)">+20.4%</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span></span>
+      
+      <div style="display:flex;align-items:center;gap:14px;padding:9px 0;">
+        <span style="flex:none;width:162px;;min-width:0">
+          <span style="display:block;font-size:12px;color:var(--s500)">CAPEX</span>
+          <span style="display:block;font-size:14.5px;font-weight:600;color:var(--s900);margin-top:2px;font-variant-numeric:tabular-nums">€50.7M</span>
+        </span>
+        <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
+          <span style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(30,58,138,.16);display:block"></span>
+          <span class="mk" style="position:absolute;top:5px;height:10px;border-radius:3px;display:block;
+                right:50%;width:23.7%;
+                background:#8496AD;opacity:.62"></span>
+        </span>
+        <span style="flex:none;width:118px;text-align:right">
+          <span style="display:block"><span style="font-size:11px;font-weight:600;color:var(--s700)">+20.4%</span></span>
+        </span>
+        <span style="flex:none;width:92px"><span class="src"><i style="background:#2563EB"></i>StoreBrid</span></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:9px 0;">
+        <span style="flex:none;width:162px;;min-width:0">
+          <span style="display:block;font-size:12px;color:var(--s500)">Energy discharged</span>
+          <span style="display:block;font-size:14.5px;font-weight:600;color:var(--s900);margin-top:2px;font-variant-numeric:tabular-nums">92.4 GWh</span>
+        </span>
+        <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
+          <span style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(30,58,138,.16);display:block"></span>
+          <span class="mk" style="position:absolute;top:5px;height:10px;border-radius:3px;display:block;
+                left:50%;width:48.4%;
+                background:#8496AD;opacity:.62"></span>
+        </span>
+        <span style="flex:none;width:118px;text-align:right">
+          <span style="display:block"><span style="font-size:11px;font-weight:600;color:var(--s700)">+41.7%</span></span>
+        </span>
+        <span style="flex:none;width:92px"><span class="src"><i style="background:#2563EB"></i>StoreBrid</span></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:9px 0;">
+        <span style="flex:none;width:162px;;min-width:0">
+          <span style="display:block;font-size:12px;color:var(--s500)">Annual revenue</span>
+          <span style="display:block;font-size:14.5px;font-weight:600;color:var(--s900);margin-top:2px;font-variant-numeric:tabular-nums">€12.05M</span>
+        </span>
+        <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
+          <span style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(30,58,138,.16);display:block"></span>
+          <span class="mk" style="position:absolute;top:5px;height:10px;border-radius:3px;display:block;
+                left:50%;width:50.0%;
+                background:#0E9DA8;opacity:.62"></span>
+        </span>
+        <span style="flex:none;width:118px;text-align:right">
+          <span style="display:block"><span style="font-size:11px;font-weight:600;color:#0E9469">+43.1%</span></span>
+        </span>
+        <span style="flex:none;width:92px"><span class="src"><i style="background:#AF47B2"></i>ReveNew</span></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:9px 0;box-shadow:inset 2px 0 0 #0E9DA8">
+        <span style="flex:none;width:150px;padding-left:12px;min-width:0">
+          <span style="display:block;font-size:12px;color:var(--s500)">IRR</span>
+          <span style="display:block;font-size:14.5px;font-weight:600;color:var(--s900);margin-top:2px;font-variant-numeric:tabular-nums">14.1%</span>
+        </span>
+        <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
+          <span style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(30,58,138,.16);display:block"></span>
+          <span class="mk" style="position:absolute;top:5px;height:10px;border-radius:3px;display:block;
+                left:50%;width:11.8%;
+                background:#0E9DA8;opacity:.62"></span>
+        </span>
+        <span style="flex:none;width:118px;text-align:right">
+          <span style="display:block"><span style="font-size:11px;font-weight:600;color:#0E9469">+1.3 pt</span></span>
+        </span>
+        <span style="flex:none;width:92px"><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:9px 0;">
+        <span style="flex:none;width:162px;;min-width:0">
+          <span style="display:block;font-size:12px;color:var(--s500)">Revenue / MWh</span>
+          <span style="display:block;font-size:14.5px;font-weight:600;color:var(--s900);margin-top:2px;font-variant-numeric:tabular-nums">€130.4</span>
+        </span>
+        <span style="flex:1;min-width:0;position:relative;height:20px;display:block">
+          <span style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(30,58,138,.16);display:block"></span>
+          <span class="mk" style="position:absolute;top:5px;height:10px;border-radius:3px;display:block;
+                left:50%;width:1.1%;
+                background:#0E9DA8;opacity:.62"></span>
+        </span>
+        <span style="flex:none;width:118px;text-align:right">
+          <span style="display:block"><span style="font-size:11px;font-weight:600;color:#0E9469">+1.0%</span></span>
+        </span>
+        <span style="flex:none;width:92px"><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span></span>
+      </div>
     </span>
   </div>
-  <p class="t-meta" style="margin-top:16px;line-height:1.6">Both dimensions differ from the baseline. Explaining the split needs two controlled steps — Compare builds them. <b style="font-weight:600;color:var(--s700)">Explain difference</b> opens it with Base 2 h + High spread and 4 h variant + Base market already in place — the two cells that isolate one dimension each.</p>
+  
   
 <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--hair)">
   <span class="band" style="color:var(--su700)">Why this pairing reads differently</span>
@@ -1028,13 +916,174 @@ a.glass-sm:hover{
   </span>
 </div>
 </section>
+
+
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:26px 0 14px">
+  <div style="min-width:0">
+    
+    <div style="display:flex;align-items:center;gap:10px">
+      <h2 class="t-sec">What irr says about this project</h2><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+    </div>
+    <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.5">Which combination of asset and market produces the strongest return on the money invested?</p>
+  </div>
+  
+</div>
+<div style="display:flex;gap:18px">
+<div class="glass-sm" style="flex:1;min-width:0;padding:17px 19px;
+     box-shadow:0 0 0 1px #5B4BB52e, var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92)">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <span class="band" style="color:#5B4BB5;font-size:10px">Highest return</span>
+    <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+  </div>
+  <div style="display:flex;align-items:baseline;gap:7px;margin-top:10px">
+    <span style="font-size:25px;font-weight:700;letter-spacing:-.026em;color:var(--s900);font-variant-numeric:tabular-nums">14.1%</span>
+    
+  </div>
+  
+  <div style="display:flex;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap">
+    <span style="display:inline-flex;align-items:center;gap:5px">
+      <i style="width:4px;height:4px;border-radius:50%;background:#2563EB;display:block"></i>
+      <span style="font-size:12px;font-weight:500;color:var(--s700)">4 h variant</span>
+    </span>
+    <span style="font-size:11px;color:var(--s400)">+</span>
+    <span style="display:inline-flex;align-items:center;gap:5px">
+      <i style="width:4px;height:4px;border-radius:50%;background:#AF47B2;display:block"></i>
+      <span style="font-size:12px;font-weight:500;color:var(--s700)">High spread</span>
+    </span>
+  </div>
+  <div class="t-meta" style="margin-top:8px;line-height:1.5">€50.7M invested · +1.3 pt vs baseline. The most return, and also the most capital at risk.</div>
+</div>
+<div class="glass-sm" style="flex:1;min-width:0;padding:17px 19px;
+     box-shadow:0 0 0 1px #0A6E772e, var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92)">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <span class="band" style="color:#0A6E77;font-size:10px">Best return on the baseline investment</span>
+    <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+  </div>
+  <div style="display:flex;align-items:baseline;gap:7px;margin-top:10px">
+    <span style="font-size:25px;font-weight:700;letter-spacing:-.026em;color:var(--s900);font-variant-numeric:tabular-nums">13.4%</span>
+    
+  </div>
+  
+  <div style="display:flex;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap">
+    <span style="display:inline-flex;align-items:center;gap:5px">
+      <i style="width:4px;height:4px;border-radius:50%;background:#2563EB;display:block"></i>
+      <span style="font-size:12px;font-weight:500;color:var(--s700)">Base 2 h</span>
+    </span>
+    <span style="font-size:11px;color:var(--s400)">+</span>
+    <span style="display:inline-flex;align-items:center;gap:5px">
+      <i style="width:4px;height:4px;border-radius:50%;background:#AF47B2;display:block"></i>
+      <span style="font-size:12px;font-weight:500;color:var(--s700)">High spread</span>
+    </span>
+  </div>
+  <div class="t-meta" style="margin-top:8px;line-height:1.5">+0.6 pt for no additional CAPEX — the whole gain comes from the market, not from the asset.</div>
+</div>
+<div class="glass-sm" style="flex:1;min-width:0;padding:17px 19px;
+     box-shadow:0 0 0 1px #9A62082e, var(--sh-md), inset 0 1px 0 rgba(255,255,255,.92)">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <span class="band" style="color:#9A6208;font-size:10px">Weakest return</span>
+    <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+  </div>
+  <div style="display:flex;align-items:baseline;gap:7px;margin-top:10px">
+    <span style="font-size:25px;font-weight:700;letter-spacing:-.026em;color:var(--s900);font-variant-numeric:tabular-nums">8.4%</span>
+    
+  </div>
+  
+  <div style="display:flex;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap">
+    <span style="display:inline-flex;align-items:center;gap:5px">
+      <i style="width:4px;height:4px;border-radius:50%;background:#2563EB;display:block"></i>
+      <span style="font-size:12px;font-weight:500;color:var(--s700)">Low RTE</span>
+    </span>
+    <span style="font-size:11px;color:var(--s400)">+</span>
+    <span style="display:inline-flex;align-items:center;gap:5px">
+      <i style="width:4px;height:4px;border-radius:50%;background:#AF47B2;display:block"></i>
+      <span style="font-size:12px;font-weight:500;color:var(--s700)">Low spread</span>
+    </span>
+  </div>
+  <div class="t-meta" style="margin-top:8px;line-height:1.5">-4.4 pt vs baseline. A 3-point round-trip loss and the softest market compound.</div>
+</div></div>
+
+
+
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;
+     padding:12px 16px;border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(245,158,11,0.08),rgba(255,255,255,0) 70%);box-shadow:inset 0 0 0 1px rgba(245,158,11,0.2)">
+  <span style="color:#9A6208;display:flex;flex:none;"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
+  <span style="flex:1;min-width:0">
+    
+    <span class="t-meta" style="display:block;line-height:1.55;font-size:12.5px">1 of the 3 saved analysis cases is outdated — <b style="font-weight:600;color:var(--s900)">Stress test</b> was priced before the technical simulation changed. The other 6 combinations are calculated live and are never outdated.</span>
+  </span>
+  <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Recalculate in ReveNew<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
+  
+</div>
+
+<section class="panel" style="display:flex;align-items:stretch;padding:4px 0;margin-bottom:18px">
+  
+    <div style="flex:1;min-width:0;padding:15px 22px;">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="band" style="font-size:10px">Highest NPV within criteria</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+      </div>
+      <div style="font-size:21px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:8px;font-variant-numeric:tabular-nums">€9.9M</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#2563EB;display:block"></i>
+          <span class="t-meta">Base 2 h</span></span>
+        <span style="font-size:11px;color:var(--s400)">×</span>
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#AF47B2;display:block"></i>
+          <span class="t-meta">High spread</span></span>
+      </div>
+      <div class="t-meta" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--hair);line-height:1.45">
+        <b style="font-weight:600;color:var(--s500)">€14.2M</b> overall — 4 h variant × High spread,
+        <span style="color:#9A6208">outside criteria</span>
+      </div>
+    </div>
+    <div style="flex:1;min-width:0;padding:15px 22px;border-left:1px solid var(--hair)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="band" style="font-size:10px">Lowest CAPEX within criteria</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+      </div>
+      <div style="font-size:21px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:8px;font-variant-numeric:tabular-nums">€41.2M</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#2563EB;display:block"></i>
+          <span class="t-meta">Low RTE</span></span>
+        <span style="font-size:11px;color:var(--s400)">×</span>
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#AF47B2;display:block"></i>
+          <span class="t-meta">High spread</span></span>
+      </div>
+      
+    </div>
+    <div style="flex:1;min-width:0;padding:15px 22px;border-left:1px solid var(--hair)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="band" style="font-size:10px">Highest revenue / MWh within criteria</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+      </div>
+      <div style="font-size:21px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:8px;font-variant-numeric:tabular-nums">€150.3</div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#2563EB;display:block"></i>
+          <span class="t-meta">Base 2 h</span></span>
+        <span style="font-size:11px;color:var(--s400)">×</span>
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#AF47B2;display:block"></i>
+          <span class="t-meta">High spread</span></span>
+      </div>
+      
+    </div>
+</section>
+<p class="t-meta" style="margin:-8px 0 20px;line-height:1.5">
+  Leaders on the other objectives, across all 9 pairings, saved or not.
+  Ranked within your criteria; where the outright leader is different it is shown too, because that gap is what the constraint costs you.
+  Each is a ranking on one objective — which objective matters is your decision, not the Suite's. Outdated results are excluded.
+</p>
+
+
 </div>
     </main>
   </div>
   
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":3190}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":3290}}'>
 class Component extends DCLogic {}
 </script>
 </body>
