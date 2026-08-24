@@ -736,19 +736,29 @@ function revenueChart(w = 700) {
 }
 
 /* ── Fleet scatter — the chart neither product can draw alone ───── */
+/* One portfolio dataset behind every Analytics chart, so the three
+   scatters plot the same eleven projects and a name means the same asset
+   in all of them. Valencia is the project modelled in full elsewhere in
+   the canvas, so its row IS that model — 200 MWh, 65.2 GWh, €8.42M,
+   12.8%, €42.1M — and the portfolio figures are summed from here rather
+   than typed, which is what keeps the KPI row and the charts agreeing.
+   NPV is not stored: it comes out of the same CAPEX-and-IRR model the
+   project screens use, so a project cannot read one way here and another
+   way inside its own Overview. */
 const FLEET = [
-  ["Murcia BESS", 78, 13.4, 110, null],
-  ["Valencia BESS", 74, 12.8, 100, null],
-  ["Girona BESS", 76, 12.6, 85, null],
-  ["Bilbao BESS", 71, 12.1, 90, null],
-  ["Madrid Hybrid", 68, 11.9, 80, null],
-  ["Córdoba Storage", 62, 10.6, 45, null],
-  ["Faro Storage", 64, 10.1, 35, null],
-  ["Évora Hybrid", 59, 9.6, 50, null],
-  ["Almería BESS", 81, 9.4, 60, "start"],
-  ["Toledo Hybrid", 57, 8.9, 70, "top"],
-  ["Cádiz Storage", 52, 7.8, 40, "start"],
+  { n: "Murcia BESS",     util: 78, irr: 13.4, mw: 110, mwh: 220, gwh: 76.6, rev: 9.80, capex: 45.6 },
+  { n: "Valencia BESS",   util: 74, irr: 12.8, mw: 100, mwh: 200, gwh: 65.2, rev: 8.42, capex: 42.1 },
+  { n: "Girona BESS",     util: 76, irr: 12.6, mw:  85, mwh: 170, gwh: 56.3, rev: 7.10, capex: 37.2 },
+  { n: "Bilbao BESS",     util: 71, irr: 12.1, mw:  90, mwh: 180, gwh: 54.9, rev: 7.03, capex: 38.9 },
+  { n: "Madrid Hybrid",   util: 68, irr: 11.9, mw:  80, mwh: 120, gwh: 35.8, rev: 4.55, capex: 51.4 },
+  { n: "Córdoba Storage", util: 62, irr: 10.6, mw:  45, mwh:  90, gwh: 24.1, rev: 2.84, capex: 22.8 },
+  { n: "Faro Storage",    util: 64, irr: 10.1, mw:  35, mwh:  70, gwh: 19.5, rev: 2.18, capex: 18.6 },
+  { n: "Évora Hybrid",    util: 59, irr:  9.6, mw:  50, mwh: 100, gwh: 25.4, rev: 2.64, capex: 34.7 },
+  { n: "Almería BESS",    util: 81, irr:  9.4, mw:  60, mwh: 120, gwh: 42.7, rev: 4.34, capex: 28.5, lab: "start" },
+  { n: "Toledo Hybrid",   util: 57, irr:  8.9, mw:  70, mwh: 140, gwh: 34.4, rev: 3.30, capex: 47.9, lab: "top" },
+  { n: "Cádiz Storage",   util: 52, irr:  7.8, mw:  40, mwh:  80, gwh: 18.2, rev: 1.67, capex: 20.4, lab: "start" },
 ];
+const FSUM = (f) => FLEET.reduce((s, p) => s + f(p), 0);
 /* The only projects that carry the accent are the ones Performance insights
    is reading out beside the chart — the panel and the plot point at the same
    three assets, so the eye lands where the argument is.                    */
@@ -768,17 +778,17 @@ function fleetScatter(w = 640) {
     `<line x1="${L}" y1="${y(g).toFixed(1)}" x2="${w - R}" y2="${y(g).toFixed(1)}" stroke="${GRID}" stroke-width="1"/>
      <text x="${L - 9}" y="${(y(g) + 3.4).toFixed(1)}" text-anchor="end" font-size="9.5" fill="${AXIS}">${g}%</text>`).join("");
   // Draw the field first, the flagged three last, so the accent is never overlapped.
-  const mark = ([n, u, irr, mw]) => {
+  const mark = ({ n, util: u, irr, mw }) => {
     const on = FLAGGED.has(n);
     return `<circle class="mk" cx="${x(u).toFixed(1)}" cy="${y(irr).toFixed(1)}" r="${bubbleR(mw).toFixed(1)}"
        fill="${on ? CMB : FIELD}" fill-opacity="${on ? ".72" : ".26"}"
        stroke="${on ? "#fff" : "rgba(255,255,255,.85)"}" stroke-width="${on ? 2.2 : 1.5}"
        ><title>${n} — ${u}% utilisation · ${irr}% IRR · ${mw} MW</title></circle>`;
   };
-  const dots = FLEET.filter((f) => !FLAGGED.has(f[0])).map(mark).join("")
-             + FLEET.filter((f) => FLAGGED.has(f[0])).map(mark).join("");
-  const labs = FLEET.filter((f) => f[4] && FLAGGED.has(f[0])).map(([n, u, irr, mw, pos]) =>
-    pos === "top"
+  const dots = FLEET.filter((f) => !FLAGGED.has(f.n)).map(mark).join("")
+             + FLEET.filter((f) => FLAGGED.has(f.n)).map(mark).join("");
+  const labs = FLEET.filter((f) => f.lab && FLAGGED.has(f.n)).map(({ n, util: u, irr, mw, lab }) =>
+    lab === "top"
       ? `<text x="${(x(u) - 6).toFixed(1)}" y="${(y(irr) - bubbleR(mw) - 9).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="600" fill="${INK}">${n}</text>`
       : `<text x="${(x(u) + bubbleR(mw) + 7).toFixed(1)}" y="${(y(irr) + 3.6).toFixed(1)}" text-anchor="start" font-size="10.5" font-weight="600" fill="${INK}">${n}</text>`).join("");
 
@@ -1704,12 +1714,26 @@ function investReturn(w = 1240) {
 </svg>`;
 }
 
-const perfBlock = ({ band, tone, source, title, rows, action }) => `
+/* §7 · Each block leads with the shape of the thing over its life and
+   then quantifies it. The chart is not decoration under the numbers: it
+   answers "how does this change?", which no row in the list can, while
+   the rows keep answering "how much?". Both blocks draw a fifteen-year
+   horizon so the two curves are read on the same clock. */
+const perfBlock = ({ band, tone, source, title, chart, chartTitle, chartNote, rows, action }) => `
 <section class="panel" style="flex:1;min-width:0;padding:24px 26px;display:flex;flex-direction:column">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
     <span class="band" style="color:${tone}">${band}</span>${source}
   </div>
   <h2 class="t-sec" style="margin-top:9px">${title}</h2>
+  ${chart ? `
+  <div style="margin-top:16px;padding:14px 16px 6px;border-radius:var(--r-xs);
+       background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.24));box-shadow:inset 0 0 0 1px var(--hair)">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+      <span style="font-size:12.5px;font-weight:600;color:var(--s700)">${chartTitle}</span>
+      <span class="t-meta">${chartNote}</span>
+    </div>
+    <div style="margin-top:8px">${chart}</div>
+  </div>` : ""}
   <div class="rows" style="margin-top:14px">
     ${rows.map(([k, v, note]) => `
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:12px 0">
@@ -1902,6 +1926,9 @@ ${(() => {
 <div style="display:flex;gap:22px;margin-top:26px;align-items:stretch">
   ${perfBlock({ band: "Technical performance", tone: "var(--b700)", source: src("storebrid"),
     title: "What the asset does",
+    chartTitle: "Effective capacity over life",
+    chartNote: "2.1%/yr · StoreBrid",
+    chart: degradation(520),
     rows: [["Installed power", c.t.mw + " MW", `${c.t.mwh} MWh · ${c.t.dur.toFixed(1)} h duration`],
            ["Energy discharged", c.t.gwh + " GWh/yr", `${c.t.cycles} full cycles`],
            ["Utilisation", c.t.util + "%"],
@@ -1910,6 +1937,9 @@ ${(() => {
     action: `${ic("analytics", 15)}View technical details` })}
   ${perfBlock({ band: "Financial performance", tone: "var(--rv600)", source: src("revenew"),
     title: "What it earns",
+    chartTitle: "Cumulative cash flow",
+    chartNote: `crosses zero after ${m.pb.toFixed(1)} yrs · ReveNew`,
+    chart: projCash(c, 520),
     rows: [["NPV", eurMs(m.npv), `at ${(WACC * 100).toFixed(1)}% cost of capital`],
            /* §23 · IRR and payback need both sides — ReveNew cash flows against
               StoreBrid CAPEX — so they carry Combined here too, even sitting
@@ -2535,12 +2565,108 @@ const cmpHead = (label, source, first) => `
   <span style="display:${first ? "block" : "flex"};justify-content:flex-end;margin-top:5px;font-weight:400">${source}</span>
 </th>`;
 
+/* ── the two portfolio relationships neither product can plot ─────
+   Same eleven projects, same marks, same accent as Utilisation against
+   return: one chart language, three questions. The field is grey, the
+   three projects Portfolio signals is reading out carry the accent, and
+   every point keeps its name in the tooltip — so selecting an insight
+   and finding it on a plot is the same act in all three.
+
+   Each takes a StoreBrid quantity on one axis and a ReveNew quantity on
+   the other, which is the whole reason they belong to the Suite.       */
+const portNpv = (p) => -pvCapex(p.capex, WACC) + (pvCapex(p.capex, p.irr / 100) / annuityF(p.irr / 100)) * annuityF(WACC);
+const portPerMwh = (p) => (p.rev * 1e6) / (p.gwh * 1000);
+
+function portScatter({ xOf, yOf, xTicks, yTicks, xFmt, yFmt, xLab, yLab, refs, label, place, w = 596 }) {
+  const H = 320, L = 54, R = 18, T = 18, B = 42;
+  const pw = w - L - R, ph = H - T - B;
+  const xs = FLEET.map(xOf), ys = FLEET.map(yOf);
+  const xA = Math.min(...xs, ...xTicks), xB = Math.max(...xs, ...xTicks);
+  const yA = Math.min(...ys, ...yTicks), yB = Math.max(...ys, ...yTicks);
+  const xp = (xB - xA) * 0.10, yp = (yB - yA) * 0.12;
+  const X = (v) => L + ((v - (xA - xp)) / ((xB + xp) - (xA - xp))) * pw;
+  const Y = (v) => T + ph - ((v - (yA - yp)) / ((yB + yp) - (yA - yp))) * ph;
+  const gx = xTicks.map((t) =>
+    `<line x1="${X(t).toFixed(1)}" y1="${T}" x2="${X(t).toFixed(1)}" y2="${T + ph}" stroke="${GRID}" stroke-width="1"/>
+     <text x="${X(t).toFixed(1)}" y="${T + ph + 15}" text-anchor="middle" font-size="9.5" fill="${AXIS}">${xFmt(t)}</text>`).join("");
+  const gy = yTicks.map((t) =>
+    `<line x1="${L}" y1="${Y(t).toFixed(1)}" x2="${w - R}" y2="${Y(t).toFixed(1)}" stroke="${GRID}" stroke-width="1"/>
+     <text x="${L - 9}" y="${(Y(t) + 3.4).toFixed(1)}" text-anchor="end" font-size="9.5" fill="${AXIS}">${yFmt(t)}</text>`).join("");
+  const mark = (p) => {
+    const on = FLAGGED.has(p.n);
+    return `<circle class="mk" cx="${X(xOf(p)).toFixed(1)}" cy="${Y(yOf(p)).toFixed(1)}" r="${bubbleR(p.mw).toFixed(1)}"
+      fill="${on ? CMB : FIELD}" fill-opacity="${on ? ".72" : ".26"}"
+      stroke="${on ? "#fff" : "rgba(255,255,255,.85)"}" stroke-width="${on ? 2.2 : 1.5}"
+      ><title>${p.n} — ${label(p)}</title></circle>`;
+  };
+  /* field first, accent last, so the three the panel names are never
+     hidden under a project nobody is asking about */
+  const dots = FLEET.filter((p) => !FLAGGED.has(p.n)).map(mark).join("")
+             + FLEET.filter((p) => FLAGGED.has(p.n)).map(mark).join("");
+  /* Label placement is per chart, not per project: the same three names
+     land in different places on each plot, and a shared side would put
+     two of them on top of each other. */
+  const labs = FLEET.filter((p) => FLAGGED.has(p.n) && place(p)).map((p) => {
+    const at = place(p), px = X(xOf(p)), py = Y(yOf(p)), r = bubbleR(p.mw);
+    return at === "top"
+      ? `<text x="${px.toFixed(1)}" y="${(py - r - 9).toFixed(1)}" text-anchor="middle" font-size="10.5" font-weight="600" fill="${INK}">${p.n}</text>`
+      : at === "end"
+        ? `<text x="${(px - r - 7).toFixed(1)}" y="${(py + 3.6).toFixed(1)}" text-anchor="end" font-size="10.5" font-weight="600" fill="${INK}">${p.n}</text>`
+        : `<text x="${(px + r + 7).toFixed(1)}" y="${(py + 3.6).toFixed(1)}" text-anchor="start" font-size="10.5" font-weight="600" fill="${INK}">${p.n}</text>`;
+  }).join("");
+  return `
+<svg viewBox="0 0 ${w} ${H}" width="100%" style="display:block" role="img" aria-label="${xLab} against ${yLab}, one bubble per Suite project">
+  ${MKSTYLE}${gx}${gy}${refs ? refs({ X, Y, L, R, T, ph, pw, w }) : ""}${dots}${labs}
+</svg>`;
+}
+
+/* §32 · What the money buys. The line at zero is not decoration: below it
+   a project does not clear the 9.5% cost of capital, which is the only
+   threshold on this plot that is a fact rather than a preference. */
+function capexNpvScatter(w = 596) {
+  return portScatter({ w,
+    xOf: (p) => p.capex, yOf: portNpv,
+    xTicks: [0, 15, 30, 45, 60], yTicks: [-3, 0, 3, 6, 9],
+    xFmt: (t) => "€" + t + "M", yFmt: (t) => (t < 0 ? "−€" : "€") + Math.abs(t) + "M",
+    xLab: "CAPEX", yLab: "NPV",
+    label: (p) => `€${p.capex.toFixed(1)}M CAPEX · ${eurMs(portNpv(p))} NPV · ${p.irr.toFixed(1)}% IRR · ${eurM(p.rev)} revenue`,
+    place: () => "start",
+    refs: ({ X, Y, L, w: ww }) => `
+      <line x1="${L}" y1="${Y(0).toFixed(1)}" x2="${ww - 18}" y2="${Y(0).toFixed(1)}" stroke="rgba(154,98,8,.5)" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <text x="${L + 5}" y="${(Y(0) - 8).toFixed(1)}" font-size="9.5" font-weight="600" fill="#9A6208">NPV 0 · breaks even at ${(WACC * 100).toFixed(1)}%</text>`,
+  });
+}
+
+/* §33 · Moving energy and being paid for it are different achievements,
+   and the portfolio separates them: the vertical is what a discharged MWh
+   actually earns, the horizontal is how many of them there are. The
+   crosshair is the portfolio's own median, so "below the middle" is a
+   position on the plot rather than a judgement in a sentence. */
+function throughputScatter(w = 596) {
+  const med = (a) => { const s = [...a].sort((x, y) => x - y); const h = s.length >> 1;
+    return s.length % 2 ? s[h] : (s[h - 1] + s[h]) / 2; };
+  const mx = med(FLEET.map((p) => p.gwh)), my = med(FLEET.map(portPerMwh));
+  return portScatter({ w,
+    xOf: (p) => p.gwh, yOf: portPerMwh,
+    xTicks: [20, 40, 60, 80], yTicks: [90, 105, 120, 135],
+    xFmt: (t) => t + " GWh", yFmt: (t) => "€" + t,
+    xLab: "Energy discharged", yLab: "Revenue per MWh discharged",
+    label: (p) => `${p.gwh.toFixed(1)} GWh discharged · €${portPerMwh(p).toFixed(1)} per MWh · ${eurM(p.rev)} revenue`,
+    place: (p) => (p.n === "Toledo Hybrid" ? "end" : "start"),
+    refs: ({ X, Y, L, T, ph, w: ww }) => `
+      <line x1="${X(mx).toFixed(1)}" y1="${T}" x2="${X(mx).toFixed(1)}" y2="${T + ph}" stroke="rgba(30,58,138,.20)" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <line x1="${L}" y1="${Y(my).toFixed(1)}" x2="${ww - 18}" y2="${Y(my).toFixed(1)}" stroke="rgba(30,58,138,.20)" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <text x="${(X(mx) + 6).toFixed(1)}" y="${T + 11}" font-size="9" fill="${AXIS}">median ${mx.toFixed(1)} GWh</text>
+      <text x="${L + 5}" y="${(Y(my) - 6).toFixed(1)}" font-size="9" fill="${AXIS}">median €${my.toFixed(1)} / MWh</text>`,
+  });
+}
+
 const analytics = doc({
   w: 1440, h: 2580, side: rootSide("analytics"), rvFocus: true,
   body: `
 ${head({
   crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><b>Analytics</b>`,
-  eyebrow: "11 projects with both capabilities · 1.24 GW · 2.48 GWh",
+  eyebrow: `${FLEET.length} projects with both capabilities · ${(FSUM((p) => p.mw) / 1000).toFixed(2)} GW · ${(FSUM((p) => p.mwh) / 1000).toFixed(2)} GWh`,
   title: "Analytics",
   actions: `<button class="btn btn-secondary">${ic("upRight", 16)}Export</button>`,
 })}
@@ -2554,14 +2680,26 @@ ${head({
   <span style="margin-left:auto;display:flex;align-items:center;gap:7px" class="t-meta">${ic("link", 14, 1.7)}11 of 24 projects carry both technical and financial data</span>
 </div>
 
+${(() => {
+  /* Every headline is summed from the same eleven projects the charts
+     plot, so the KPI row and the geometry below it cannot disagree.
+     Utilisation is weighted by storage capacity and IRR by capital,
+     because an unweighted mean of either would let a 35 MW asset speak
+     as loudly as a 110 MW one. */
+  const gwh = FSUM((p) => p.gwh), rev = FSUM((p) => p.rev), cap = FSUM((p) => p.capex);
+  const util = FSUM((p) => p.util * p.mwh) / FSUM((p) => p.mwh);
+  const irr = FSUM((p) => p.irr * p.capex) / cap;
+  return `
 <div class="kpirow">
-  ${kpi({ label: "Battery utilisation", value: "72%", source: src("storebrid"), delta: "+3 pt" })}
-  ${kpi({ label: "Energy discharged", value: "512 GWh", source: src("storebrid"), delta: "+6.2%" })}
-  ${kpi({ label: "Annual revenue", value: "€63.4M", source: src("revenew"), delta: "+4.1%" })}
-  ${kpi({ label: "Portfolio IRR", value: "11.4%", source: src("revenew"), delta: "−0.2 pt" })}
-  ${kpi({ label: "Revenue / MWh discharged", value: "€123.8", source: src("combined"), combined: true,
-          formula: "€63.4M revenue ÷ 512 GWh discharged" })}
-</div>
+  ${kpi({ label: "Battery utilisation", value: util.toFixed(0) + "%", source: src("storebrid"), delta: "+3 pt" })}
+  ${kpi({ label: "Energy discharged", value: gwh.toFixed(0) + " GWh", source: src("storebrid"), delta: "+6.2%" })}
+  ${kpi({ label: "Annual revenue", value: "€" + rev.toFixed(1) + "M", source: src("revenew"), delta: "+4.1%" })}
+  ${kpi({ label: "Portfolio IRR", value: irr.toFixed(1) + "%", source: src("combined"), combined: true,
+          formula: "weighted by CAPEX · ReveNew cash flows against StoreBrid CAPEX" })}
+  ${kpi({ label: "Revenue / MWh discharged", value: "€" + ((rev * 1e6) / (gwh * 1000)).toFixed(1), source: src("combined"), combined: true,
+          formula: `€${rev.toFixed(1)}M revenue ÷ ${gwh.toFixed(0)} GWh discharged` })}
+</div>`;
+})()}
 <div style="margin-top:20px">${staleNotice({
   body: `${STALE_PORTFOLIO} analysis cases across the portfolio are outdated — their financial result was calculated before the technical simulation changed, so they are excluded from the figures above.`,
   link: `View the ${STALE_PORTFOLIO} cases`, gap: "0" })}</div>
@@ -2608,6 +2746,61 @@ ${head({
     </div>
   </div>
 </section>
+
+${(() => {
+  /* The two relationships the portfolio KPIs cannot express. Investment
+     against value asks whether capital is working; throughput against
+     capture asks whether energy is being sold well. Both take one
+     StoreBrid axis and one ReveNew axis, which is why they live here and
+     not inside either product — and both plot the same eleven projects
+     with the same marks as the chart above, so a name found in one is the
+     same asset in all three. */
+  const cap = FSUM((p) => p.capex), npv = FSUM(portNpv);
+  const gwh = FSUM((p) => p.gwh), rev = FSUM((p) => p.rev);
+  const under = FLEET.filter((p) => portNpv(p) < 0);
+  const dense = FLEET.reduce((a, b) => (portNpv(b) / b.capex > portNpv(a) / a.capex ? b : a));
+  const thin = FLEET.filter((p) => portNpv(p) > 0)
+    .reduce((a, b) => (portNpv(b) / b.capex < portNpv(a) / a.capex ? b : a));
+  const cheapest = FLEET.reduce((a, b) => (portPerMwh(b) < portPerMwh(a) ? b : a));
+  const richest = FLEET.reduce((a, b) => (portPerMwh(b) > portPerMwh(a) ? b : a));
+  const stat = (k, v) => `
+    <span style="min-width:0">
+      <span class="t-meta" style="display:block">${k}</span>
+      <span style="display:block;font-size:17px;font-weight:700;letter-spacing:-.02em;color:var(--s900);margin-top:4px;font-variant-numeric:tabular-nums">${v}</span>
+    </span>`;
+  const panel = ({ band, title, note, chart, stats, foot, xLab, xSrc, yLab, ySrc }) => `
+    <section class="panel" style="flex:1;min-width:0;padding:24px 26px">
+      <div class="band">${band}</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+        <h2 class="t-sec">${title}</h2>${src("combined")}
+      </div>
+      <p class="t-meta" style="margin-top:6px;font-size:12px;line-height:1.55">${note}</p>
+      <div style="display:flex;gap:26px;margin-top:12px">${stats}</div>
+      <div style="margin-top:14px">${chart}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:12px;border-top:1px solid var(--hair)">
+        <span style="display:inline-flex;align-items:center;gap:7px"><span class="t-meta">↑ ${yLab}</span>${src(ySrc)}</span>
+        <span style="display:inline-flex;align-items:center;gap:7px"><span class="t-meta">→ ${xLab}</span>${src(xSrc)}</span>
+      </div>
+      <p class="t-meta" style="margin-top:12px;line-height:1.55">${foot}</p>
+    </section>`;
+  return `
+${sec({ label: "Investment, output and what they return", source: src("combined"), top: 26,
+        sub: "Two cross-product relationships on the same eleven projects and the same marks as above. Position is the reading; the exact figures are in the comparison table at the foot of the page." })}
+<div style="display:flex;gap:22px;align-items:stretch">
+  ${panel({ band: "Capital efficiency", title: "Investment against value",
+    note: "What each project cost to build against what it is worth today. Distance above the dashed line is value created; below it the project does not clear the cost of capital.",
+    stats: stat("Portfolio CAPEX", "€" + cap.toFixed(0) + "M") + stat("Portfolio NPV", eurMs(npv)) + stat("NPV per € invested", "€" + (npv / cap).toFixed(2)),
+    chart: capexNpvScatter(596),
+    xLab: "CAPEX", xSrc: "storebrid", yLab: "NPV", ySrc: "revenew",
+    foot: `${under.length} project${under.length === 1 ? "" : "s"} sit${under.length === 1 ? "s" : ""} below the line — ${under.map((p) => p.n).join(", ")}. ${dense.n} returns the most per euro at €${(portNpv(dense) / dense.capex).toFixed(2)}, ${thin.n} the least of those above it at €${(portNpv(thin) / thin.capex).toFixed(2)}.` })}
+  ${panel({ band: "Throughput against capture", title: "Energy moved against what it earns",
+    note: "Volume is a StoreBrid outcome, price per MWh a ReveNew one. A project can be busy and poorly paid, or quiet and well paid — the two axes separate them.",
+    stats: stat("Energy discharged", gwh.toFixed(0) + " GWh") + stat("Annual revenue", "€" + rev.toFixed(1) + "M") + stat("Spread in capture", "€" + (portPerMwh(richest) - portPerMwh(cheapest)).toFixed(0) + " / MWh"),
+    chart: throughputScatter(596),
+    xLab: "Energy discharged", xSrc: "storebrid", yLab: "Revenue / MWh discharged", ySrc: "combined",
+    foot: `${richest.n} earns €${portPerMwh(richest).toFixed(1)} per discharged MWh against €${portPerMwh(cheapest).toFixed(1)} at ${cheapest.n} — a €${(portPerMwh(richest) - portPerMwh(cheapest)).toFixed(0)} gap on the same commodity. Below and right of the crosshair is high volume sold cheaply.` })}
+</div>`;
+})()}
 
 ${(() => {
   /* §10 · Which projects depend most on the market view being right. The
@@ -4533,7 +4726,7 @@ function degradation(w = 500) {
     <path d="${line}" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linejoin="round"/>
     <circle cx="${x(cross).toFixed(1)}" cy="${y(80).toFixed(1)}" r="4" fill="#fff" stroke="#9A6208" stroke-width="2"/>
     <text x="${(x(cross) + 9).toFixed(1)}" y="${(y(80) - 8).toFixed(1)}" font-size="10" font-weight="600" fill="#9A6208">80% at year ${cross.toFixed(1)}</text>
-    <text x="${(x(yrs) - 4).toFixed(1)}" y="${(y(end) - 9).toFixed(1)}" text-anchor="end" font-size="10.5" font-weight="600" fill="${INK}">${end.toFixed(0)}% · ${(200 * end / 100).toFixed(0)} MWh</text>
+    <text x="${(x(yrs) - 4).toFixed(1)}" y="${(y(end) + 16).toFixed(1)}" text-anchor="end" font-size="10.5" font-weight="600" fill="${INK}">${end.toFixed(0)}% · ${(200 * end / 100).toFixed(0)} MWh</text>
     ${xl}</svg>`;
 }
 
@@ -5558,7 +5751,7 @@ const perfView = ({ mk = "irr", sel, evalModel = false } = {}) => {
       <h2 class="t-sec">${objectiveOf(mk)}</h2>
       <span class="t-meta">${x.unit}</span>${src(m.from)}
     </div>
-    <div style="margin-top:12px">${metricTabs(mk)}</div>
+    <p class="t-meta" style="margin-top:8px;line-height:1.5">${x.q}</p>
   </div>
   <div style="width:1px;background:var(--hair);flex:none"></div>
   <div style="flex:1;min-width:250px;padding:20px 24px">
@@ -5580,6 +5773,12 @@ const perfView = ({ mk = "irr", sel, evalModel = false } = {}) => {
     ${stat(CRITERIA.length ? (m.lowerBetter ? "Lowest within criteria" : "Highest within criteria") : (m.lowerBetter ? "Lowest" : "Highest"), win, "var(--su700)")}
     ${stat("Baseline", BASE)}
     ${stat(m.lowerBetter ? "Highest" : "Lowest", worst)}
+  </div>
+  <div style="width:100%;display:flex;align-items:center;gap:14px;padding:14px 24px;border-top:1px solid var(--hair);flex-wrap:wrap">
+    <span class="t-meta" style="flex:none">Evaluate by</span>
+    ${metricTabs(mk)}
+    <span style="flex:1"></span>
+    <span class="t-meta">Changing the objective re-reads the whole matrix — the combinations do not change, only what is being compared.</span>
   </div>
 </section>`;
 })()}
@@ -7711,73 +7910,152 @@ const impactBlock = (fromId, toId) => {
     <span class="cov"><i style="background:${k.dot}"></i>${k.label}</span>
   </div>
   ${(() => {
-    /* §17, §50 · The hero of Compare: the chain from a technical decision to
-       a financial consequence, in the order it actually happens. Storage
-       bought -> capital committed -> energy that buys -> revenue it earns ->
-       value it creates -> rate that value returns.
+    /* §1, §51 · The hero of Compare, drawn rather than written: the chain
+       from a technical decision to a financial consequence, in the order it
+       actually happens. Storage bought -> capital committed -> energy that
+       buys -> revenue it earns -> value it creates -> rate that value
+       returns.
 
-       It is a sequence, not a flow diagram: the quantities are in different
-       units and do not conserve, so drawing them as a Sankey would imply a
-       conservation that is not there. Each step keeps its own unit, its own
-       provenance, and its sign; the connector carries the reading, not the
-       magnitude. The colour crosses from StoreBrid blue to ReveNew magenta
-       exactly where ownership of the number changes — which is the whole
-       argument for the Suite existing, drawn once. */
-    const sgn = (v, d, u, pre = "") => (v >= 0 ? "+" : "−") + pre + Math.abs(v).toFixed(d) + u;
+       The geometry is a PAIR OF BARS per stage, each pair on its own
+       zero-based scale, so the gap between the two bar tops IS the change
+       and the height of the bars is the size of the quantity it happened
+       to. That is what a row of cards could not do: +€8.6M on €42.1M of
+       CAPEX and +€3.0M on €8.3M of NPV are the same shape as text and very
+       different shapes as bars.
+
+       Each stage keeps its own unit and its own scale — deliberately. The
+       quantities do not conserve, so one shared axis, or a Sankey, would
+       imply a conservation that is not there. What crosses the stages is
+       ownership, and that is drawn once, as the rail changing colour
+       exactly where the number stops being StoreBrid's and becomes
+       ReveNew's. That crossing is the argument for the Suite existing.
+
+       §2 · Both absolute values sit under every stage, so the hero carries
+       the baseline and the selected case as well as the movement between
+       them — the chart shows the relationship, the figures quantify it.
+
+       The change figures are NEUTRAL in ink. Whether more CAPEX is bad
+       news is a decision, not a reading, and the delta chart below already
+       orients everything by better and worse — repeating that judgement
+       here would be the same story told twice (§4). */
     const tMoved = A.c.t.id !== B.c.t.id;
-    /* The chain starts wherever the change started. A financial-only case has
-       no asset step to show, and inventing one — "+0 MWh" — would suggest a
-       decision nobody made. */
+    const sgn = (v, d, u, pre = "") => (v >= 0 ? "+" : "−") + pre + Math.abs(v).toFixed(d) + u;
+    const num = (v, d, u, pre = "") => pre + v.toFixed(d) + u;
+    /* The chain starts wherever the change started. A financial-only case
+       has no asset stage to show, and inventing one — "+0 MWh" — would
+       suggest a decision nobody made. */
     const steps = tMoved
-      ? [{ v: sgn(B.c.t.mwh - A.c.t.mwh, 0, " MWh"), l: "storage bought", who: "sb" },
-         { v: sgn(B.capex - A.capex, 1, "M", "€"), l: "capital committed", who: "sb" },
-         { v: sgn(B.c.t.gwh - A.c.t.gwh, 1, " GWh/yr"), l: "energy that buys", who: "sb" },
-         { v: sgn(B.rev - A.rev, 2, "M/yr", "€"), l: "revenue it earns", who: "rn" },
-         { v: sgn(B.npv - A.npv, 1, "M", "€"), l: "value it creates", who: "rn" },
-         { v: sgn(B.irr - A.irr, 1, " pp"), l: "rate that value returns", who: "cmb" }]
-      : [{ v: sgn(B.c.sc.capture - A.c.sc.capture, 1, "/MWh", "€"), l: "capture price moved", who: "rn" },
-         { v: "€0.0M", l: "capital committed", who: "sb" },
-         { v: sgn(B.rev - A.rev, 2, "M/yr", "€"), l: "revenue it earns", who: "rn" },
-         { v: sgn(B.npv - A.npv, 1, "M", "€"), l: "value it creates", who: "rn" },
-         { v: sgn(B.irr - A.irr, 1, " pp"), l: "rate that value returns", who: "cmb" }];
+      ? [{ g: "Technical decision", who: "sb", lab: "Storage capacity", a: A.c.t.mwh, b: B.c.t.mwh, d: 0, u: " MWh" },
+         { g: "Investment", who: "sb", lab: "CAPEX", a: A.capex, b: B.capex, d: 1, u: "M", pre: "€" },
+         { g: "Operational output", who: "sb", lab: "Energy discharged", a: A.c.t.gwh, b: B.c.t.gwh, d: 1, u: " GWh/yr" },
+         { g: "Financial consequence", who: "rn", lab: "Expected revenue", a: A.rev, b: B.rev, d: 2, u: "M/yr", pre: "€" },
+         { g: "Financial consequence", who: "rn", lab: "NPV", a: A.npv, b: B.npv, d: 1, u: "M", pre: "€" },
+         { g: "Financial consequence", who: "cmb", lab: "IRR", a: A.irr, b: B.irr, d: 1, u: "%", pt: true }]
+      : [{ g: "Market view", who: "rn", lab: "Capture price", a: A.c.sc.capture, b: B.c.sc.capture, d: 1, u: "/MWh", pre: "€" },
+         { g: "Investment", who: "sb", lab: "CAPEX", a: A.capex, b: B.capex, d: 1, u: "M", pre: "€" },
+         { g: "Financial consequence", who: "rn", lab: "Expected revenue", a: A.rev, b: B.rev, d: 2, u: "M/yr", pre: "€" },
+         { g: "Financial consequence", who: "rn", lab: "NPV", a: A.npv, b: B.npv, d: 1, u: "M", pre: "€" },
+         { g: "Financial consequence", who: "cmb", lab: "IRR", a: A.irr, b: B.irr, d: 1, u: "%", pt: true }];
+
     const tone = { sb: SB, rn: RN, cmb: CMB };
+    const W = 1240, PAD = 10, RAIL = 34, TT = 74, PH = 128, FOOT = 76;
+    const H = TT + PH + FOOT;
+    const n = steps.length, colW = (W - PAD * 2) / n;
+    const BW = 30, GAP = 14;
+
+    /* the rail: one segment per run of consecutive stages with the same
+       owner, so the colour changes once, where ownership does */
+    const runOf = (key) => {
+      const rs = [];
+      steps.forEach((st, i) => {
+        const last = rs[rs.length - 1];
+        if (last && last.k === st[key]) last.to = i; else rs.push({ k: st[key], from: i, to: i });
+      });
+      return rs;
+    };
+    const owners = runOf("who");
+    const rail = owners.map((r) => {
+      const x0 = PAD + r.from * colW + 10, x1 = PAD + (r.to + 1) * colW - 10;
+      const who = r.k === "sb" ? "StoreBrid decides these" : r.k === "rn" ? "ReveNew produces these" : "Needs both products";
+      return `
+      <line x1="${x0.toFixed(1)}" y1="${RAIL}" x2="${x1.toFixed(1)}" y2="${RAIL}" stroke="${tone[r.k]}" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
+      <text x="${((x0 + x1) / 2).toFixed(1)}" y="${RAIL - 9}" text-anchor="middle" font-size="10" font-weight="600" fill="${tone[r.k]}">${who}</text>`;
+    }).join("");
+    /* the hand-off: a break drawn where the rail changes owner, because
+       that transfer is the thing worth pointing at */
+    const handoff = owners.slice(0, -1).map((r) => {
+      const x = PAD + (r.to + 1) * colW;
+      return `<circle cx="${x.toFixed(1)}" cy="${RAIL}" r="4.5" fill="#fff" stroke="${AXIS}" stroke-width="1.5"/>`;
+    }).join("");
+
+    const groups = runOf("g").map((r, gi, all) => {
+      const x0 = PAD + r.from * colW, x1 = PAD + (r.to + 1) * colW;
+      return `
+      <text x="${((x0 + x1) / 2).toFixed(1)}" y="12" text-anchor="middle" font-size="9.5" font-weight="700"
+        letter-spacing=".08em" fill="${AXIS}">${r.k.toUpperCase()}</text>
+      ${gi < all.length - 1 ? `<line x1="${x1.toFixed(1)}" y1="20" x2="${x1.toFixed(1)}" y2="${TT + PH + 60}" stroke="${GRID}" stroke-width="1"/>` : ""}`;
+    }).join("");
+
+    const base0 = TT + PH;
+    const cols = steps.map((st, i) => {
+      const cx = PAD + i * colW + colW / 2;
+      /* zero-based within the stage: the bars are the quantities, the gap
+         between their tops is the change */
+      const lo = Math.min(0, st.a, st.b), hi = Math.max(0, st.a, st.b);
+      const span = (hi - lo) * 1.16 || 1;
+      const Y = (v) => base0 - ((v - lo) / span) * PH;
+      const ax = cx - BW - GAP / 2, bx = cx + GAP / 2;
+      const dv = st.b - st.a;
+      const fmt = (v) => num(v, st.d, st.u, st.pre || "");
+      const dfmt = st.pt ? sgn(dv, 1, " pp") : sgn(dv, st.d, st.u, st.pre || "");
+      const yA = Y(st.a), yB = Y(st.b), y0 = Y(0);
+      const bTop = Math.min(yA, yB), bBot = Math.max(yA, yB);
+      const brX = bx + BW + 10;
+      return `
+      <path d="${bar(ax, Math.min(yA, y0), BW, Math.max(Math.abs(y0 - yA), 1.5), 3, true)}" fill="${FIELD}" fill-opacity=".32">
+        <title>${AC(fromId).name} — ${st.lab} ${fmt(st.a)}</title></path>
+      <path class="mk" d="${bar(bx, Math.min(yB, y0), BW, Math.max(Math.abs(y0 - yB), 1.5), 3, true)}" fill="${tone[st.who]}" fill-opacity=".6">
+        <title>${AC(toId).name} — ${st.lab} ${fmt(st.b)} (${dfmt} against ${AC(fromId).name})</title></path>
+      ${bBot - bTop > 7 ? `
+      <line x1="${brX.toFixed(1)}" y1="${bTop.toFixed(1)}" x2="${brX.toFixed(1)}" y2="${bBot.toFixed(1)}" stroke="${AXIS}" stroke-width="1"/>
+      <line x1="${(brX - 3.5).toFixed(1)}" y1="${bTop.toFixed(1)}" x2="${(brX + 3.5).toFixed(1)}" y2="${bTop.toFixed(1)}" stroke="${AXIS}" stroke-width="1"/>
+      <line x1="${(brX - 3.5).toFixed(1)}" y1="${bBot.toFixed(1)}" x2="${(brX + 3.5).toFixed(1)}" y2="${bBot.toFixed(1)}" stroke="${AXIS}" stroke-width="1"/>` : ""}
+      <line x1="${(cx - colW / 2 + 14).toFixed(1)}" y1="${base0}" x2="${(cx + colW / 2 - 14).toFixed(1)}" y2="${base0}" stroke="rgba(30,58,138,.18)" stroke-width="1"/>
+
+      <text x="${cx.toFixed(1)}" y="${(bTop - 11).toFixed(1)}" text-anchor="middle" font-size="15" font-weight="700"
+        fill="${INK}" font-variant-numeric="tabular-nums">${dfmt}</text>
+
+      <text x="${cx.toFixed(1)}" y="${base0 + 21}" text-anchor="middle" font-size="11.5" font-weight="600" fill="${INK}">${st.lab}</text>
+      <text x="${cx.toFixed(1)}" y="${base0 + 40}" text-anchor="middle" font-size="10.5" fill="${AXIS}" font-variant-numeric="tabular-nums">${fmt(st.a)}</text>
+      <text x="${cx.toFixed(1)}" y="${base0 + 56}" text-anchor="middle" font-size="12" font-weight="700" fill="${INK}" font-variant-numeric="tabular-nums">${fmt(st.b)}</text>
+      ${i < n - 1 ? `<path d="M${(PAD + (i + 1) * colW - 4).toFixed(1)} ${(base0 - PH / 2 - 6).toFixed(1)}l6 6-6 6"
+        fill="none" stroke="${AXIS}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>` : ""}`;
+    }).join("");
+
     return `
-<div style="margin-bottom:16px">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+<div style="margin-bottom:18px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
     <span class="band" style="color:var(--su700)">${tMoved ? "From the technical decision to its financial consequence" : "From the market view to its financial consequence"}</span>
     <span class="hr" style="flex:1"></span>
-    <span class="t-meta">Each step in its own unit</span>
+    <span style="display:inline-flex;align-items:center;gap:7px">
+      <svg width="13" height="12" aria-hidden="true"><rect x="0" y="2" width="5" height="10" rx="1.5" fill="${FIELD}" fill-opacity=".32"/></svg>
+      <span class="t-meta">${AC(fromId).name}</span>
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:7px">
+      <svg width="13" height="12" aria-hidden="true"><rect x="0" y="4" width="5" height="8" rx="1.5" fill="${CMB}" fill-opacity=".6"/></svg>
+      <span class="t-meta">${AC(toId).name}</span>
+    </span>
   </div>
-  <div style="display:flex;align-items:stretch;gap:0">
-    ${steps.map((st, i) => `
-      <div style="flex:1;min-width:0;display:flex;align-items:center">
-        <div style="flex:1;min-width:0;padding:14px 12px;border-radius:var(--r-xs);text-align:center;
-             background:linear-gradient(168deg,rgba(255,255,255,.62),rgba(255,255,255,.34));
-             box-shadow:inset 0 0 0 1px var(--hair)">
-          <span style="display:block;font-size:17px;font-weight:700;letter-spacing:-.022em;
-                color:var(--s900);font-variant-numeric:tabular-nums">${st.v}</span>
-          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.35">${st.l}</span>
-          <span style="display:flex;justify-content:center;margin-top:7px">
-            <i style="width:5px;height:5px;border-radius:50%;background:${tone[st.who]};display:block"></i>
-          </span>
-        </div>
-        ${i < steps.length - 1 ? `
-        <span style="flex:none;width:26px;display:flex;align-items:center;justify-content:center;color:${
-          steps[i + 1].who !== st.who ? "var(--s700)" : "var(--s300)"}">${ic("right", 15, 2)}</span>` : ""}
-      </div>`).join("")}
-  </div>
-  <div style="display:flex;align-items:center;gap:16px;margin-top:11px;flex-wrap:wrap">
-    <span style="display:inline-flex;align-items:center;gap:6px"><i style="width:5px;height:5px;border-radius:50%;background:${SB};display:block"></i><span class="t-meta">StoreBrid decides these</span></span>
-    <span style="display:inline-flex;align-items:center;gap:6px"><i style="width:5px;height:5px;border-radius:50%;background:${RN};display:block"></i><span class="t-meta">ReveNew produces these</span></span>
-    <span style="display:inline-flex;align-items:center;gap:6px"><i style="width:5px;height:5px;border-radius:50%;background:${CMB};display:block"></i><span class="t-meta">Needs both</span></span>
-    <span style="flex:1"></span>
-    <span class="t-meta">A sequence, not a flow — the quantities are in different units and do not conserve.</span>
-  </div>
+  <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block" role="img"
+    aria-label="Every stage from the technical decision to the return, drawn as the baseline case beside the selected case with the change between them">
+    ${MKSTYLE}${groups}${rail}${handoff}${cols}
+  </svg>
+  <p class="t-meta" style="margin-top:12px;line-height:1.55">
+    Bar height is the quantity on each stage's own zero-based scale, so the gap between the pair is the change.
+    The stages share no axis because they share no unit and do not conserve — a sequence, not a flow.
+  </p>
 </div>`;
   })()}
-
-
-
 
   <div style="display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)">
     <span class="band" style="flex:none;color:var(--su700);padding-top:2px">Trade-off</span>
@@ -8020,8 +8298,9 @@ ${savedBar()}
 
 ${pairSelector("high")}
 
-${sec({ label: "What the design change buys", source: src("combined"), top: 0,
-        sub: "From the technical decision to its financial consequence — the chain the Suite exists to draw." })}
+${/* §50 · The panel carries its own heading and its own band, both of which
+      said this already. Three titles for one chart is the duplication this
+      pass exists to remove — the chart starts where the controls end. */""}
 ${impactBlock("base", "high")}
 ${criteriaThreshold("high")}
 
@@ -8515,21 +8794,21 @@ console.log("deck slides -> export/slides");
 const COLX = [0, 1560, 3120];
 const PAGES = [
   { id: "page-1", name: "Project workspace", rows: [
-    [["ProjectOverview.dc.html", 1440, 2380, "1 · Overview"],
-     ["CaseMatrix.dc.html", 1440, 3290, "2 · Case matrix"],
+    [["ProjectOverview.dc.html", 1440, 2670, "1 · Overview"],
+     ["CaseMatrix.dc.html", 1440, 3340, "2 · Case matrix"],
      ["CaseMatrixRobustness.dc.html", 1440, 1180, "2b · Case matrix — robustness"],
-     ["CaseMatrixUnevaluated.dc.html", 1440, 3290, "2c · Case matrix — evaluation states"],
-     ["CompareAlternatives.dc.html", 1440, 2700, "3 · Compare"],
-     ["CompareAllMetrics.dc.html", 1440, 3520, "3b · Compare — all metrics"],
-     ["DecisionBrief.dc.html", 1440, 2700, "3c · Save decision brief"]],
-    [["OverviewChangeSim.dc.html", 1440, 2380, "4 · Change technical simulation"],
-     ["OverviewChangeScenario.dc.html", 1440, 2380, "5 · Change financial case"],
-     ["OverviewTechnical.dc.html", 1440, 2380, "6 · Technical details"]],
+     ["CaseMatrixUnevaluated.dc.html", 1440, 3340, "2c · Case matrix — evaluation states"],
+     ["CompareAlternatives.dc.html", 1440, 2820, "3 · Compare"],
+     ["CompareAllMetrics.dc.html", 1440, 3645, "3b · Compare — all metrics"],
+     ["DecisionBrief.dc.html", 1440, 2820, "3c · Save decision brief"]],
+    [["OverviewChangeSim.dc.html", 1440, 2670, "4 · Change technical simulation"],
+     ["OverviewChangeScenario.dc.html", 1440, 2670, "5 · Change financial case"],
+     ["OverviewTechnical.dc.html", 1440, 2670, "6 · Technical details"]],
     [["FinancialDetails.dc.html", 1440, 1160, "7 · Financial details"],
-     ["CreateAnalysisCase.dc.html", 1440, 2700, "8 · Create analysis case"],
+     ["CreateAnalysisCase.dc.html", 1440, 2820, "8 · Create analysis case"],
      ["CompareExplained.dc.html", 1440, 1630, "9 · Explain difference"]],
-    [["OverviewStale.dc.html", 1440, 2470, "10 · Financial results outdated"],
-     ["EditProjectDetails.dc.html", 1440, 2380, "11 · Project details"]],
+    [["OverviewStale.dc.html", 1440, 2760, "10 · Financial results outdated"],
+     ["EditProjectDetails.dc.html", 1440, 2670, "11 · Project details"]],
   ]},
   { id: "page-2", name: "Suite", rows: [
     [["Login.dc.html", 1440, 900, "Sign in"],
@@ -8537,7 +8816,7 @@ const PAGES = [
     [["Main.dc.html", 1440, 2040, "Home"],
      ["Projects.dc.html", 1440, 800, "Projects"],
      ["CreateProject.dc.html", 1440, 1380, "Create project"]],
-    [["Analytics.dc.html", 1440, 2580, "Analytics"],
+    [["Analytics.dc.html", 1440, 3220, "Analytics"],
      ["Files.dc.html", 1440, 870, "Files"],
      ["Activity.dc.html", 1440, 1280, "Activity"]],
     [["Settings.dc.html", 1440, 1600, "Settings"],

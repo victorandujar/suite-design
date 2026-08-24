@@ -262,8 +262,8 @@ a.glass-sm:hover{
 .grid{display:grid;gap:20px}
 </style>
 </helmet>
-<div class="atmos" style="width:1440px;min-height:3290px;position:relative">
-  <div class="shell" style="min-height:3290px">
+<div class="atmos" style="width:1440px;min-height:3340px;position:relative">
+  <div class="shell" style="min-height:3340px">
     <aside class="side">
 
 <div class="brand">
@@ -378,8 +378,7 @@ a.glass-sm:hover{
       <h2 class="t-sec">Maximise IRR</h2>
       <span class="t-meta">per cent</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
     </div>
-    <div style="margin-top:12px">
-<div class="tabs"><a href="#" class="on">IRR</a><a href="#" class="">Annual revenue</a><a href="#" class="">Revenue / MWh</a><a href="#" class="">Revenue / cycle</a><a href="#" class="">Energy discharged</a><a href="#" class="">CAPEX</a></div></div>
+    <p class="t-meta" style="margin-top:8px;line-height:1.5">Which combination of asset and market produces the strongest return on the money invested?</p>
   </div>
   <div style="width:1px;background:var(--hair);flex:none"></div>
   <div style="flex:1;min-width:250px;padding:20px 24px">
@@ -413,6 +412,13 @@ a.glass-sm:hover{
       <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.022em;color:var(--s900);margin-top:6px;font-variant-numeric:tabular-nums">8.4%</span>
       <span class="t-meta" style="display:block;margin-top:4px;line-height:1.4">Low RTE × Low spread</span>
     </span>
+  </div>
+  <div style="width:100%;display:flex;align-items:center;gap:14px;padding:14px 24px;border-top:1px solid var(--hair);flex-wrap:wrap">
+    <span class="t-meta" style="flex:none">Evaluate by</span>
+    
+<div class="tabs"><a href="#" class="on">IRR</a><a href="#" class="">Annual revenue</a><a href="#" class="">Revenue / MWh</a><a href="#" class="">Revenue / cycle</a><a href="#" class="">Energy discharged</a><a href="#" class="">CAPEX</a></div>
+    <span style="flex:1"></span>
+    <span class="t-meta">Changing the objective re-reads the whole matrix — the combinations do not change, only what is being compared.</span>
   </div>
 </section>
 
@@ -1088,7 +1094,7 @@ a.glass-sm:hover{
   
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":3290}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":3340}}'>
 class Component extends DCLogic {}
 </script>
 </body>
