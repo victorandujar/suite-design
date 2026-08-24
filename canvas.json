@@ -15,14 +15,32 @@
       "x": 1560,
       "y": 0,
       "w": 1440,
-      "h": 2760,
+      "h": 3190,
       "title": "2 · Case matrix",
       "print": "fixed",
       "page": "page-1"
     },
     {
-      "file": "CompareAlternatives.dc.html",
+      "file": "CaseMatrixRobustness.dc.html",
       "x": 3120,
+      "y": 0,
+      "w": 1440,
+      "h": 1180,
+      "title": "2b · Case matrix — robustness",
+      "print": "fixed",
+      "page": "page-1"
+    },
+    {
+      "file": "CaseMatrixUnevaluated.dc.html",
+      "y": 0,
+      "w": 1440,
+      "h": 3190,
+      "title": "2c · Case matrix — evaluation states",
+      "print": "fixed",
+      "page": "page-1"
+    },
+    {
+      "file": "CompareAlternatives.dc.html",
       "y": 0,
       "w": 1440,
       "h": 2380,
@@ -304,12 +322,26 @@
       "x": 1560,
       "y": -760,
       "w": 640,
-      "text": "2 · CASE MATRIX — explore the combinations\n\nRenamed from \"Cases\", which collided with Financial Case and Analysis Case.\n\nThe distinction it now carries is the important one: 3 simulations × 3 financial cases = 9 POSSIBLE COMBINATIONS, of which 3 are saved as analysis cases. A combination becomes an analysis case only when someone names it. Every cell says which it is — the case name, or \"Not saved\" — and the selected cell offers \"Save as analysis case\" or, if it already is one, \"Use as current analysis\".\n\nThat second action is what closes the loop back to Overview.\n\nThe outdated cell is marked and greyed rather than shown as a valid result.\n\nCHANGED. The aggregate freshness notice Compare already carried now appears here too, under the header summary and before the grid: how many SAVED analysis cases are outdated, which one, and the deep link that fixes it. It also states the rule the empty cells depend on — the other six combinations are calculated live when a cell is opened, so they have no age to be stale against and are never marked\n\nCHANGED. Two additions make the matrix state its own value proposition. Above the grid, the leaders on the objectives NOT currently selected — highest NPV, lowest CAPEX, highest revenue per MWh — across all nine pairings, saved or not, outdated ones excluded. They are rankings, never preferences: the label names the objective and the user decides which objective matters.\n\nBelow the selected cell, WHY THIS PAIRING READS DIFFERENTLY decomposes the difference the way the domain splits it: what StoreBrid changed, what ReveNew changed, what came out of both. When only one dimension moved, the other column says so rather than inventing a contribution. When both moved, the panel refuses to split the cause and hands that to Explain difference, which builds the two controlled orders.\n\nHANDOFF. The two actions on a selected cell carry their selection with them. Add to comparison opens Compare with that pairing already in the comparison — as its analysis case if one is saved, otherwise under the product's existing rule for unsaved combinations; nothing is auto-named. Explain difference opens with the comparison already built, including the controlled intermediates needed to isolate one dimension at a time. Neither ever lands the user on an empty screen asking them to choose again.",
+      "text": "2 · CASE MATRIX — explore the combinations\n\nRenamed from \"Cases\", which collided with Financial Case and Analysis Case.\n\nThe distinction it now carries is the important one: 3 simulations × 3 financial cases = 9 POSSIBLE COMBINATIONS, of which 3 are saved as analysis cases. A combination becomes an analysis case only when someone names it. Every cell says which it is — the case name, or \"Not saved\" — and the selected cell offers \"Save as analysis case\" or, if it already is one, \"Use as current analysis\".\n\nThat second action is what closes the loop back to Overview.\n\nThe outdated cell is marked and greyed rather than shown as a valid result.\n\nCHANGED. The aggregate freshness notice Compare already carried now appears here too, under the header summary and before the grid: how many SAVED analysis cases are outdated, which one, and the deep link that fixes it. It also states the rule the empty cells depend on — the other six combinations are calculated live when a cell is opened, so they have no age to be stale against and are never marked\n\nCHANGED. Two additions make the matrix state its own value proposition. Above the grid, the leaders on the objectives NOT currently selected — highest NPV, lowest CAPEX, highest revenue per MWh — across all nine pairings, saved or not, outdated ones excluded. They are rankings, never preferences: the label names the objective and the user decides which objective matters.\n\nBelow the selected cell, WHY THIS PAIRING READS DIFFERENTLY decomposes the difference the way the domain splits it: what StoreBrid changed, what ReveNew changed, what came out of both. When only one dimension moved, the other column says so rather than inventing a contribution. When both moved, the panel refuses to split the cause and hands that to Explain difference, which builds the two controlled orders.\n\nHANDOFF. The two actions on a selected cell carry their selection with them. Add to comparison opens Compare with that pairing already in the comparison — as its analysis case if one is saved, otherwise under the product's existing rule for unsaved combinations; nothing is auto-named. Explain difference opens with the comparison already built, including the controlled intermediates needed to isolate one dimension at a time. Neither ever lands the user on an empty screen asking them to choose again.\n\nCHANGED. The matrix stopped asking which metric to display and started asking what the decision is for. The heading is now an objective — Maximise IRR, Minimise CAPEX — over the same six metrics, and DECISION CRITERIA sits above it: optional constraints on results that already exist. A criterion can only accept or reject a number StoreBrid or ReveNew produced; nothing here models anything, and storage size, prices and assumptions stay where they are edited.\n\nWith criteria set, the Suite can make a bounded claim it could not make before — \"highest IRR within your criteria\" is answerable because the user defined the criteria. The outright leader is still shown beside it when it differs, because that gap is exactly what the constraint costs. Combinations that fail are dimmed, never hidden: the user has to keep seeing the space they are ruling out.\n\nCriteria carry to Compare with the selection, the baseline and the objective.",
+      "page": "page-1"
+    },
+    {
+      "id": "n-robust",
+      "x": 3120,
+      "y": -760,
+      "w": 640,
+      "text": "2b · CASE MATRIX — ROBUSTNESS\n\nThe same screen, second tab. The matrix already holds every asset against every financial case, so the spread of a row is free information: how much of the outcome the market decides rather than the asset.\n\nThe language is constrained by what the data actually is. Three financial cases are three modelled views; they carry no probabilities. So this reads as a RANGE, never a distribution — no risk, no confidence, no expected value, and nothing weighted, because weighting needs probabilities nobody supplied.\n\nThe three summaries — highest upside, highest floor, smallest variation — are readings, not a ranking. Which of them matters depends on the decision, and the Suite has no way to know that. Note the honest tie: two configurations move by the same 3.8 pp, and the card says so rather than picking one.",
+      "page": "page-1"
+    },
+    {
+      "id": "n-uneval",
+      "y": -760,
+      "w": 640,
+      "text": "2c · CASE MATRIX — EVALUATION STATES\n\nEvery other screen assumes a combination can be read live, because that is what the current architecture implies. If evaluating one turns out to cost something, the matrix must not draw a number that does not exist yet.\n\nSo the cell has a second life cycle beside its freshness one: NOT EVALUATED with a Calculate action, CALCULATING while it runs, then AVAILABLE. Saved analysis cases are always available — they were evaluated when they were named. The layout does not change; only what the cell is allowed to claim.\n\nDesigned so the product can ship against either backend model without a redesign, and so nobody has to decide the architecture to unblock the design.",
       "page": "page-1"
     },
     {
       "id": "n-compare",
-      "x": 3120,
       "y": -760,
       "w": 640,
       "text": "3 · COMPARE — where the decision is made\n\nRestructured for hierarchy: decision summary, deltas, technical → financial decomposition. The full metrics table is no longer part of this page — it is collapsed behind \"Show all metrics\" and opens as its own detail level. Nothing analytical was removed; the competition for the reader's attention was.\n\nThe freshness rule matters most here. Stress test's financial result predates the technical change, so it carries an Outdated tag, is excluded from the deterministic Best NPV / Best IRR / Lowest CAPEX conclusions, and the amber line says so. A stale result is never quietly labelled best.\n\n\"Use as current analysis\" appears when a case is selected — compare, choose, and Overview follows\n\nCHANGED. Each comparison block now opens with the trade-off in its shortest form — Requires −> Produces — and closes with a TRADE-OFF reading selected from the figures, never written: it tests the sign of the NPV move against the size of the IRR move, so it cannot claim more than the numbers support.\n\nFor High storage it reads that the extra capital adds absolute value without materially changing how hard the money works. For Stress test, that no capital is committed at all and the whole difference is what the market view is worth on the asset already built.\n\nCHANGED. The All combinations tab is gone. It duplicated the case matrix, and having two places to browse the same nine pairings blurred what each screen was for. Compare now has one continuous view and works only on saved analysis cases; exploring the full set is the matrix, and the subtitle links there.\n\nEach delta block also gained its own Explain difference entry, so someone who arrives straight at Compare can open the decomposition for one specific trade-off without going back to the matrix first.",

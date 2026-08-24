@@ -27,6 +27,8 @@ export const NAV = {
   "Project details": "EditProjectDetails",
   "Compare": "CompareAlternatives",
   "Compare all": "CompareAllMetrics",
+  "Robustness": "CaseMatrixRobustness",
+  "Performance": "CaseMatrix",
   "Compare analysis cases": "CompareAlternatives",
 
   // Flujo 2 y 3 — profundizar en cada mitad
@@ -105,6 +107,8 @@ export const PREFIX = [
 export const OVERRIDE = {
   // §12: el contador de Home y el indicador global abren el MISMO panel.
   Main:                { "View": "NeedsAttention" },
+  // §15: al calcular una combinación pendiente, la celda pasa a estar disponible.
+  CaseMatrixUnevaluated: { "Calculate": "CaseMatrix" },
   // Desde el panel se entra al caso afectado, que es la pantalla stale.
   NeedsAttention:      { "Review case": "OverviewStale", "Recalculate in ReveNew": "OverviewStale",
                          "Recalculate in StoreBrid": "OverviewStale" },

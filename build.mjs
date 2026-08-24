@@ -4376,6 +4376,57 @@ const MET = {
    variesTech / variesComm are domain facts, not display choices: they
    decide whether the matrix has three columns or one. */
 const METKEYS = ["irr", "rev", "perMwh", "perCyc", "gwh", "capex"];
+
+/* ═══════════════════════════════════════════════════════════════
+   §2-§7 · DECISION CRITERIA
+   The matrix used to ask "which metric do you want to see?". It now
+   asks "what are you trying to achieve, and what will you not accept?"
+   — the same six metrics, reframed as objectives, plus optional
+   constraints ON RESULTS THAT ALREADY EXIST. Nothing here models
+   anything: a criterion can only accept or reject a number StoreBrid
+   or ReveNew already produced. Storage size, prices, curves and
+   assumptions stay where they are edited.
+   ═══════════════════════════════════════════════════════════════ */
+const objectiveOf = (mk) => (MET[mk].lowerBetter ? "Minimise " : "Maximise ") + MET[mk].label;
+
+/* The catalogue the criteria editor offers. Every one reads a computed
+   result; none of them is an input to a model. */
+const CRIT_SPEC = {
+  capex: { label: "CAPEX", op: "≤", get: (c) => c.t.capex, fmt: (v) => "€" + v.toFixed(1) + "M",
+           unit: "€M", pass: (v, t) => v <= t, over: (v, t) => v - t, from: "storebrid" },
+  irr:   { label: "IRR", op: "≥", get: (c) => c.irr, fmt: (v) => v.toFixed(1) + "%",
+           unit: "%", pass: (v, t) => v >= t, over: (v, t) => t - v, from: "combined" },
+  pb:    { label: "Payback", op: "≤", get: (c) => paybackOfCase(c), fmt: (v) => v.toFixed(1) + " yrs",
+           unit: "yrs", pass: (v, t) => v <= t, over: (v, t) => v - t, from: "revenew" },
+  npv:   { label: "NPV", op: "≥", get: (c) => npvOfCase(c), fmt: (v) => eurMs(v),
+           unit: "€M", pass: (v, t) => v >= t, over: (v, t) => t - v, from: "revenew" },
+};
+
+/* The worked example the screens carry. Criteria are optional — CRITERIA
+   empty is a valid, and the default, state of the product. */
+const CRITERIA = [{ key: "capex", target: 48 }, { key: "irr", target: 12 }];
+
+/* Why a combination fails, in the words of the criterion it failed.
+   Returns [] when it satisfies everything. */
+const failsOf = (c, crit = CRITERIA) => crit.flatMap(({ key, target }) => {
+  const k = CRIT_SPEC[key], v = k.get(c);
+  return k.pass(v, target) ? [] : [{ k, key, target, v, by: k.over(v, target) }];
+});
+const eligible = (c, crit = CRITERIA) => failsOf(c, crit).length === 0;
+
+/* Every pairing in the project, and the ones a deterministic claim may
+   be made about: eligible, and not sitting on data that has moved on.
+   §14 — a stale result never wins anything until it is recalculated. */
+const ALLCOMBOS = () => TECH.flatMap((t) => SCEN.map((sc) => caseOf(t.id, sc.id)));
+const claimable = (crit = CRITERIA) =>
+  ALLCOMBOS().filter((c) => !isStale(c.t.id, c.sc.id) && eligible(c, crit));
+
+const bestBy = (mk, pool) => {
+  if (!pool.length) return null;
+  const m = MET[mk], better = m.lowerBetter ? (x, y) => x < y : (x, y) => x > y;
+  return pool.reduce((a, b) => (better(m.get(b), m.get(a)) ? b : a));
+};
+
 const VARIES = {
   irr:    { tech: true,  comm: true },
   rev:    { tech: true,  comm: true },
@@ -4847,7 +4898,7 @@ const cellMark = (text, color, tint) =>
   `<span style="display:inline-flex;align-items:center;gap:4px;height:18px;padding:0 7px;border-radius:6px;
      font-size:10px;font-weight:600;letter-spacing:.02em;background:${tint};color:${color}">${text}</span>`;
 
-const matrixGrid = (mk, sel) => {
+const matrixGrid = (mk, sel, evalModel = false) => {
   const m = MET[mk], x = MX[mk], rowConstant = !variesComm(mk);
   const vals = ALLC().map(m.get);
   const lo = Math.min(...vals), hi = Math.max(...vals);
@@ -4950,8 +5001,28 @@ ${rowConstant ? `
                    : win ? cellMark(words.top, neutral ? NEU[0] : "#5B4BB5", neutral ? NEU[1] : "rgba(109,90,198,.13)")
                    : low ? cellMark(words.bot, neutral ? NEU[0] : "#9A6208", neutral ? NEU[1] : "rgba(245,158,11,.14)") : "";
         const saved = savedAs(t.id, s2.id), stale = isStale(t.id, s2.id);
+        const est = evalOf(t.id, s2.id, evalModel);
+        const fails = CRITERIA.length && est === "ok" ? failsOf(c) : [];
+        const dim = fails.length ? "opacity:.52;" : "";
+        if (est !== "ok") return `
+        <a href="#" class="wash" style="flex:1;min-width:0;padding:13px 16px 16px;text-decoration:none;text-align:center">
+          <span style="display:flex;justify-content:center;height:18px;margin-bottom:5px">
+            ${est === "calc" ? `<span class="cov" style="border-color:rgba(37,99,235,.3);background:linear-gradient(168deg,rgba(37,99,235,.1),rgba(37,99,235,.05));color:var(--b700)"><i style="background:${SB}"></i>Calculating</span>` : ""}
+          </span>
+          <span style="display:block;font-size:22px;font-weight:600;letter-spacing:-.024em;color:var(--s300);font-variant-numeric:tabular-nums">—</span>
+          <span class="t-meta" style="display:block;margin-top:6px;line-height:1.5">
+            ${est === "calc" ? "Started 20 seconds ago" : "Not evaluated"}</span>
+          <span style="display:block;margin-top:9px">
+            ${est === "calc"
+              ? `<span class="t-meta" style="opacity:.8">Result appears here when it finishes</span>`
+              : `<span class="btn btn-secondary" style="height:28px;font-size:11.5px;pointer-events:none">${ic("gauge", 13)}Calculate</span>`}
+          </span>
+          <span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--hair)">
+            <span class="t-meta" style="opacity:.75">Not saved</span>
+          </span>
+        </a>`;
         return `
-        <a href="#" class="${win || isSel ? "glass-sm" : "wash"}" style="flex:1;min-width:0;padding:13px 16px 16px;text-decoration:none;text-align:center;${tint(v)};${ring}">
+        <a href="#" class="${win || isSel ? "glass-sm" : "wash"}" style="flex:1;min-width:0;padding:13px 16px 16px;text-decoration:none;text-align:center;${tint(v)};${ring};${dim}">
           <span style="display:flex;justify-content:center;height:18px;margin-bottom:5px">${stale ? staleTag() : mark}</span>
           <span style="display:block;font-size:${win || isSel ? "25" : "22"}px;font-weight:${win || isSel ? "700" : "600"};letter-spacing:-.024em;
                 color:${stale ? "var(--s500)" : "var(--s900)"};font-variant-numeric:tabular-nums">${m.fmt(c)}</span>
@@ -4966,6 +5037,11 @@ ${rowConstant ? `
                  <span class="t-meta" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${saved.name}</span>`
               : `<span class="t-meta" style="opacity:.75">Not saved</span>`}
           </span>
+          ${CRITERIA.length ? `<span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:7px">
+            ${fails.length
+              ? `<span class="t-meta" style="color:${WARN.ink}">${fails.length === 1 ? fails[0].k.label + " " + (fails[0].k.op === "≤" ? "over" : "under") + " limit" : fails.length + " criteria not met"}</span>`
+              : `<span style="display:inline-flex;align-items:center;gap:5px;color:var(--su700)">${ic("check", 12, 2.6)}<span class="t-meta" style="color:var(--su700)">Meets criteria</span></span>`}
+          </span>` : ""}
         </a>`;
       }).join("")}
     </div>`;
@@ -5040,6 +5116,17 @@ const cellPreview = (sel, mk) => {
     ${savedAs(sel.tid, sel.sid)
       ? `<span class="cov"><i style="background:${SU}"></i>Saved as ${savedAs(sel.tid, sel.sid).name}</span>`
       : `<span class="cov" style="opacity:.82">Unsaved combination</span>`}
+    ${(() => {
+      /* §11 · Eligibility belongs where the decision is being made, and it
+         has to say WHY and BY HOW MUCH — "does not meet criteria" alone
+         leaves the user to work out which limit and by how far. */
+      if (!CRITERIA.length) return "";
+      const f = failsOf(c);
+      if (!f.length) return `<span class="cov" style="border-color:rgba(14,157,168,.3);background:linear-gradient(168deg,rgba(14,157,168,.1),rgba(14,157,168,.05));color:var(--su700)">
+        <i style="background:${SU}"></i>Meets all criteria</span>`;
+      return f.map((x) => staleTag(
+        `${x.k.label} ${x.k.op === "≤" ? "exceeds limit by" : "short of limit by"} ${x.k.fmt(Math.abs(x.by)).replace("−", "")}`)).join("");
+    })()}
     ${k.key === "same" ? `<span class="cov"><i style="background:${SU}"></i>Baseline</span>`
                        : `<span class="cov"><i style="background:${k.dot}"></i>${k.label} vs baseline</span>`}
     <span style="flex:1"></span>
@@ -5112,30 +5199,23 @@ const cellPreview = (sel, mk) => {
 };
 
 /* ── the Cases page: one component, six analytical states ──────── */
-const casesBody = ({ mk = "irr", sel, baselinePop } = {}) => {
+/* La rejilla y todo lo que la rodea. Vive aparte de casesBody para que
+   Performance y Robustness sean dos ramas simétricas de la misma pantalla,
+   y no un template anidado dentro de otro. */
+/* §15 · The screens assume every pairing can be read live, because that is
+   what the current architecture implies. If evaluation turns out to cost
+   something, the matrix must not pretend the number is already there —
+   so the cell has a second life cycle: not evaluated -> calculating ->
+   available. Saved analysis cases are always available; they were
+   evaluated when they were named. Nothing about the layout changes, only
+   what the cell is allowed to claim. */
+const EVALSTATE = { "lowrte|base": "calc", "base2h|low": "none", "lowrte|low": "none",
+                    "v4h|base": "none", "lowrte|high": "none" };
+const evalOf = (tid, sid, on) => (on && !savedAs(tid, sid) ? (EVALSTATE[`${tid}|${sid}`] || "ok") : "ok");
+
+const perfView = ({ mk = "irr", sel, evalModel = false } = {}) => {
   const m = MET[mk], x = MX[mk];
-  return `
-${head({
-  crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Projects</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Valencia BESS</a><span class="sep">${ic("right", 12, 2)}</span><b>Case matrix</b>`,
-  eyebrow: `<span style="display:inline-flex;align-items:center;gap:9px">Analysis ${src("suite")}</span>`,
-  title: "Case matrix",
-  meta: "Explore every technical simulation × financial case combination — saved or not. Comparing the ones you keep is <a href=\"#\">Compare</a>.",
-  actions: `<button class="btn btn-secondary">${ic("plus", 16, 1.9)}New analysis case</button>
-            <button class="btn btn-secondary">${ic("analytics", 16)}Compare analysis cases</button>`,
-})}
-
-${baselineBar({ pop: baselinePop })}
-
-<div style="display:flex;align-items:center;gap:12px;padding:13px 18px;margin-bottom:20px;border-radius:var(--r-xs);
-     background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 74%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.14)">
-  <span style="color:var(--su700);display:flex;flex:none">${ic("layers", 15)}</span>
-  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
-    ${TECH.length} technical simulations × ${SCEN.length} financial cases = <b style="font-weight:600">${TECH.length * SCEN.length} possible combinations</b>.
-    ${ACASES.length} are saved as analysis cases — a combination becomes one only when it is named.
-  </span>
-  <span class="t-meta" style="flex:none">Open a cell to save or compare it</span>
-</div>
-${(() => {
+  return `${(() => {
   /* §1 · the aggregate notice Compare already carries, at matrix scale.
      Only SAVED analysis cases can be outdated — an unsaved combination is
      calculated live when the cell is opened, so it has no age to be stale
@@ -5153,11 +5233,16 @@ ${(() => {
      not recommendations — the label names the objective, never a preference,
      and the user picks which objective matters. Outdated results are excluded
      from every claim, the same rule Compare applies. */
-  const all = TECH.flatMap((t) => SCEN.map((sc) => caseOf(t.id, sc.id)))
-                  .filter((c) => !isStale(c.t.id, c.sc.id));
+  /* §7 · With criteria active the ranking that matters is the ranking
+     among the alternatives the user would actually accept. The overall
+     leader is still shown when it differs, because that gap IS the cost
+     of the constraint — hiding it would hide the trade-off. */
+  const all = ALLCOMBOS().filter((c) => !isStale(c.t.id, c.sc.id));
+  const pool = CRITERIA.length ? all.filter((c) => eligible(c)) : all;
   const top = (f, better, fmt) => {
-    const w = all.reduce((x, y) => (better(f(y), f(x)) ? y : x));
-    return { c: w, v: fmt(f(w)) };
+    const pick = (xs) => xs.reduce((x, y) => (better(f(y), f(x)) ? y : x));
+    const w = pick(pool.length ? pool : all), o = pick(all);
+    return { c: w, v: fmt(f(w)), out: f(o) !== f(w) ? { c: o, v: fmt(f(o)) } : null };
   };
   const up = (x, y) => x > y, down = (x, y) => x < y;
   /* The metric cards under the tabs already lead on whichever metric is
@@ -5173,10 +5258,10 @@ ${(() => {
   ].filter(([, key]) => key !== mk);
   return `
 <section class="panel" style="display:flex;align-items:stretch;padding:4px 0;margin-bottom:18px">
-  ${objectives.map(([label, , { c, v }, sr], i) => `
+  ${objectives.map(([label, , { c, v, out }, sr], i) => `
     <div style="flex:1;min-width:0;padding:15px 22px;${i ? "border-left:1px solid var(--hair)" : ""}">
       <div style="display:flex;align-items:center;gap:8px">
-        <span class="band" style="font-size:10px">${label}</span>${sr}
+        <span class="band" style="font-size:10px">${label}${CRITERIA.length ? " within criteria" : ""}</span>${sr}
       </div>
       <div style="font-size:21px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:8px;font-variant-numeric:tabular-nums">${v}</div>
       <div style="display:flex;align-items:center;gap:7px;margin-top:6px;flex-wrap:wrap">
@@ -5188,19 +5273,97 @@ ${(() => {
           <i style="width:4px;height:4px;flex:none;border-radius:50%;background:${RN};display:block"></i>
           <span class="t-meta">${c.sc.name}</span></span>
       </div>
+      ${out ? `<div class="t-meta" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--hair);line-height:1.45">
+        <b style="font-weight:600;color:var(--s500)">${out.v}</b> overall — ${out.c.t.short} × ${out.c.sc.name},
+        <span style="color:${WARN.ink}">outside criteria</span>
+      </div>` : ""}
     </div>`).join("")}
 </section>
 <p class="t-meta" style="margin:-8px 0 20px;line-height:1.5">
   Leaders on the other objectives, across all ${TECH.length * SCEN.length} pairings, saved or not.
-  Each is a ranking on one objective — which objective matters is your decision, not the Suite's.
-  Outdated results are excluded.
+  ${CRITERIA.length ? "Ranked within your criteria; where the outright leader is different it is shown too, because that gap is what the constraint costs you." : ""}
+  Each is a ranking on one objective — which objective matters is your decision, not the Suite's. Outdated results are excluded.
 </p>` ;
+})()}
+
+${(() => {
+  /* §3-§6 · Constraints on results, never on models. Optional: with none
+     set the band is a single line and an Add control, and the matrix
+     behaves exactly as before. With criteria set, the Suite may make a
+     bounded deterministic claim — "highest NPV within your criteria" is
+     answerable because the user defined the criteria. Stale results are
+     excluded from that claim (§14); they stay visible and marked. */
+  const all = ALLCOMBOS(), pool = claimable();
+  const nOk = all.filter((c) => eligible(c)).length;
+  const win = bestBy(mk, pool);
+  const outrightWin = bestBy(mk, all.filter((c) => !isStale(c.t.id, c.sc.id)));
+  const beaten = outrightWin && !eligible(outrightWin) ? outrightWin : null;
+  if (!CRITERIA.length) return `
+<div style="display:flex;align-items:center;gap:12px;padding:12px 18px;margin-bottom:20px;border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.3));box-shadow:inset 0 0 0 1px var(--hair)">
+  <span class="band" style="flex:none">Decision criteria</span>
+  <span class="t-meta" style="flex:1;min-width:0">None. All ${all.length} combinations are evaluated.</span>
+  <button class="btn btn-secondary" style="height:30px;font-size:12px">${ic("plus", 14, 1.9)}Add criteria</button>
+</div>`;
+  const chip = ({ key, target }) => {
+    const k = CRIT_SPEC[key];
+    return `<span class="cov" style="gap:7px"><span style="color:var(--s500)">${k.label}</span>
+      <b style="font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${k.op} ${k.fmt(target)}</b>${src(k.from)}</span>`;
+  };
+  return `
+<section class="panel" style="padding:0;margin-bottom:20px;overflow:hidden">
+  <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;flex-wrap:wrap">
+    <span class="band" style="flex:none">Decision criteria</span>
+    ${CRITERIA.map(chip).join("")}
+    <span style="flex:1"></span>
+    <span class="t-meta"><b style="font-weight:600;color:var(--s900)">${nOk} of ${all.length}</b> combinations meet your criteria</span>
+    <button class="btn btn-ghost" style="height:30px;font-size:12px">${ic("sliders", 14)}Edit</button>
+  </div>
+  ${win ? `
+  <div style="display:flex;align-items:stretch;border-top:1px solid var(--hair);
+       background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 78%)">
+    <div style="flex:1;min-width:0;padding:16px 20px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="band" style="font-size:10px;color:var(--su700)">${MET[mk].lowerBetter ? "Lowest" : "Highest"} ${MET[mk].label} within criteria</span>${src(MET[mk].from)}
+      </div>
+      <div style="display:flex;align-items:baseline;gap:14px;margin-top:9px;flex-wrap:wrap">
+        <span style="font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);font-variant-numeric:tabular-nums">${MET[mk].fmt(win)}</span>
+        <span style="display:inline-flex;align-items:center;gap:7px">
+          <i style="width:5px;height:5px;flex:none;border-radius:50%;background:${SB};display:block"></i>
+          <span style="font-size:13px;font-weight:500;color:var(--s700)">${win.t.short}</span>
+          <span style="font-size:12px;color:var(--s400)">×</span>
+          <i style="width:5px;height:5px;flex:none;border-radius:50%;background:${RN};display:block"></i>
+          <span style="font-size:13px;font-weight:500;color:var(--s700)">${win.sc.name}</span>
+        </span>
+      </div>
+      <div style="display:flex;gap:18px;margin-top:10px;flex-wrap:wrap">
+        ${[["CAPEX", "€" + win.t.capex.toFixed(1) + "M"], ["NPV", eurMs(npvOfCase(win))],
+           ["IRR", win.irr.toFixed(1) + "%"], ["Payback", paybackOfCase(win).toFixed(1) + " yrs"]]
+          .map(([l, v]) => `<span class="t-meta">${l} <b style="font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${v}</b></span>`).join("")}
+      </div>
+    </div>
+    ${beaten ? `
+    <div style="width:1px;background:var(--hair);flex:none"></div>
+    <div style="flex:none;width:290px;padding:16px 20px">
+      <span class="band" style="font-size:10px">${MET[mk].lowerBetter ? "Lowest" : "Highest"} ${MET[mk].label} overall</span>
+      <div style="display:flex;align-items:baseline;gap:12px;margin-top:9px">
+        <span style="font-size:19px;font-weight:600;color:var(--s500);font-variant-numeric:tabular-nums">${MET[mk].fmt(beaten)}</span>
+        <span class="t-meta">${beaten.t.short} × ${beaten.sc.name}</span>
+      </div>
+      <div style="margin-top:9px">${staleTag(failsOf(beaten)[0].k.label + " " + (failsOf(beaten)[0].k.op === "≤" ? "over" : "under") + " limit")}</div>
+      <p class="t-meta" style="margin-top:9px;line-height:1.5">Ruled out by your criteria, not by its result. This is the trade-off the constraint is buying.</p>
+    </div>` : ""}
+  </div>` : `
+  <div style="padding:16px 20px;border-top:1px solid var(--hair)">
+    <p class="t-meta" style="line-height:1.55">No combination satisfies all criteria. Loosen one, or open the two that come closest below.</p>
+  </div>`}
+</section>`;
 })()}
 
 <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:16px;flex-wrap:wrap">
   <div style="flex:1;min-width:0">
-    <div class="band">Showing</div>
-    <h2 class="t-sec" style="margin-top:7px">${m.label}<span style="font-size:13px;font-weight:500;color:var(--s400);margin-left:9px">${x.unit}</span></h2>
+    <div class="band">Evaluate combinations by</div>
+    <h2 class="t-sec" style="margin-top:7px">${objectiveOf(mk)}<span style="font-size:13px;font-weight:500;color:var(--s400);margin-left:9px">${x.unit}</span></h2>
     <p class="t-meta" style="margin-top:7px;font-size:12.5px;line-height:1.55;max-width:88ch">${x.q}</p>
   </div>
   <div style="text-align:right">
@@ -5214,7 +5377,7 @@ ${(() => {
 <div style="display:flex;gap:18px">${x.cards().join("")}</div>
 
 <section class="panel lift" style="padding:26px 28px;margin-top:24px">
-  ${matrixGrid(mk, sel)}
+  ${matrixGrid(mk, sel, evalModel)}
   ${sel ? cellPreview(sel, mk) : `
   <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;margin-top:4px;border-radius:var(--r-xs);
        background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 72%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.14)">
@@ -5241,6 +5404,38 @@ ${(() => {
   </div>
   ${x.chart(sel)}
 </section>`;
+};
+
+const casesBody = ({ mk = "irr", sel, baselinePop, view = "perf", evalModel = false } = {}) => {
+  const m = MET[mk], x = MX[mk];
+  return `
+${head({
+  crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Projects</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Valencia BESS</a><span class="sep">${ic("right", 12, 2)}</span><b>Case matrix</b>`,
+  eyebrow: `<span style="display:inline-flex;align-items:center;gap:9px">Analysis ${src("suite")}</span>`,
+  title: "Case matrix",
+  meta: "Explore every technical simulation × financial case combination — saved or not. Comparing the ones you keep is <a href=\"#\">Compare</a>.",
+  actions: `<button class="btn btn-secondary">${ic("plus", 16, 1.9)}New analysis case</button>
+            <button class="btn btn-secondary">${ic("analytics", 16)}Compare analysis cases</button>`,
+})}
+
+${baselineBar({ pop: baselinePop })}
+
+<div style="display:flex;align-items:center;gap:12px;padding:13px 18px;margin-bottom:20px;border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 74%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.14)">
+  <span style="color:var(--su700);display:flex;flex:none">${ic("layers", 15)}</span>
+  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
+    ${TECH.length} technical simulations × ${SCEN.length} financial cases = <b style="font-weight:600">${TECH.length * SCEN.length} possible combinations</b>.
+    ${ACASES.length} are saved as analysis cases — a combination becomes one only when it is named.
+  </span>
+  <span class="t-meta" style="flex:none">Open a cell to save or compare it</span>
+</div>
+
+<div class="tabs" style="margin-bottom:20px">
+  <a href="#" class="${view === "perf" ? "on" : ""}">Performance</a>
+  <a href="#" class="${view === "robust" ? "on" : ""}">Robustness</a>
+</div>
+${view === "robust" ? robustView(mk) : perfView({ mk, sel, evalModel })}
+`;
 };
 
 /* §20 · the baseline selector lists only cases in the analysis —
@@ -5279,7 +5474,119 @@ const SELCASE = { tid: "v4h", sid: "high" };
 /* The nine-cell matrix survives as ONE state of Compare — the surface
    for exploring combinations behind the named alternatives, not eight
    navigational destinations. */
-writeFileSync("CaseMatrix.dc.html", doc({ w: 1440, h: 2760, side: projectSide("cases"),
+/* ═══════════════════════════════════════════════════════════════
+   §8-§10 · ROBUSTNESS
+   The matrix already holds every technical configuration against every
+   financial case, so the spread of a row is free information: how much
+   of the outcome the market decides rather than the asset.
+
+   §9 · The language has to stay honest about what the data is. Three
+   financial cases are three modelled views, not a distribution — they
+   carry no probabilities. So: range, spread, highest and lowest, never
+   risk, confidence or expected value. Nothing here is weighted, because
+   weighting would require probabilities nobody has supplied.
+   ═══════════════════════════════════════════════════════════════ */
+const robustRows = (mk = "irr") => {
+  const m = MET[mk];
+  return TECH.map((t) => {
+    const vs = SCEN.map((sc) => ({ sc, c: caseOf(t.id, sc.id), v: m.get(caseOf(t.id, sc.id)) }));
+    const lo = vs.reduce((a, b) => (b.v < a.v ? b : a)), hi = vs.reduce((a, b) => (b.v > a.v ? b : a));
+    return { t, vs, lo, hi, spread: hi.v - lo.v };
+  });
+};
+
+const robustView = (mk = "irr") => {
+  const m = MET[mk], rows = robustRows(mk);
+  const gLo = Math.min(...rows.map((r) => r.lo.v)), gHi = Math.max(...rows.map((r) => r.hi.v));
+  const pad = (gHi - gLo) * 0.12, A = gLo - pad, B = gHi + pad;
+  const pct = (v) => ((v - A) / (B - A)) * 100;
+  const best = (f, better) => rows.reduce((a, b) => (better(f(b), f(a)) ? b : a));
+  const upside = best((r) => r.hi.v, (x, y) => x > y);
+  const floor = best((r) => r.lo.v, (x, y) => x > y);
+  const tight = Math.min(...rows.map((r) => r.spread));
+  const tightest = rows.filter((r) => Math.abs(r.spread - tight) < 1e-9);
+  const unit = m.pt ? " pp" : "";
+  /* Axis ends are bare numbers on the metric's own scale: m.fmt expects a
+     real case, and inventing one to label an axis would be a lie waiting
+     to drift. */
+  const axis = (v) => (m.pt ? v.toFixed(1) + "%" : mk === "capex" || mk === "rev" ? "€" + v.toFixed(1) + "M" : v.toFixed(1));
+  return `
+${sec({ label: "Scenario sensitivity", source: src("combined"), top: 0,
+        sub: `How far ${m.label} moves for each technical simulation as the financial case changes. The three financial cases are modelled views, not probabilities — this is a range, not a distribution.` })}
+<section class="panel" style="padding:26px 28px">
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+    <span class="t-meta" style="flex:none;width:210px">Technical simulation${src("storebrid")}</span>
+    <span style="flex:1;min-width:0;display:flex;justify-content:space-between">
+      <span class="t-meta">${axis(A)}</span>
+      <span class="t-meta">${m.label} across financial cases${src("revenew")}</span>
+      <span class="t-meta">${axis(B)}</span>
+    </span>
+    <span class="t-meta" style="flex:none;width:96px;text-align:right">Spread</span>
+  </div>
+  ${rows.map((r, i) => `
+  <div style="display:flex;align-items:center;gap:14px;padding:16px 0;${i ? "border-top:1px solid var(--hair)" : ""}">
+    <span style="flex:none;width:210px;min-width:0">
+      <span style="display:block;font-size:14px;font-weight:600;color:var(--s900)">${r.t.short}</span>
+      <span class="t-meta" style="display:block;margin-top:3px">${r.t.mwh} MWh · ${r.t.dur.toFixed(1)} h</span>
+    </span>
+    <span style="flex:1;min-width:0;position:relative;height:42px;display:block">
+      <span style="position:absolute;left:0;right:0;top:20px;height:1px;background:var(--hair);display:block"></span>
+      <span style="position:absolute;top:17px;height:7px;border-radius:4px;display:block;
+            left:${pct(r.lo.v).toFixed(1)}%;width:${(pct(r.hi.v) - pct(r.lo.v)).toFixed(1)}%;
+            background:linear-gradient(90deg,rgba(175,71,178,.34),rgba(37,99,235,.5))"></span>
+      ${r.vs.map((x) => `
+        <span class="mk" style="position:absolute;top:14.5px;left:${pct(x.v).toFixed(1)}%;margin-left:-6.5px;
+              width:13px;height:13px;border-radius:50%;display:block;background:#fff;
+              box-shadow:0 0 0 2px ${x.v === r.hi.v ? SB : x.v === r.lo.v ? RN : "rgba(132,150,173,.75)"}">
+          <span style="position:absolute;inset:0"><title>${x.sc.name} — ${m.fmt(x.c)}</title></span></span>`).join("")}
+      <span style="position:absolute;top:0;left:${pct(r.lo.v).toFixed(1)}%;margin-left:-6.5px;font-size:10.5px;color:var(--s500);white-space:nowrap">${m.fmt(r.lo.c)}</span>
+      <span style="position:absolute;bottom:0;left:${pct(r.hi.v).toFixed(1)}%;margin-left:-6.5px;font-size:10.5px;font-weight:600;color:var(--s900);white-space:nowrap">${m.fmt(r.hi.c)}</span>
+    </span>
+    <span style="flex:none;width:96px;text-align:right;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${r.spread.toFixed(1)}${unit}</span>
+  </div>`).join("")}
+  <div style="display:flex;align-items:center;gap:20px;margin-top:18px;padding-top:14px;border-top:1px solid var(--hair);flex-wrap:wrap">
+    <span style="display:inline-flex;align-items:center;gap:7px"><i style="width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px ${RN};display:block"></i><span class="t-meta">Lowest financial case</span></span>
+    <span style="display:inline-flex;align-items:center;gap:7px"><i style="width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px ${SB};display:block"></i><span class="t-meta">Highest financial case</span></span>
+    <span style="flex:1"></span>
+    <span class="t-meta">Each row holds the asset constant and varies only the financial case.</span>
+  </div>
+</section>
+
+<div style="display:flex;gap:14px;margin-top:20px">
+  ${[["Highest upside", `${m.fmt(upside.hi.c)}`, `${upside.t.short} under ${upside.hi.sc.name}`,
+      "The best result available anywhere in the matrix, and the financial case it depends on."],
+     ["Highest floor", `${m.fmt(floor.lo.c)}`, `${floor.t.short} under ${floor.lo.sc.name}`,
+      "The strongest worst case. If the weakest financial view is the one that lands, this configuration gives up the least."],
+     ["Smallest variation", `${tight.toFixed(1)}${unit}`,
+      tightest.map((r) => r.t.short).join(" and "),
+      tightest.length > 1
+        ? "Two configurations move the same amount across the financial cases — neither is more exposed to the market view than the other."
+        : "Moves least as the financial case changes: more of this result is decided by the asset than by the market."]]
+    .map(([band, v, who, why]) => `
+    <div class="panel" style="flex:1;min-width:0;padding:20px 22px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="band" style="font-size:10px">${band}</span>${src("combined")}
+      </div>
+      <div style="font-size:23px;font-weight:700;letter-spacing:-.024em;color:var(--s900);margin-top:9px;font-variant-numeric:tabular-nums">${v}</div>
+      <div style="font-size:13px;font-weight:500;color:var(--s700);margin-top:6px">${who}</div>
+      <p class="t-meta" style="margin-top:10px;line-height:1.55">${why}</p>
+    </div>`).join("")}
+</div>
+<p class="t-meta" style="margin-top:16px;line-height:1.6;max-width:112ch">
+  These are readings of the numbers in the matrix, not a ranking of configurations. Which of upside, floor and stability
+  matters depends on the decision being made, and the Suite has no way to know that.
+</p>`;
+};
+
+writeFileSync("CaseMatrixUnevaluated.dc.html", doc({ w: 1440, h: 3190, side: projectSide("cases"),
+  body: casesBody({ mk: "irr", sel: { tid: "v4h", sid: "high" }, evalModel: true }) }));
+console.log("CaseMatrixUnevaluated.dc.html");
+
+writeFileSync("CaseMatrixRobustness.dc.html", doc({ w: 1440, h: 1180, side: projectSide("cases"),
+  body: casesBody({ mk: "irr", view: "robust" }) }));
+console.log("CaseMatrixRobustness.dc.html");
+
+writeFileSync("CaseMatrix.dc.html", doc({ w: 1440, h: 3190, side: projectSide("cases"),
   body: casesBody({ mk: "irr", sel: { tid: "v4h", sid: "high" } }) }));
 console.log("Compare · all combinations");
 
@@ -7401,7 +7708,9 @@ const COLX = [0, 1560, 3120];
 const PAGES = [
   { id: "page-1", name: "Project workspace", rows: [
     [["ProjectOverview.dc.html", 1440, 2190, "1 · Overview"],
-     ["CaseMatrix.dc.html", 1440, 2760, "2 · Case matrix"],
+     ["CaseMatrix.dc.html", 1440, 3190, "2 · Case matrix"],
+     ["CaseMatrixRobustness.dc.html", 1440, 1180, "2b · Case matrix — robustness"],
+     ["CaseMatrixUnevaluated.dc.html", 1440, 3190, "2c · Case matrix — evaluation states"],
      ["CompareAlternatives.dc.html", 1440, 2380, "3 · Compare"],
      ["CompareAllMetrics.dc.html", 1440, 3200, "3b · Compare — all metrics"]],
     [["OverviewChangeSim.dc.html", 1440, 2190, "4 · Change technical simulation"],
@@ -7437,6 +7746,8 @@ const PAGES = [
 ];
 
 const NOTES = {
+  "CaseMatrixUnevaluated.dc.html": ["n-uneval", "2c · CASE MATRIX — EVALUATION STATES\n\nEvery other screen assumes a combination can be read live, because that is what the current architecture implies. If evaluating one turns out to cost something, the matrix must not draw a number that does not exist yet.\n\nSo the cell has a second life cycle beside its freshness one: NOT EVALUATED with a Calculate action, CALCULATING while it runs, then AVAILABLE. Saved analysis cases are always available — they were evaluated when they were named. The layout does not change; only what the cell is allowed to claim.\n\nDesigned so the product can ship against either backend model without a redesign, and so nobody has to decide the architecture to unblock the design."],
+  "CaseMatrixRobustness.dc.html": ["n-robust", "2b · CASE MATRIX — ROBUSTNESS\n\nThe same screen, second tab. The matrix already holds every asset against every financial case, so the spread of a row is free information: how much of the outcome the market decides rather than the asset.\n\nThe language is constrained by what the data actually is. Three financial cases are three modelled views; they carry no probabilities. So this reads as a RANGE, never a distribution — no risk, no confidence, no expected value, and nothing weighted, because weighting needs probabilities nobody supplied.\n\nThe three summaries — highest upside, highest floor, smallest variation — are readings, not a ranking. Which of them matters depends on the decision, and the Suite has no way to know that. Note the honest tie: two configurations move by the same 3.8 pp, and the card says so rather than picking one."],
   "ActivityDecisions.dc.html": ["n-actdec", "ACTIVITY — ANALYSIS & DECISIONS\n\nThe same screen with a second filter axis. Provenance answers WHICH PRODUCT did it; this one answers WHAT KIND of thing happened — and the kind people come looking for is the decision.\n\nWhere the current analysis changed, the row keeps the figures each pairing produced at that moment: what was active, what replaced it, what each was worth. That answers \"what was active before, what replaced it, when, and who changed it\" without turning Activity into an audit screen.\n\nThis is why there is no Decision History page. With these two filters, one would be the same events under a second name."],
   "NeedsAttention.dc.html": ["n-attn", "NEEDS ATTENTION — portfolio scale\n\nNEW. Every screen could already say a result was outdated; none of them could say it across projects. Someone with forty projects had no way to find the three that need recalculating except by opening all forty.\n\nIt is deliberately NOT a notification centre. Staleness is a persistent condition, not an event: it does not clear because someone looked at it, and it comes back the moment a simulation is re-run. So there is no read/unread, no dismiss, and no history — a case leaves the list when both sides are back in step, and the panel says so.\n\nEach row carries only what is needed to decide whether to act: whose project, which analysis case, which side fell behind, and the deep link that fixes it. It does not restate the case's figures, because deciding from inside a notification panel is exactly what it should not invite.\n\nThe same panel opens from the sidebar indicator and from the Home counter — one destination, not two."],
   "Login.dc.html": ["n-login", "SIGN IN\n\nNEW. The set had no entry point of its own — StoreBrid has one, the Suite did not, so the first screen a user met was a product they had not chosen.\n\nIt authenticates, and it does one more job: it says which layer is opening. The provenance dots carry that here exactly as they carry it on every figure elsewhere — teal for the Suite, blue and magenta for the two engines it reads from.\n\nThe copy is explicit that StoreBrid and ReveNew keep their own sign-in, and that nothing is modelled in the Suite. The boundary is stated before the user is inside it."],
@@ -7461,7 +7772,7 @@ const NOTES = {
   "Results.dc.html": ["n-results", "3 · TECHNICAL RESULTS — three views, not thirty\n\nPower and state of charge; the energy balance; degradation. Daily graphs, heat maps, tables and CSV exports stay in StoreBrid.\n\nCHANGED. A FINANCIAL SUMMARY now sits under the technical results: the NPV, IRR and CAPEX of this same simulation under the current ReveNew scenario, with the scenario named and switchable.\n\nThat panel is the whole argument for a Suite in one screen — 65.2 GWh discharged is what earns €8.42M, and you can see both without changing application. Change the scenario and only the financial half moves."],
   "CommercialScenarios.dc.html": ["n-scen", "4 · COMMERCIAL SCENARIOS\n\nOne technical case, three ReveNew scenarios, read as a strip before any card is opened. The constant is stated: 65.2 GWh in every column, because the technical case does not change.\n\nCHANGED. The picker now has the action it was missing — Add selected — plus a scenario that cannot be evaluated at all, because it has no price curve in ReveNew. It is shown rather than hidden, and the fix links to where the fix lives. IRR moved into the Combined rows here too."],
   "CaseDetail.dc.html": ["n-casedet", "5 · CASE DETAIL — Base case 2027 + High spread\n\nThree columns: TECHNICAL CONTEXT, COMMERCIAL OUTCOME, COMBINED METRICS. Not \"cause\" and \"effect\" — the Suite states the pairing, it does not claim one produces the other.\n\nCHANGED. IRR left the ReveNew column and joined Combined, alongside Revenue / CAPEX; Merchant share took its place on the financial side. A freshness line at the top states when each side was last calculated, because two systems means two clocks."],
-  "CaseMatrix.dc.html": ["n-matrix", "2 · CASE MATRIX — explore the combinations\n\nRenamed from \"Cases\", which collided with Financial Case and Analysis Case.\n\nThe distinction it now carries is the important one: 3 simulations × 3 financial cases = 9 POSSIBLE COMBINATIONS, of which 3 are saved as analysis cases. A combination becomes an analysis case only when someone names it. Every cell says which it is — the case name, or \"Not saved\" — and the selected cell offers \"Save as analysis case\" or, if it already is one, \"Use as current analysis\".\n\nThat second action is what closes the loop back to Overview.\n\nThe outdated cell is marked and greyed rather than shown as a valid result.\n\nCHANGED. The aggregate freshness notice Compare already carried now appears here too, under the header summary and before the grid: how many SAVED analysis cases are outdated, which one, and the deep link that fixes it. It also states the rule the empty cells depend on — the other six combinations are calculated live when a cell is opened, so they have no age to be stale against and are never marked\n\nCHANGED. Two additions make the matrix state its own value proposition. Above the grid, the leaders on the objectives NOT currently selected — highest NPV, lowest CAPEX, highest revenue per MWh — across all nine pairings, saved or not, outdated ones excluded. They are rankings, never preferences: the label names the objective and the user decides which objective matters.\n\nBelow the selected cell, WHY THIS PAIRING READS DIFFERENTLY decomposes the difference the way the domain splits it: what StoreBrid changed, what ReveNew changed, what came out of both. When only one dimension moved, the other column says so rather than inventing a contribution. When both moved, the panel refuses to split the cause and hands that to Explain difference, which builds the two controlled orders.\n\nHANDOFF. The two actions on a selected cell carry their selection with them. Add to comparison opens Compare with that pairing already in the comparison — as its analysis case if one is saved, otherwise under the product's existing rule for unsaved combinations; nothing is auto-named. Explain difference opens with the comparison already built, including the controlled intermediates needed to isolate one dimension at a time. Neither ever lands the user on an empty screen asking them to choose again."],
+  "CaseMatrix.dc.html": ["n-matrix", "2 · CASE MATRIX — explore the combinations\n\nRenamed from \"Cases\", which collided with Financial Case and Analysis Case.\n\nThe distinction it now carries is the important one: 3 simulations × 3 financial cases = 9 POSSIBLE COMBINATIONS, of which 3 are saved as analysis cases. A combination becomes an analysis case only when someone names it. Every cell says which it is — the case name, or \"Not saved\" — and the selected cell offers \"Save as analysis case\" or, if it already is one, \"Use as current analysis\".\n\nThat second action is what closes the loop back to Overview.\n\nThe outdated cell is marked and greyed rather than shown as a valid result.\n\nCHANGED. The aggregate freshness notice Compare already carried now appears here too, under the header summary and before the grid: how many SAVED analysis cases are outdated, which one, and the deep link that fixes it. It also states the rule the empty cells depend on — the other six combinations are calculated live when a cell is opened, so they have no age to be stale against and are never marked\n\nCHANGED. Two additions make the matrix state its own value proposition. Above the grid, the leaders on the objectives NOT currently selected — highest NPV, lowest CAPEX, highest revenue per MWh — across all nine pairings, saved or not, outdated ones excluded. They are rankings, never preferences: the label names the objective and the user decides which objective matters.\n\nBelow the selected cell, WHY THIS PAIRING READS DIFFERENTLY decomposes the difference the way the domain splits it: what StoreBrid changed, what ReveNew changed, what came out of both. When only one dimension moved, the other column says so rather than inventing a contribution. When both moved, the panel refuses to split the cause and hands that to Explain difference, which builds the two controlled orders.\n\nHANDOFF. The two actions on a selected cell carry their selection with them. Add to comparison opens Compare with that pairing already in the comparison — as its analysis case if one is saved, otherwise under the product's existing rule for unsaved combinations; nothing is auto-named. Explain difference opens with the comparison already built, including the controlled intermediates needed to isolate one dimension at a time. Neither ever lands the user on an empty screen asking them to choose again.\n\nCHANGED. The matrix stopped asking which metric to display and started asking what the decision is for. The heading is now an objective — Maximise IRR, Minimise CAPEX — over the same six metrics, and DECISION CRITERIA sits above it: optional constraints on results that already exist. A criterion can only accept or reject a number StoreBrid or ReveNew produced; nothing here models anything, and storage size, prices and assumptions stay where they are edited.\n\nWith criteria set, the Suite can make a bounded claim it could not make before — \"highest IRR within your criteria\" is answerable because the user defined the criteria. The outright leader is still shown beside it when it differs, because that gap is exactly what the constraint costs. Combinations that fail are dimmed, never hidden: the user has to keep seeing the space they are ruling out.\n\nCriteria carry to Compare with the selection, the baseline and the objective."],
   "CaseMatrixCell.dc.html": ["n-matrixcell", "IRR · A CASE SELECTED\n\nClicking a cell does not leave the page. The panel opens under the grid with the five figures that matter, and three actions that each mean something different: make this the analysis baseline, add it to a comparison, or explain the difference.\n\nEXPLAIN DIFFERENCE is the important one. Both dimensions differ from the baseline here, so the panel refuses to attribute — and instead names the two cells that would isolate each change, which is exactly what the action opens Compare with.\n\nThe selection is a case, not a number, so it survives every metric change."],
   "CompareCases.dc.html": ["n-compcases", "8 · COMPARE CASES — the decision cockpit\n\nCHANGED SUBSTANTIALLY. The baseline and the metric are now real controls, not labels. Both are read by everything below them: change the baseline and every delta, the key changes, the bridge and the wording of the summary follow; change the metric and the bridge and the bar comparison follow with it.\n\nTHE SUMMARY IS GENERATED from the same figures the page shows, so it cannot describe a comparison that is not on screen.\n\nTHE BRIDGE IS NO LONGER IRR-ONLY and no longer hard-coded. It reads the selected metric, and it is drawn only when each step moved one dimension. Select two cases that differ on both and it refuses, in words, and says what to add.\n\nIncremental economics is unchanged in spirit and now derived: +€8.6M of CAPEX buys +27.2 GWh and +€2.25M a year, 3.8 years undiscounted. The data table is regrouped as Technical — StoreBrid / Financial — ReveNew / Combined — Suite, with CAPEX moved to Technical where it belongs and IRR to Combined."],
   "QuickVariant.dc.html": ["n-variant", "9 · CREATE TECHNICAL VARIANT\n\nFive levers, never the wizard. It states its own changes — storage 200 → 400 MWh, duration 2.0 → 4.0 h — and names everything that carries over untouched.\n\nThat matters because the whole comparison model rests on it: the original simulation is never modified, so every case already built on it stays valid."],
