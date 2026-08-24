@@ -10,6 +10,7 @@ export const NAV = {
   "Projects": "Projects",
   "Analytics": "Analytics",
   "Administration": "Administration",
+  "Needs attention 3": "NeedsAttention",
   "All projects": "Projects",
 
   // Barra lateral del proyecto
@@ -18,13 +19,15 @@ export const NAV = {
   "Compare 3": "CompareAlternatives",
   "Files": "Files",
   "Activity": "Activity",
+  "All events": "ActivityDecisions",
+  "Analysis & decisions": "Activity",
   "Settings": "Settings",
 
   // Cabecera del proyecto
   "Project details": "EditProjectDetails",
   "Compare": "CompareAlternatives",
   "Compare all": "CompareAllMetrics",
-  "Open Compare": "CompareAlternatives",
+  "Compare analysis cases": "CompareAlternatives",
 
   // Flujo 2 y 3 — profundizar en cada mitad
   "View technical details": "OverviewTechnical",
@@ -100,6 +103,11 @@ export const PREFIX = [
 
 /* Cuando la misma etiqueta significa cosas distintas según la pantalla. */
 export const OVERRIDE = {
+  // §12: el contador de Home y el indicador global abren el MISMO panel.
+  Main:                { "View": "NeedsAttention" },
+  // Desde el panel se entra al caso afectado, que es la pantalla stale.
+  NeedsAttention:      { "Review case": "OverviewStale", "Recalculate in ReveNew": "OverviewStale",
+                         "Recalculate in StoreBrid": "OverviewStale" },
   // Flujo 5: el aviso de obsoleto lleva a la pantalla stale; desde ahí, recalcular
   // devuelve el resultado ya fresco.
   CompareAlternatives: { "Recalculate in ReveNew": "OverviewStale" },

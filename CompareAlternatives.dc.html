@@ -306,6 +306,16 @@ a.glass-sm:hover{
 </nav>
 <div style="flex:1;min-height:14px"></div>
 <div class="rule"></div>
+<nav class="nav">
+<a href="#" class="" style="display:flex;align-items:center;gap:10px;height:35px;padding:0 10px;
+   border-radius:var(--r-xs);font-size:13px;font-weight:500;color:var(--s500);text-decoration:none;
+   ">
+  <span style="flex:none;display:flex;color:#9A6208"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
+  <span style="flex:1;min-width:0">Needs attention</span>
+  <span style="flex:none;min-width:19px;height:19px;padding:0 6px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+        font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:#9A6208;
+        background:rgba(245,158,11,.16);box-shadow:inset 0 0 0 1px rgba(245,158,11,.28)">3</span>
+</a></nav>
 
 <div style="display:flex;align-items:center;gap:9px;padding:9px 10px;margin-top:8px;border-radius:10px;
             background:rgba(255,255,255,.5);border:1px solid var(--hair)">
@@ -326,14 +336,9 @@ a.glass-sm:hover{
   <div style="flex:1;min-width:0">
     <p class="eyebrow"><span style="display:inline-flex;align-items:center;gap:9px">Compare <span class="src"><i style="background:#0E9DA8"></i>Suite</span></span></p>
     <h1 class="t-page">Compare</h1>
-    <div class="t-body" style="margin-top:9px;color:var(--s500)">Analysis cases side by side — the technical configuration and the financial result it produces.</div>
+    <div class="t-body" style="margin-top:9px;color:var(--s500)">Compare saved analysis cases and see what each trade-off costs and returns. Exploring every possible pairing is <a href="#">Case matrix</a>.</div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;flex:none;padding-top:12px"><button class="btn btn-primary"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4.6v10.8M4.6 10h10.8"/></svg>New analysis case</button></div>
-</div>
-
-<div class="tabs" style="margin-bottom:24px">
-  <a href="#" class="on">Analysis cases <span class="count">3</span></a>
-  <a href="#" class="">All combinations <span class="count">9</span></a>
 </div>
 
 <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;margin-bottom:20px;border-radius:var(--r-sm);
@@ -652,6 +657,12 @@ a.glass-sm:hover{
     <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.6">The extra €8.6M adds €3.0M of absolute value but improves return on capital by only 0.4 pp. Higher storage increases what the project is worth without materially changing how hard the money works — whether that trade is worth making is the decision.</span>
     <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
   </div>
+  <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
+    <span class="t-meta" style="flex:1;min-width:0">
+      Only the StoreBrid simulation moved, so the whole difference sits on the technical step.
+    </span>
+    <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Explain difference<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></button>
+  </div>
 </section>
   
 <section class="panel" style="padding:24px 26px">
@@ -728,6 +739,12 @@ a.glass-sm:hover{
     <span class="band" style="flex:none;color:var(--su700);padding-top:2px">Trade-off</span>
     <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.6">No additional capital is committed. The whole difference is what this market view is worth on the asset already built — value lost without rebuilding anything.</span>
     <span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
+    <span class="t-meta" style="flex:1;min-width:0">
+      Only the ReveNew case moved, so the whole difference sits on the financial step.
+    </span>
+    <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Explain difference<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></button>
   </div>
 </section>
 </div>

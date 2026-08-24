@@ -426,6 +426,23 @@ const appLink = (name, dot, licensed) => licensed
   ? `<a href="#"><span style="width:17px;display:flex;justify-content:center"><i style="width:6px;height:6px;border-radius:50%;background:${dot};display:block"></i></span>${name}<span style="margin-left:auto;color:var(--s400);display:flex">${ic("upRight", 13, 1.8)}</span></a>`
   : `<a href="#" style="opacity:.72"><span style="width:17px;display:flex;justify-content:center"><i style="width:6px;height:6px;border-radius:50%;background:${dot};opacity:.45;display:block"></i></span>${name}<span style="margin-left:auto;font-size:10.5px;font-weight:500;color:var(--s400)">Available</span></a>`;
 
+/* §9 · Staleness is a persistent condition, not a notification: it does not
+   clear because someone looked at it, and it reappears the moment a
+   simulation is re-run. So the indicator is a standing count, never a
+   read/unread badge — it sits with Administration and the account, out of
+   the working navigation, and reuses the amber the rest of the product
+   already spends on outdated results. */
+const attnLink = (n = STALE_PORTFOLIO, on = false) => n ? `
+<a href="#" class="${on ? "on" : ""}" style="display:flex;align-items:center;gap:10px;height:35px;padding:0 10px;
+   border-radius:var(--r-xs);font-size:13px;font-weight:500;color:var(--s500);text-decoration:none;
+   ${on ? "background:linear-gradient(168deg,rgba(255,255,255,.92),rgba(255,255,255,.7));color:var(--s900)" : ""}">
+  <span style="flex:none;display:flex;color:${WARN.ink}">${ic("alert", 17)}</span>
+  <span style="flex:1;min-width:0">Needs attention</span>
+  <span style="flex:none;min-width:19px;height:19px;padding:0 6px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+        font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:${WARN.ink};
+        background:rgba(${WARN.tint},.16);box-shadow:inset 0 0 0 1px rgba(${WARN.tint},.28)">${n}</span>
+</a>` : "";
+
 const rootSide = (active, ent = "both") => `
 ${brand()}
 <div class="rule" style="margin-top:16px"></div>
@@ -441,7 +458,10 @@ ${brand()}
 </nav>
 <div style="flex:1"></div>
 <div class="rule"></div>
-<nav class="nav"><a href="#" class="${active === "admin" ? "on" : ""}">${ic("sliders", 17)}Administration</a></nav>
+<nav class="nav">
+  ${attnLink(STALE_PORTFOLIO, active === "attn")}
+  <a href="#" class="${active === "admin" ? "on" : ""}">${ic("sliders", 17)}Administration</a>
+</nav>
 ${userChip()}`;
 
 const projectSide = (active = "overview", caps = "both", name = "Valencia BESS", meta = "Spain · BESS · 100 MW / 200 MWh") => `
@@ -473,6 +493,7 @@ ${brand()}
 </nav>
 <div style="flex:1;min-height:14px"></div>
 <div class="rule"></div>
+<nav class="nav">${attnLink()}</nav>
 ${userChip()}`;
 
 const closeX = (s = 17) =>
@@ -1136,9 +1157,8 @@ const insightCard = ({ verdict, tone, body, action, source }) => `
   </span>
 </a>`;
 
-const home = doc({
-  w: 1440, h: 1710, side: rootSide("home"),
-  body: `
+const HOMEB = { w: 1440, h: 1710 };
+const homeBody = () => `
 ${head({
   eyebrow: "Friday, 21 August · Sunveon Energy",
   title: "Good morning, Victor",
@@ -1246,8 +1266,83 @@ ${sec({ label: "Needs your attention", top: 30,
         action: "View details" })}
     </div>
   </section>
-</div>`,
-});
+</div>`;
+const home = doc({ ...HOMEB, side: rootSide("home"), body: homeBody() });
+/* §10 · The panel behind the global indicator. Persistent conditions only —
+   things that are still true and still need an action — so no read/unread,
+   no dismiss, and no history. Each row carries the minimum that lets someone
+   decide whether to act: whose project, which analysis case, which side fell
+   behind, and the one link that fixes it. It deliberately does not restate
+   the case's figures; those live one click away and would only invite
+   deciding from inside a notification panel. */
+const ATTN = [
+  { project: "Valencia BESS", ac: "Stress test", pair: "4 h variant × Low spread",
+    state: "Outdated", behind: "rn",
+    why: "The technical simulation was re-run 12 minutes ago; the financial result dates from 4 hours ago." },
+  { project: "Madrid Hybrid", ac: "Base case", pair: "2 h baseline × Base market",
+    state: "Recalculation required", behind: "rn",
+    why: "Plant configuration changed after the last financial calculation, so CAPEX no longer matches the model." },
+  { project: "Sevilla Storage", ac: "Contracted 2027", pair: "2 h baseline × PPA 2027",
+    state: "Outdated", behind: "sb",
+    why: "The price curve was replaced after the simulation ran, so the dispatch behind these figures is the earlier one." },
+];
+
+const attnRow = (x, last) => `
+<div style="padding:16px 22px;${last ? "" : "border-bottom:1px solid var(--hair)"}">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="font-size:13.5px;font-weight:600;color:var(--s900)">${x.project}</span>
+    <span style="color:var(--s300)">·</span>
+    <span style="font-size:13px;color:var(--s700)">${x.ac}</span>
+    <span style="flex:1"></span>
+    ${staleTag(x.state)}
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;margin-top:7px;flex-wrap:wrap">
+    <span class="t-meta">${x.pair}</span>
+    <span style="color:var(--s300)">·</span>
+    <span class="src" title="Which side moved, and which side is behind">
+      <i style="background:${x.behind === "rn" ? SB : RN}"></i>${x.behind === "rn" ? "StoreBrid" : "ReveNew"}
+      <span style="color:var(--s400);margin:0 2px">→</span>
+      <i style="background:${x.behind === "rn" ? RN : SB}"></i>${x.behind === "rn" ? "ReveNew" : "StoreBrid"}
+    </span>
+  </div>
+  <p class="t-meta" style="margin-top:9px;line-height:1.55">${x.why}</p>
+  <div style="display:flex;align-items:center;gap:12px;margin-top:11px">
+    <a href="#" style="font-size:12.5px;font-weight:500">Review case${ic("right", 12, 2)}</a>
+    <button class="btn btn-secondary" style="height:30px;font-size:12px">
+      <i style="width:6px;height:6px;border-radius:50%;background:${x.behind === "rn" ? RN : SB};display:block"></i>Recalculate in ${x.behind === "rn" ? "ReveNew" : "StoreBrid"}${ic("upRight", 12, 1.8)}</button>
+  </div>
+</div>`;
+
+const attnPanel = () => `
+${scrim()}
+<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:auto;width:520px;z-index:11;overflow:hidden;
+       display:flex;flex-direction:column">
+  <span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
+        background:linear-gradient(90deg,rgba(${WARN.tint},0),rgba(${WARN.tint},.8) 18%,rgba(${WARN.tint},.8) 82%,rgba(${WARN.tint},0))"></span>
+  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
+    <div style="flex:1;min-width:0">
+      <div class="t-card" style="font-size:16px">Needs attention</div>
+      <div class="t-meta" style="margin-top:5px">Conditions that require action across your portfolio.</div>
+    </div>
+    <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close">${closeX()}</button>
+  </div>
+  <div style="padding:13px 22px;border-bottom:1px solid var(--hair);display:flex;align-items:center;gap:10px">
+    <span style="color:${WARN.ink};display:flex;flex:none">${ic("alert", 15)}</span>
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
+      ${ATTN.length} analysis cases pair a result with data that has moved on since it was calculated.
+    </span>
+  </div>
+  <div>${ATTN.map((x, i) => attnRow(x, i === ATTN.length - 1)).join("")}</div>
+  <div style="padding:15px 22px;border-top:1px solid var(--hair);display:flex;align-items:center;gap:12px">
+    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">
+      Nothing is dismissed here. A case leaves this list when both sides are back in step.
+    </span>
+  </div>
+</aside>`;
+
+writeFileSync("NeedsAttention.dc.html", doc({ ...HOMEB, side: rootSide("attn"), body: homeBody(), overlay: attnPanel() }));
+console.log("NeedsAttention.dc.html");
+
 writeFileSync("Main.dc.html", home);
 console.log("Main.dc.html", home.length);
 
@@ -3560,21 +3655,57 @@ const tlRow = ({ what, who, source, when }) => `
   <span class="t-meta" style="width:70px;flex:none;text-align:right">${when}</span>
 </div>`;
 
-const activity = doc({
-  w: 1440, h: 1080, side: projectSide("activity"),
-  body: `
-${head({
+/* §16-17 · A decision event carries what the provenance filter cannot: what
+   was active before, what replaced it, and what that swap was worth at the
+   time. Two lines instead of a table — Activity records the trail, it does
+   not become an audit screen. */
+const tlDecision = ({ what, who, when, from, to }) => `
+<div style="display:flex;align-items:flex-start;gap:16px;padding:15px 0">
+  <span style="width:7px;height:7px;flex:none;border-radius:50%;background:var(--su);display:block;margin-top:6px"></span>
+  <span style="flex:1;min-width:0">
+    <span style="display:block;font-size:13.5px;color:var(--s700)">${what}</span>
+    ${from ? `
+    <span style="display:flex;align-items:center;gap:12px;margin-top:9px;flex-wrap:wrap">
+      <span class="wash" style="padding:8px 12px">
+        <span class="t-meta" style="display:block;font-size:10.5px">Previous</span>
+        <span style="display:block;font-size:12.5px;font-weight:600;color:var(--s500);margin-top:3px;font-variant-numeric:tabular-nums">${from}</span>
+      </span>
+      <span style="color:var(--s400);display:flex">${ic("right", 14, 2)}</span>
+      <span class="glass-sm" style="padding:8px 12px">
+        <span class="t-meta" style="display:block;font-size:10.5px">New</span>
+        <span style="display:block;font-size:12.5px;font-weight:600;color:var(--s900);margin-top:3px;font-variant-numeric:tabular-nums">${to}</span>
+      </span>
+    </span>` : ""}
+  </span>
+  <span class="t-meta" style="width:150px;flex:none;padding-top:1px">${who}</span>
+  <span style="width:96px;flex:none;padding-top:1px">${src("suite")}</span>
+  <span class="t-meta" style="width:70px;flex:none;text-align:right;padding-top:1px">${when}</span>
+</div>`;
+
+const eventFilter = (on = "all") => `
+<button class="btn btn-secondary" style="height:34px;font-size:12.5px">${ic("filter", 15, 1.7)}${
+  on === "dec" ? "Analysis &amp; decisions" : "All events"}${ic("down", 14, 1.8)}</button>`;
+
+const activityHead = ({ on = "all", srcOn = "all" } = {}) => head({
   crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Projects</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Valencia BESS</a><span class="sep">${ic("right", 12, 2)}</span><b>Activity</b>`,
   eyebrow: `<span style="display:inline-flex;align-items:center;gap:9px">Project timeline ${src("suite")}</span>`,
   title: "Activity",
   meta: "The history of the project, not of the applications. Every event keeps the product that produced it.",
-  actions: `<div class="tabs">
-              <a href="#" class="on">All <span class="count">38</span></a>
-              <a href="#"><i style="width:5px;height:5px;border-radius:50%;background:${SB};display:block"></i>StoreBrid <span class="count">14</span></a>
-              <a href="#"><i style="width:5px;height:5px;border-radius:50%;background:${RN};display:block"></i>ReveNew <span class="count">16</span></a>
-              <a href="#"><i style="width:5px;height:5px;border-radius:50%;background:${SU};display:block"></i>Suite <span class="count">8</span></a>
+  actions: `<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end">
+              ${eventFilter(on)}
+              <div class="tabs">
+                <a href="#" class="${srcOn === "all" ? "on" : ""}">All <span class="count">${on === "dec" ? 11 : 38}</span></a>
+                <a href="#"><i style="width:5px;height:5px;border-radius:50%;background:${SB};display:block"></i>StoreBrid <span class="count">${on === "dec" ? 0 : 14}</span></a>
+                <a href="#"><i style="width:5px;height:5px;border-radius:50%;background:${RN};display:block"></i>ReveNew <span class="count">${on === "dec" ? 1 : 16}</span></a>
+                <a href="#"><i style="width:5px;height:5px;border-radius:50%;background:${SU};display:block"></i>Suite <span class="count">${on === "dec" ? 10 : 8}</span></a>
+              </div>
             </div>`,
-})}
+});
+
+const activity = doc({
+  w: 1440, h: 1080, side: projectSide("activity"),
+  body: `
+${activityHead()}
 ${tlDay("Today", 
   tlRow({ what: "Analysis case “Stress test” created — 4 h variant + Low spread", who: "Victor Andújar", source: src("suite"), when: "1h ago" }) +
   tlRow({ what: "Financial results became outdated — technical simulation changed after the last calculation", who: "System", source: src("combined"), when: "1h ago" }) +
@@ -3597,6 +3728,53 @@ ${tlDay("19 August 2026",
   Suite events are the shared ones — files, settings, membership. Product events keep their own provenance and open in the product that produced them.
 </p>`,
 });
+/* §16 · The same screen with the event filter on Analysis & decisions:
+   only what moved the decision forward. It is the decision trail the brief
+   asked for, without a Decision History page that would duplicate this. */
+const activityDecisions = doc({
+  w: 1440, h: 1180, side: projectSide("activity"),
+  body: `
+${activityHead({ on: "dec" })}
+<div style="display:flex;align-items:center;gap:11px;margin-bottom:20px;padding:12px 16px;border-radius:var(--r-xs);
+     background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 76%);box-shadow:inset 0 0 0 1px rgba(14,157,168,.13)">
+  <span style="color:var(--su700);display:flex;flex:none">${ic("gauge", 15)}</span>
+  <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
+    11 of the 38 events changed what is being analysed or how it is compared. Where the current analysis changed, the figures each pairing produced at that moment are kept.
+  </span>
+</div>
+${tlDay("Today",
+  tlDecision({ what: "Analysis case created — <b style=\"font-weight:600;color:var(--s900)\">Stress test</b> · 4 h variant + Low spread",
+    who: "Victor Andújar", when: "1h ago" }) +
+  tlDecision({ what: "Financial results became outdated — <b style=\"font-weight:600;color:var(--s900)\">Stress test</b>. The technical simulation changed after the last financial calculation.",
+    who: "System", when: "1h ago" }) +
+  tlDecision({ what: "Analysis case created — <b style=\"font-weight:600;color:var(--s900)\">High storage</b> · 4 h variant + Base market",
+    who: "Victor Andújar", when: "6h ago" }) +
+  tlDecision({ what: "Current analysis changed — Base case → High storage",
+    who: "Victor Andújar", when: "6h ago",
+    from: `Base case · ${eurMs(acMetrics(AC("base")).npv)} NPV · ${acMetrics(AC("base")).irr.toFixed(1)}% IRR`,
+    to: `High storage · ${eurMs(acMetrics(AC("high")).npv)} NPV · ${acMetrics(AC("high")).irr.toFixed(1)}% IRR` }) +
+  tlDecision({ what: "Comparison saved — “4 h storage investment decision” · Base case, High storage, Stress test",
+    who: "Victor Andújar", when: "7h ago" }))}
+${tlDay("Yesterday",
+  tlDecision({ what: "Comparison baseline changed — Base case → High storage, then back to Base case",
+    who: "Victor Andújar", when: "17:05" }) +
+  tlDecision({ what: "Analysis case renamed — “4 h variant” → <b style=\"font-weight:600;color:var(--s900)\">High storage</b>",
+    who: "Ana Ruiz", when: "11:40" }))}
+${tlDay("19 August 2026",
+  tlDecision({ what: "Current analysis changed — no analysis → Base case",
+    who: "Victor Andújar", when: "09:15",
+    from: "No current analysis",
+    to: `Base case · ${eurMs(acMetrics(AC("base")).npv)} NPV · ${acMetrics(AC("base")).irr.toFixed(1)}% IRR` }) +
+  tlDecision({ what: "Analysis case created — <b style=\"font-weight:600;color:var(--s900)\">Base case</b> · Base 2 h + Base market",
+    who: "Victor Andújar", when: "09:12" }))}
+<p class="t-meta" style="margin-top:18px;line-height:1.6;max-width:110ch">
+  A record of what was decided, not an approval trail. Nothing here can be signed off, commented on or locked — the Suite
+  keeps the history the project already generates and leaves governance to the systems that own it.
+</p>`,
+});
+writeFileSync("ActivityDecisions.dc.html", activityDecisions);
+console.log("ActivityDecisions.dc.html");
+
 writeFileSync("Activity.dc.html", activity);
 console.log("Activity.dc.html", activity.length);
 
@@ -4941,9 +5119,9 @@ ${head({
   crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Projects</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Valencia BESS</a><span class="sep">${ic("right", 12, 2)}</span><b>Case matrix</b>`,
   eyebrow: `<span style="display:inline-flex;align-items:center;gap:9px">Analysis ${src("suite")}</span>`,
   title: "Case matrix",
-  meta: "Every technical simulation × financial case combination in this project. Nine possible, three saved as analysis cases.",
+  meta: "Explore every technical simulation × financial case combination — saved or not. Comparing the ones you keep is <a href=\"#\">Compare</a>.",
   actions: `<button class="btn btn-secondary">${ic("plus", 16, 1.9)}New analysis case</button>
-            <button class="btn btn-secondary">${ic("analytics", 16)}Open Compare</button>`,
+            <button class="btn btn-secondary">${ic("analytics", 16)}Compare analysis cases</button>`,
 })}
 
 ${baselineBar({ pop: baselinePop })}
@@ -6591,12 +6769,6 @@ writeFileSync("FinancialDetails.dc.html",
    Two to three Analysis Cases, technical beside financial, with the
    deltas that answer the actual question: what does changing the
    design buy, and what does it cost. */
-const cmpTabs = (on) => `
-<div class="tabs" style="margin-bottom:24px">
-  <a href="#" class="${on === "alt" ? "on" : ""}">Analysis cases <span class="count">${ACASES.length}</span></a>
-  <a href="#" class="${on === "grid" ? "on" : ""}">All combinations <span class="count">9</span></a>
-</div>`;
-
 const acChip = (a, sel) => {
   const c = acCase(a), stale = isStale(a.tid, a.sid);
   return `
@@ -6732,6 +6904,16 @@ const impactBlock = (fromId, toId) => {
     <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.6">${tradeOff}</span>
     ${src("combined")}
   </div>
+  <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
+    <span class="t-meta" style="flex:1;min-width:0">
+      ${k.key === "both"
+        ? "Both dimensions moved between these two cases, so the split depends on which one moves first."
+        : k.key === "sb"
+          ? "Only the StoreBrid simulation moved, so the whole difference sits on the technical step."
+          : "Only the ReveNew case moved, so the whole difference sits on the financial step."}
+    </span>
+    <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px">${ic("analytics", 14)}Explain difference${ic("right", 13, 2)}</button>
+  </div>
 </section>`;
 };
 
@@ -6814,10 +6996,9 @@ ${head({
   crumb: `<a href="#">Home</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Projects</a><span class="sep">${ic("right", 12, 2)}</span><a href="#">Valencia BESS</a><span class="sep">${ic("right", 12, 2)}</span><b>Compare</b>`,
   eyebrow: `<span style="display:inline-flex;align-items:center;gap:9px">Compare ${src("suite")}</span>`,
   title: "Compare",
-  meta: "Analysis cases side by side — the technical configuration and the financial result it produces.",
+  meta: "Compare saved analysis cases and see what each trade-off costs and returns. Exploring every possible pairing is <a href=\"#\">Case matrix</a>.",
   actions: `<button class="btn btn-primary">${ic("plus", 16, 1.9)}New analysis case</button>`,
 })}
-${cmpTabs("alt")}
 ${savedBar()}
 <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap">
   ${ACASES.map((a) => acChip(a, true)).join("")}
@@ -7233,14 +7414,16 @@ const PAGES = [
      ["EditProjectDetails.dc.html", 1440, 2190, "11 · Project details"]],
   ]},
   { id: "page-2", name: "Suite", rows: [
-    [["Login.dc.html", 1440, 900, "Sign in"]],
+    [["Login.dc.html", 1440, 900, "Sign in"],
+     ["NeedsAttention.dc.html", 1440, 1710, "Needs attention"]],
     [["Main.dc.html", 1440, 1710, "Home"],
      ["Projects.dc.html", 1440, 800, "Projects"],
      ["CreateProject.dc.html", 1440, 1380, "Create project"]],
     [["Analytics.dc.html", 1440, 1990, "Analytics"],
      ["Files.dc.html", 1440, 870, "Files"],
      ["Activity.dc.html", 1440, 1280, "Activity"]],
-    [["Settings.dc.html", 1440, 1600, "Settings"]],
+    [["Settings.dc.html", 1440, 1600, "Settings"],
+     ["ActivityDecisions.dc.html", 1440, 1180, "Activity — analysis & decisions"]],
   ]},
   { id: "page-3", name: "States, licences & patterns", rows: [
     [["ProjectStoreBrid.dc.html", 1440, 1170, "Project — engineering licence"],
@@ -7254,18 +7437,20 @@ const PAGES = [
 ];
 
 const NOTES = {
+  "ActivityDecisions.dc.html": ["n-actdec", "ACTIVITY — ANALYSIS & DECISIONS\n\nThe same screen with a second filter axis. Provenance answers WHICH PRODUCT did it; this one answers WHAT KIND of thing happened — and the kind people come looking for is the decision.\n\nWhere the current analysis changed, the row keeps the figures each pairing produced at that moment: what was active, what replaced it, what each was worth. That answers \"what was active before, what replaced it, when, and who changed it\" without turning Activity into an audit screen.\n\nThis is why there is no Decision History page. With these two filters, one would be the same events under a second name."],
+  "NeedsAttention.dc.html": ["n-attn", "NEEDS ATTENTION — portfolio scale\n\nNEW. Every screen could already say a result was outdated; none of them could say it across projects. Someone with forty projects had no way to find the three that need recalculating except by opening all forty.\n\nIt is deliberately NOT a notification centre. Staleness is a persistent condition, not an event: it does not clear because someone looked at it, and it comes back the moment a simulation is re-run. So there is no read/unread, no dismiss, and no history — a case leaves the list when both sides are back in step, and the panel says so.\n\nEach row carries only what is needed to decide whether to act: whose project, which analysis case, which side fell behind, and the deep link that fixes it. It does not restate the case's figures, because deciding from inside a notification panel is exactly what it should not invite.\n\nThe same panel opens from the sidebar indicator and from the Home counter — one destination, not two."],
   "Login.dc.html": ["n-login", "SIGN IN\n\nNEW. The set had no entry point of its own — StoreBrid has one, the Suite did not, so the first screen a user met was a product they had not chosen.\n\nIt authenticates, and it does one more job: it says which layer is opening. The provenance dots carry that here exactly as they carry it on every figure elsewhere — teal for the Suite, blue and magenta for the two engines it reads from.\n\nThe copy is explicit that StoreBrid and ReveNew keep their own sign-in, and that nothing is modelled in the Suite. The boundary is stated before the user is inside it."],
   "CompareAllMetrics.dc.html": ["n-allmetrics", "3b · COMPARE — ALL METRICS\n\nThe full table, one level below Compare rather than beside it.\n\nDeltas before density: the horizontal worse/better bars carry the decision, so the table is collapsed by default behind \"Show all metrics\" and, when open, labels itself DETAIL LEVEL. Nothing was removed — it stopped competing with the reading it exists to check.\n\nGrouping stays by owner, so any figure quoted above can be traced to the product that produced it."],
   "OverviewStale.dc.html": ["n-stale", "6 · OUT OF SYNC\n\nThe state that two engines make necessary. The simulation was re-run 12 minutes ago; the financial case was last calculated 4 hours ago, so the figures below are the earlier calculation.\n\nIt names what changed, which side is behind, and where to fix it. The rest of the page still renders — hiding the numbers would be worse than labelling them."],
   "OverviewTechnical.dc.html": ["n-techdet", "4 · TECHNICAL DETAILS\n\nProgressive disclosure instead of a Technical Results page. Configuration, operation, degradation and the dispatch chart — read-only, one level down from the KPIs that prompted the question.\n\nThe rule this drawer encodes: the Suite shows enough to understand why you might open StoreBrid. It does not try to be StoreBrid."],
   "FinancialDetails.dc.html": ["n-findet", "5 · FINANCIAL BREAKDOWN\n\nThe financial counterpart: Forecast, Energy, Revenue, Costs and Financial Model in one read-only drawer.\n\nThis is where ReveNew's internal structure is allowed to appear — as supporting detail explaining a number, never as navigation. Nothing here is editable; the only action is Open in ReveNew."],
   "CreateAnalysisCase.dc.html": ["n-createac", "8 · CREATE ALTERNATIVE\n\nA name and two selectors. The summary is read live from both products.\n\nAn analysis case is the only object the Suite owns, and it is deliberately thin — no wizard, no CRUD module, no navigation section. It is a saved combination, nothing more."],
-  "CompareAlternatives.dc.html": ["n-compare", "3 · COMPARE — where the decision is made\n\nRestructured for hierarchy: decision summary, deltas, technical → financial decomposition. The full metrics table is no longer part of this page — it is collapsed behind \"Show all metrics\" and opens as its own detail level. Nothing analytical was removed; the competition for the reader's attention was.\n\nThe freshness rule matters most here. Stress test's financial result predates the technical change, so it carries an Outdated tag, is excluded from the deterministic Best NPV / Best IRR / Lowest CAPEX conclusions, and the amber line says so. A stale result is never quietly labelled best.\n\n\"Use as current analysis\" appears when a case is selected — compare, choose, and Overview follows\n\nCHANGED. Each comparison block now opens with the trade-off in its shortest form — Requires −> Produces — and closes with a TRADE-OFF reading selected from the figures, never written: it tests the sign of the NPV move against the size of the IRR move, so it cannot claim more than the numbers support.\n\nFor High storage it reads that the extra capital adds absolute value without materially changing how hard the money works. For Stress test, that no capital is committed at all and the whole difference is what the market view is worth on the asset already built."],
+  "CompareAlternatives.dc.html": ["n-compare", "3 · COMPARE — where the decision is made\n\nRestructured for hierarchy: decision summary, deltas, technical → financial decomposition. The full metrics table is no longer part of this page — it is collapsed behind \"Show all metrics\" and opens as its own detail level. Nothing analytical was removed; the competition for the reader's attention was.\n\nThe freshness rule matters most here. Stress test's financial result predates the technical change, so it carries an Outdated tag, is excluded from the deterministic Best NPV / Best IRR / Lowest CAPEX conclusions, and the amber line says so. A stale result is never quietly labelled best.\n\n\"Use as current analysis\" appears when a case is selected — compare, choose, and Overview follows\n\nCHANGED. Each comparison block now opens with the trade-off in its shortest form — Requires −> Produces — and closes with a TRADE-OFF reading selected from the figures, never written: it tests the sign of the NPV move against the size of the IRR move, so it cannot claim more than the numbers support.\n\nFor High storage it reads that the extra capital adds absolute value without materially changing how hard the money works. For Stress test, that no capital is committed at all and the whole difference is what the market view is worth on the asset already built.\n\nCHANGED. The All combinations tab is gone. It duplicated the case matrix, and having two places to browse the same nine pairings blurred what each screen was for. Compare now has one continuous view and works only on saved analysis cases; exploring the full set is the matrix, and the subtitle links there.\n\nEach delta block also gained its own Explain difference entry, so someone who arrives straight at Compare can open the decomposition for one specific trade-off without going back to the matrix first."],
   "ProjectFinancial.dc.html": ["n-projfin", "4 · FINANCIALS\n\nScenarios became Financials. ReveNew has Forecast, Energy, Revenue, DevEx, CapEx, OpEx and Financial Model scenarios inside it; exposing that structure in the Suite would have been reproducing ReveNew.\n\nInstead: the five decision figures at the top, the financial case switcher above them, and CASE COMPOSITION underneath — the ReveNew scenarios this case selects, read-only, so a number can be traced without opening the model.\n\nThe line under the KPIs is the cross-product point: this result is priced against Base case 2027. A different simulation gives a different CAPEX and a different NPV."],
   "CasesBaseline.dc.html": ["n-casesbase", "ANALYSIS BASELINE MOVED\n\nThe same nine cases, read from 4 h variant + High spread instead of the project's own case.\n\nNothing was re-run, no scenario was edited and no value moved — only the reference the deltas count from. Every delta has flipped sign, and the question the page answers has flipped with it: not \"what does the 4 h buy us\" but \"what do we give up by not building it\".\n\nThe control says it is not the project baseline and offers the way back. That is the whole safety model for this feature."],
   "VariantEvaluating.dc.html": ["n-vareval", "11 · VARIANT · PRICING\n\nNEW — the middle stage that was missing.\n\nThe technical run has landed, so the StoreBrid figures are real: 92.4 GWh, 231 cycles, 79% utilisation. ReveNew is now pricing that same energy against the project's three scenarios, and the cases are still waiting.\n\nThis is the stage that makes the dependency legible: one technical run, three commercial evaluations, three cases."],
   "CompareSave.dc.html": ["n-savecmp", "8 · SAVE COMPARISON\n\nA comparison is an analysis someone made, not disposable UI state. What is kept is the minimum that makes it reproducible: the cases, the baseline they were read against, the primary metric, and the name of the question.\n\nValues are NOT frozen. They are re-read from StoreBrid and ReveNew when the comparison is reopened, so a saved analysis follows its sources — which is also why Export decision brief sits beside it rather than instead of it."],
-  "CompareExplained.dc.html": ["n-explained", "10 · EXPLAIN A DIFFERENCE\n\nA state of Compare, reached from a selected cell. Both dimensions moved between the baseline and this case, so the two combinations that isolate one change each were added from the matrix — nothing was calculated to do it.\n\nThe contribution panel shows both controlled orders and names the residual, because the split depends on which dimension moves first. The Suite reports the difference associated with each step; it never claims a cause."],
+  "CompareExplained.dc.html": ["n-explained", "10 · EXPLAIN A DIFFERENCE\n\nA state of Compare, reached from a selected cell. Both dimensions moved between the baseline and this case, so the two combinations that isolate one change each were added from the matrix — nothing was calculated to do it.\n\nThe contribution panel shows both controlled orders and names the residual, because the split depends on which dimension moves first. The Suite reports the difference associated with each step; it never claims a cause.\n\nENTRY POINTS. Reached from a selected matrix cell or from a single delta block in Compare. Either way it opens with the comparison already assembled and the baseline preserved — the controlled intermediates are added from combinations that already exist, and they are never saved as analysis cases. Their use is explanatory; they leave when the explanation does."],
   "CaseMatrixCapex.dc.html": ["n-mx-capex", "CAPEX — a StoreBrid output\n\nThe other row-constant metric, and the one where colour semantics had to be corrected: an earlier pass painted the cheapest cell green and the priciest red. Lower CAPEX is not better, it is only less. Markers, wash and deltas are all neutral here.\n\nThe third highlight is the honest finding: nothing in this matrix costs less than the baseline and beats it — Low RTE saves €0.9M and gives up 1.3 pt of return.\n\nThe chart's annotation is the reading that matters: €211/kWh installed at 2 h against €127/kWh at 4 h. Unit cost falls with duration because the power equipment and the grid connection are already paid for."],
   "CaseMatrixEnergy.dc.html": ["n-mx-gwh", "ENERGY DISCHARGED — a StoreBrid output\n\nStructurally different, and deliberately so. This metric does not vary by financial scenario: these simulations were dispatched against one price signal and the Suite does not re-run them per scenario. So each row collapses to ONE value across all three columns, with a band saying why.\n\nNo invented scenario-dependent difference, and no green: the markers read Most and Least in slate, because more throughput is a fact, not a recommendation.\n\nThe reading worth having: doubling storage adds 41.7% more energy, not 100%. Power and the export limit did not move, so the extra capacity discharges over more hours — never faster."],
   "CaseMatrixPerCycle.dc.html": ["n-mx-cyc", "REVENUE / CYCLE\n\nThe bridge between the financial result and the cell replacement schedule: warranties and degradation curves are written against cycles, not against euros.\n\nThe third highlight is a warning rather than a winner. Per-cycle value is high on the 4 h variant mainly because each cycle is twice the size — not because the energy sells better. A battery that never cycles has infinite value per cycle and no revenue, which is why this is a supporting metric and never a ranking on its own."],
@@ -7276,7 +7461,7 @@ const NOTES = {
   "Results.dc.html": ["n-results", "3 · TECHNICAL RESULTS — three views, not thirty\n\nPower and state of charge; the energy balance; degradation. Daily graphs, heat maps, tables and CSV exports stay in StoreBrid.\n\nCHANGED. A FINANCIAL SUMMARY now sits under the technical results: the NPV, IRR and CAPEX of this same simulation under the current ReveNew scenario, with the scenario named and switchable.\n\nThat panel is the whole argument for a Suite in one screen — 65.2 GWh discharged is what earns €8.42M, and you can see both without changing application. Change the scenario and only the financial half moves."],
   "CommercialScenarios.dc.html": ["n-scen", "4 · COMMERCIAL SCENARIOS\n\nOne technical case, three ReveNew scenarios, read as a strip before any card is opened. The constant is stated: 65.2 GWh in every column, because the technical case does not change.\n\nCHANGED. The picker now has the action it was missing — Add selected — plus a scenario that cannot be evaluated at all, because it has no price curve in ReveNew. It is shown rather than hidden, and the fix links to where the fix lives. IRR moved into the Combined rows here too."],
   "CaseDetail.dc.html": ["n-casedet", "5 · CASE DETAIL — Base case 2027 + High spread\n\nThree columns: TECHNICAL CONTEXT, COMMERCIAL OUTCOME, COMBINED METRICS. Not \"cause\" and \"effect\" — the Suite states the pairing, it does not claim one produces the other.\n\nCHANGED. IRR left the ReveNew column and joined Combined, alongside Revenue / CAPEX; Merchant share took its place on the financial side. A freshness line at the top states when each side was last calculated, because two systems means two clocks."],
-  "CaseMatrix.dc.html": ["n-matrix", "2 · CASE MATRIX — explore the combinations\n\nRenamed from \"Cases\", which collided with Financial Case and Analysis Case.\n\nThe distinction it now carries is the important one: 3 simulations × 3 financial cases = 9 POSSIBLE COMBINATIONS, of which 3 are saved as analysis cases. A combination becomes an analysis case only when someone names it. Every cell says which it is — the case name, or \"Not saved\" — and the selected cell offers \"Save as analysis case\" or, if it already is one, \"Use as current analysis\".\n\nThat second action is what closes the loop back to Overview.\n\nThe outdated cell is marked and greyed rather than shown as a valid result.\n\nCHANGED. The aggregate freshness notice Compare already carried now appears here too, under the header summary and before the grid: how many SAVED analysis cases are outdated, which one, and the deep link that fixes it. It also states the rule the empty cells depend on — the other six combinations are calculated live when a cell is opened, so they have no age to be stale against and are never marked\n\nCHANGED. Two additions make the matrix state its own value proposition. Above the grid, the leaders on the objectives NOT currently selected — highest NPV, lowest CAPEX, highest revenue per MWh — across all nine pairings, saved or not, outdated ones excluded. They are rankings, never preferences: the label names the objective and the user decides which objective matters.\n\nBelow the selected cell, WHY THIS PAIRING READS DIFFERENTLY decomposes the difference the way the domain splits it: what StoreBrid changed, what ReveNew changed, what came out of both. When only one dimension moved, the other column says so rather than inventing a contribution. When both moved, the panel refuses to split the cause and hands that to Explain difference, which builds the two controlled orders."],
+  "CaseMatrix.dc.html": ["n-matrix", "2 · CASE MATRIX — explore the combinations\n\nRenamed from \"Cases\", which collided with Financial Case and Analysis Case.\n\nThe distinction it now carries is the important one: 3 simulations × 3 financial cases = 9 POSSIBLE COMBINATIONS, of which 3 are saved as analysis cases. A combination becomes an analysis case only when someone names it. Every cell says which it is — the case name, or \"Not saved\" — and the selected cell offers \"Save as analysis case\" or, if it already is one, \"Use as current analysis\".\n\nThat second action is what closes the loop back to Overview.\n\nThe outdated cell is marked and greyed rather than shown as a valid result.\n\nCHANGED. The aggregate freshness notice Compare already carried now appears here too, under the header summary and before the grid: how many SAVED analysis cases are outdated, which one, and the deep link that fixes it. It also states the rule the empty cells depend on — the other six combinations are calculated live when a cell is opened, so they have no age to be stale against and are never marked\n\nCHANGED. Two additions make the matrix state its own value proposition. Above the grid, the leaders on the objectives NOT currently selected — highest NPV, lowest CAPEX, highest revenue per MWh — across all nine pairings, saved or not, outdated ones excluded. They are rankings, never preferences: the label names the objective and the user decides which objective matters.\n\nBelow the selected cell, WHY THIS PAIRING READS DIFFERENTLY decomposes the difference the way the domain splits it: what StoreBrid changed, what ReveNew changed, what came out of both. When only one dimension moved, the other column says so rather than inventing a contribution. When both moved, the panel refuses to split the cause and hands that to Explain difference, which builds the two controlled orders.\n\nHANDOFF. The two actions on a selected cell carry their selection with them. Add to comparison opens Compare with that pairing already in the comparison — as its analysis case if one is saved, otherwise under the product's existing rule for unsaved combinations; nothing is auto-named. Explain difference opens with the comparison already built, including the controlled intermediates needed to isolate one dimension at a time. Neither ever lands the user on an empty screen asking them to choose again."],
   "CaseMatrixCell.dc.html": ["n-matrixcell", "IRR · A CASE SELECTED\n\nClicking a cell does not leave the page. The panel opens under the grid with the five figures that matter, and three actions that each mean something different: make this the analysis baseline, add it to a comparison, or explain the difference.\n\nEXPLAIN DIFFERENCE is the important one. Both dimensions differ from the baseline here, so the panel refuses to attribute — and instead names the two cells that would isolate each change, which is exactly what the action opens Compare with.\n\nThe selection is a case, not a number, so it survives every metric change."],
   "CompareCases.dc.html": ["n-compcases", "8 · COMPARE CASES — the decision cockpit\n\nCHANGED SUBSTANTIALLY. The baseline and the metric are now real controls, not labels. Both are read by everything below them: change the baseline and every delta, the key changes, the bridge and the wording of the summary follow; change the metric and the bridge and the bar comparison follow with it.\n\nTHE SUMMARY IS GENERATED from the same figures the page shows, so it cannot describe a comparison that is not on screen.\n\nTHE BRIDGE IS NO LONGER IRR-ONLY and no longer hard-coded. It reads the selected metric, and it is drawn only when each step moved one dimension. Select two cases that differ on both and it refuses, in words, and says what to add.\n\nIncremental economics is unchanged in spirit and now derived: +€8.6M of CAPEX buys +27.2 GWh and +€2.25M a year, 3.8 years undiscounted. The data table is regrouped as Technical — StoreBrid / Financial — ReveNew / Combined — Suite, with CAPEX moved to Technical where it belongs and IRR to Combined."],
   "QuickVariant.dc.html": ["n-variant", "9 · CREATE TECHNICAL VARIANT\n\nFive levers, never the wizard. It states its own changes — storage 200 → 400 MWh, duration 2.0 → 4.0 h — and names everything that carries over untouched.\n\nThat matters because the whole comparison model rests on it: the original simulation is never modified, so every case already built on it stays valid."],

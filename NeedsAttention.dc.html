@@ -281,7 +281,7 @@ a.glass-sm:hover{
 </div>
 <div class="rule" style="margin-top:16px"></div>
 <nav class="nav">
-  <a href="#" class="on"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.2 10 3.5l7 5.7"/><path d="M4.6 8.3V16a.9.9 0 0 0 .9.9h9a.9.9 0 0 0 .9-.9V8.3"/></svg>Home</a>
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.2 10 3.5l7 5.7"/><path d="M4.6 8.3V16a.9.9 0 0 0 .9.9h9a.9.9 0 0 0 .9-.9V8.3"/></svg>Home</a>
   <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="4.4" width="6.1" height="5.2" rx="1.2"/><rect x="11.1" y="4.4" width="6.1" height="5.2" rx="1.2"/><rect x="2.8" y="11.4" width="6.1" height="4.2" rx="1.2"/><rect x="11.1" y="11.4" width="6.1" height="4.2" rx="1.2"/></svg>Projects</a>
   <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Analytics</a>
 </nav>
@@ -294,9 +294,9 @@ a.glass-sm:hover{
 <div class="rule"></div>
 <nav class="nav">
   
-<a href="#" class="" style="display:flex;align-items:center;gap:10px;height:35px;padding:0 10px;
+<a href="#" class="on" style="display:flex;align-items:center;gap:10px;height:35px;padding:0 10px;
    border-radius:var(--r-xs);font-size:13px;font-weight:500;color:var(--s500);text-decoration:none;
-   ">
+   background:linear-gradient(168deg,rgba(255,255,255,.92),rgba(255,255,255,.7));color:var(--s900)">
   <span style="flex:none;display:flex;color:#9A6208"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
   <span style="flex:1;min-width:0">Needs attention</span>
   <span style="flex:none;min-width:19px;height:19px;padding:0 6px;border-radius:9px;display:flex;align-items:center;justify-content:center;
@@ -729,6 +729,108 @@ a.glass-sm:hover{
     </main>
   </div>
   
+
+<div style="position:absolute;inset:0;z-index:10;backdrop-filter:blur(9px) saturate(.92);-webkit-backdrop-filter:blur(9px) saturate(.92);
+     background:linear-gradient(168deg,rgba(236,245,247,.5),rgba(238,244,248,.46))"></div>
+<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:auto;width:520px;z-index:11;overflow:hidden;
+       display:flex;flex-direction:column">
+  <span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
+        background:linear-gradient(90deg,rgba(245,158,11,0),rgba(245,158,11,.8) 18%,rgba(245,158,11,.8) 82%,rgba(245,158,11,0))"></span>
+  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
+    <div style="flex:1;min-width:0">
+      <div class="t-card" style="font-size:16px">Needs attention</div>
+      <div class="t-meta" style="margin-top:5px">Conditions that require action across your portfolio.</div>
+    </div>
+    <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5.4 5.4l9.2 9.2M14.6 5.4l-9.2 9.2"/></svg></button>
+  </div>
+  <div style="padding:13px 22px;border-bottom:1px solid var(--hair);display:flex;align-items:center;gap:10px">
+    <span style="color:#9A6208;display:flex;flex:none"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
+    <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
+      3 analysis cases pair a result with data that has moved on since it was calculated.
+    </span>
+  </div>
+  <div>
+<div style="padding:16px 22px;border-bottom:1px solid var(--hair)">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="font-size:13.5px;font-weight:600;color:var(--s900)">Valencia BESS</span>
+    <span style="color:var(--s300)">·</span>
+    <span style="font-size:13px;color:var(--s700)">Stress test</span>
+    <span style="flex:1"></span>
+    <span class="cov" style="background:linear-gradient(168deg,rgba(245,158,11,.14),rgba(245,158,11,.07));border-color:rgba(245,158,11,.3);color:#9A6208">
+     <i style="background:#9A6208"></i>Outdated</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;margin-top:7px;flex-wrap:wrap">
+    <span class="t-meta">4 h variant × Low spread</span>
+    <span style="color:var(--s300)">·</span>
+    <span class="src" title="Which side moved, and which side is behind">
+      <i style="background:#2563EB"></i>StoreBrid
+      <span style="color:var(--s400);margin:0 2px">→</span>
+      <i style="background:#AF47B2"></i>ReveNew
+    </span>
+  </div>
+  <p class="t-meta" style="margin-top:9px;line-height:1.55">The technical simulation was re-run 12 minutes ago; the financial result dates from 4 hours ago.</p>
+  <div style="display:flex;align-items:center;gap:12px;margin-top:11px">
+    <a href="#" style="font-size:12.5px;font-weight:500">Review case<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></a>
+    <button class="btn btn-secondary" style="height:30px;font-size:12px">
+      <i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Recalculate in ReveNew<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
+  </div>
+</div>
+<div style="padding:16px 22px;border-bottom:1px solid var(--hair)">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="font-size:13.5px;font-weight:600;color:var(--s900)">Madrid Hybrid</span>
+    <span style="color:var(--s300)">·</span>
+    <span style="font-size:13px;color:var(--s700)">Base case</span>
+    <span style="flex:1"></span>
+    <span class="cov" style="background:linear-gradient(168deg,rgba(245,158,11,.14),rgba(245,158,11,.07));border-color:rgba(245,158,11,.3);color:#9A6208">
+     <i style="background:#9A6208"></i>Recalculation required</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;margin-top:7px;flex-wrap:wrap">
+    <span class="t-meta">2 h baseline × Base market</span>
+    <span style="color:var(--s300)">·</span>
+    <span class="src" title="Which side moved, and which side is behind">
+      <i style="background:#2563EB"></i>StoreBrid
+      <span style="color:var(--s400);margin:0 2px">→</span>
+      <i style="background:#AF47B2"></i>ReveNew
+    </span>
+  </div>
+  <p class="t-meta" style="margin-top:9px;line-height:1.55">Plant configuration changed after the last financial calculation, so CAPEX no longer matches the model.</p>
+  <div style="display:flex;align-items:center;gap:12px;margin-top:11px">
+    <a href="#" style="font-size:12.5px;font-weight:500">Review case<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></a>
+    <button class="btn btn-secondary" style="height:30px;font-size:12px">
+      <i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Recalculate in ReveNew<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
+  </div>
+</div>
+<div style="padding:16px 22px;">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="font-size:13.5px;font-weight:600;color:var(--s900)">Sevilla Storage</span>
+    <span style="color:var(--s300)">·</span>
+    <span style="font-size:13px;color:var(--s700)">Contracted 2027</span>
+    <span style="flex:1"></span>
+    <span class="cov" style="background:linear-gradient(168deg,rgba(245,158,11,.14),rgba(245,158,11,.07));border-color:rgba(245,158,11,.3);color:#9A6208">
+     <i style="background:#9A6208"></i>Outdated</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;margin-top:7px;flex-wrap:wrap">
+    <span class="t-meta">2 h baseline × PPA 2027</span>
+    <span style="color:var(--s300)">·</span>
+    <span class="src" title="Which side moved, and which side is behind">
+      <i style="background:#AF47B2"></i>ReveNew
+      <span style="color:var(--s400);margin:0 2px">→</span>
+      <i style="background:#2563EB"></i>StoreBrid
+    </span>
+  </div>
+  <p class="t-meta" style="margin-top:9px;line-height:1.55">The price curve was replaced after the simulation ran, so the dispatch behind these figures is the earlier one.</p>
+  <div style="display:flex;align-items:center;gap:12px;margin-top:11px">
+    <a href="#" style="font-size:12.5px;font-weight:500">Review case<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></a>
+    <button class="btn btn-secondary" style="height:30px;font-size:12px">
+      <i style="width:6px;height:6px;border-radius:50%;background:#2563EB;display:block"></i>Recalculate in StoreBrid<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
+  </div>
+</div></div>
+  <div style="padding:15px 22px;border-top:1px solid var(--hair);display:flex;align-items:center;gap:12px">
+    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">
+      Nothing is dismissed here. A case leaves this list when both sides are back in step.
+    </span>
+  </div>
+</aside>
 </div>
 </x-dc>
 <script data-dc-script data-props='{"$preview":{"width":1440,"height":1710}}'>
