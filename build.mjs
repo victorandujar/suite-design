@@ -1597,6 +1597,73 @@ const popover = ({ label, items, footer }) => `
    euro axis. Three items do not make a scatter — they make three rows,
    and rows are read in a glance. The right-hand figure does the
    comparison the eye cannot: value created per euro invested. */
+/* §5, §50 · The hero of Overview: what each case costs against what it
+   returns, which is the one reading neither product can produce alone.
+
+   Three points do not make a scatter on their own — that objection stood
+   in an earlier iteration and it was right. What makes position mean
+   something here is the reference: a dashed ray through the origin at the
+   current case's NPV-per-euro. Above the ray, capital works harder than
+   it does today; below it, the extra euro buys less. The question §5
+   actually asks — "does additional CAPEX create proportional value" — is
+   answered by which side of that line a point falls on, not by reading
+   two numbers and dividing them in your head.
+
+   Point area encodes storage capacity, the technical dimension that
+   drives CAPEX, so the eye can see cost rising with the asset.          */
+function investValue(w = 1240) {
+  const rows = ACASES.map((a) => ({ a, ...acMetrics(a), stale: isStale(a.tid, a.sid) }));
+  const cur = rows.find((r) => r.a.current) || rows[0];
+  const ratio = cur.npv / cur.capex;
+  const H = 396, L = 62, R = 250, TT = 26, B = 52;
+  const pw = w - L - R, ph = H - TT - B;
+  const xMax = Math.max(...rows.map((r) => r.capex)) * 1.16;
+  const yMax = Math.max(...rows.map((r) => r.npv)) * 1.22;
+  const X = (v) => L + (v / xMax) * pw;
+  const Y = (v) => TT + ph - (v / yMax) * ph;
+  const rOf = (mwh) => 11 + ((mwh - 200) / 200) * 8;
+
+  const gx = niceTicks(0, xMax, 4).map((t) =>
+    `<line x1="${X(t).toFixed(1)}" y1="${TT}" x2="${X(t).toFixed(1)}" y2="${TT + ph}" stroke="${GRID}" stroke-width="1"/>
+     <text x="${X(t).toFixed(1)}" y="${TT + ph + 17}" text-anchor="middle" font-size="9.5" fill="${AXIS}">€${t.toFixed(0)}M</text>`).join("");
+  const gy = niceTicks(0, yMax, 4).map((t) =>
+    `<line x1="${L}" y1="${Y(t).toFixed(1)}" x2="${w - R}" y2="${Y(t).toFixed(1)}" stroke="${GRID}" stroke-width="1"/>
+     <text x="${L - 9}" y="${(Y(t) + 3.4).toFixed(1)}" text-anchor="end" font-size="9.5" fill="${AXIS}">€${t.toFixed(0)}M</text>`).join("");
+
+  /* the iso-efficiency ray: every point on it returns the same € per € */
+  const rayEnd = Math.min(xMax, yMax / ratio);
+  const ray = `
+    <line x1="${X(0)}" y1="${Y(0)}" x2="${X(rayEnd).toFixed(1)}" y2="${Y(rayEnd * ratio).toFixed(1)}"
+      stroke="${SU}" stroke-width="1.5" stroke-dasharray="5 4" opacity=".7"/>
+    <text x="${X(rayEnd * 0.42).toFixed(1)}" y="${(Y(rayEnd * 0.42 * ratio) + 17).toFixed(1)}"
+      font-size="10" font-weight="600" fill="var(--su700)">€${ratio.toFixed(2)} of NPV per € — the current rate</text>`;
+
+  const marks = rows.map((r) => {
+    const x = X(r.capex), y = Y(r.npv), rad = rOf(r.a.tid ? acCase(r.a).t.mwh : 200);
+    const dens = r.npv / r.capex;
+    const above = dens > ratio + 0.005, below = dens < ratio - 0.005;
+    const isCur = r.a.current;
+    const fill = r.stale ? FIELD : isCur ? SU : CMB;
+    /* §41 · the current analysis is a ring, not just another colour */
+    return `
+    ${isCur ? `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(rad + 6).toFixed(1)}" fill="none" stroke="${SU}" stroke-width="1.6" stroke-dasharray="3 3"/>` : ""}
+    <circle class="mk" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rad.toFixed(1)}"
+      fill="${fill}" fill-opacity="${r.stale ? ".24" : isCur ? ".3" : ".62"}" stroke="#fff" stroke-width="2.2">
+      <title>${r.a.name} — €${r.capex.toFixed(1)}M CAPEX · ${eurMs(r.npv)} NPV · ${r.irr.toFixed(1)}% IRR · ${eurM(r.rev)} revenue${r.stale ? " · outdated" : ""}</title></circle>
+    <text x="${(x + rad + 10).toFixed(1)}" y="${(y - 2).toFixed(1)}" font-size="11.5" font-weight="600" fill="${INK}">${r.a.name}</text>
+    <text x="${(x + rad + 10).toFixed(1)}" y="${(y + 13).toFixed(1)}" font-size="10" fill="${AXIS}">€${dens.toFixed(2)} per € invested${
+      r.stale ? " · outdated" : above ? " · above today's rate" : below ? " · below today's rate" : ""}</text>`;
+  }).join("");
+
+  return `
+<svg viewBox="0 0 ${w} ${H}" width="100%" style="display:block" role="img"
+  aria-label="CAPEX against NPV for each analysis case, with a reference line at the current case's return per euro invested">
+  ${MKSTYLE}${gx}${gy}${ray}${marks}
+  <text x="${L}" y="${H - 8}" font-size="10.5" fill="${AXIS}">CAPEX — what it costs to build · StoreBrid</text>
+  <text transform="translate(15,${TT + ph / 2}) rotate(-90)" text-anchor="middle" font-size="10.5" fill="${AXIS}">NPV over ${HORIZON} years · ReveNew</text>
+</svg>`;
+}
+
 function investReturn(w = 1240) {
   const rows = ACASES.map((a) => ({ a, ...acMetrics(a), stale: isStale(a.tid, a.sid) }));
   const cur = rows.find((r) => r.a.current) || rows[0];
@@ -1859,9 +1926,9 @@ ${(() => {
   <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px">
     <div style="flex:1;min-width:0">
       <div style="display:flex;align-items:center;gap:9px"><span class="band">What the combination produces</span>${src("combined")}</div>
-      <h2 class="t-sec" style="margin-top:9px">What each case invests, and what it returns</h2>
+      <h2 class="t-sec" style="margin-top:9px">Investment against value</h2>
       <p class="t-meta" style="margin-top:7px;font-size:12px;line-height:1.6;max-width:96ch">
-        Both bars are euros on the same scale. Cost comes from StoreBrid, value from ReveNew — neither product can draw this alone.
+        Cost from StoreBrid, value from ReveNew. The dashed line is the rate the current analysis returns today — above it, capital works harder; below it, the extra euro buys less.
       </p>
     </div>
     <div style="display:flex;gap:30px;flex:none">
@@ -1874,18 +1941,18 @@ ${(() => {
         </span>`).join("")}
     </div>
   </div>
-  <div style="margin-top:18px">${investReturn(1240)}</div>
+  <div style="margin-top:18px">${investValue(1240)}</div>
   <div style="display:flex;align-items:center;gap:18px;padding-top:12px;border-top:1px solid var(--hair);flex-wrap:wrap">
     <span style="display:inline-flex;align-items:center;gap:7px">
-      <span style="width:14px;height:9px;border-radius:2px;background:${SB};opacity:.55;display:block"></span>
-      <span class="t-meta">CAPEX — what it costs to build</span>${src("storebrid")}
+      <span style="width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 0 0 1.6px ${SU};display:block"></span>
+      <span class="t-meta">Current analysis</span>
     </span>
     <span style="display:inline-flex;align-items:center;gap:7px">
-      <span style="width:14px;height:9px;border-radius:2px;background:${RN};opacity:.8;display:block"></span>
-      <span class="t-meta">NPV — value created over ${HORIZON} years</span>${src("revenew")}
+      <svg width="26" height="10" aria-hidden="true"><circle cx="6" cy="5" r="4" fill="${CMB}" fill-opacity=".62"/><circle cx="19" cy="5" r="6" fill="${CMB}" fill-opacity=".62"/></svg>
+      <span class="t-meta">Point size = storage capacity</span>${src("storebrid")}
     </span>
     <span style="flex:1"></span>
-    <span class="t-meta">The right-hand figure divides one by the other</span>${src("combined")}
+    <span class="t-meta">Position against the dashed line is the reading</span>${src("combined")}
   </div>
 </section>
 
@@ -2134,7 +2201,7 @@ ${scrim()}
 </aside>`;
 
 
-const OVB = { w: 1440, h: 2250, side: projectSide("overview") };
+const OVB = { w: 1440, h: 2380, side: projectSide("overview") };
 writeFileSync("ProjectOverview.dc.html", doc({ ...OVB, body: overviewBody() }));
 writeFileSync("OverviewChangeSim.dc.html", doc({ ...OVB, focusSb: true, body: overviewBody(), overlay: pickDrawer({ kind: "tech" }) }));
 writeFileSync("OverviewChangeScenario.dc.html", doc({ ...OVB, rvFocus: true, body: overviewBody(), overlay: pickDrawer({ kind: "fin" }) }));
@@ -6054,20 +6121,47 @@ const contributionPanel = (mk) => {
   </p>
   ${pathRow(mk, "Financial first", [A, B, D], [[cn.commercialFirst.commercial, "rv"], [cn.commercialFirst.technical, "sb"]])}
   ${pathRow(mk, "Technical first", [A, C, D], [[cn.technicalFirst.technical, "sb"], [cn.technicalFirst.commercial, "rv"]])}
-  <div style="display:flex;align-items:flex-start;gap:11px;margin-top:16px;padding:14px 16px;border-radius:var(--r-xs);
-       background:linear-gradient(168deg,rgba(109,90,198,.055),rgba(255,255,255,0) 72%);box-shadow:inset 0 0 0 1px rgba(109,90,198,.14)">
-    <span style="color:var(--cmb);display:flex;flex:none;margin-top:1px">${ic("layers", 15)}</span>
-    <span style="flex:1;min-width:0">
-      <span style="display:block;font-size:12.5px;font-weight:600;color:var(--s900)">
-        Total ${cn.total >= 0 ? "+" : "−"}${shortFmt(mk, Math.abs(cn.total), true)} either way${same ? "" : ` · the split moves by ${shortFmt(mk, Math.abs(cn.interaction), true)}`}
-      </span>
-      <span class="t-meta" style="display:block;margin-top:5px;line-height:1.55">
+  ${(() => {
+    /* §23 · The finding was buried in a paragraph. It is the most important
+       thing on the page, so it gets read as a range: each effect has a
+       span, not a value, and the span is what proves the two are not
+       independent. The methodology moves behind a link — the caveat does
+       not, because a reader who takes one number from here without it has
+       been misled. */
+    const rng = (a, b) => {
+      const lo = Math.min(a, b), hi = Math.max(a, b);
+      const f = (v) => (v >= 0 ? "+" : "−") + shortFmt(mk, Math.abs(v), true);
+      return same ? f(a) : `${f(lo)} → ${f(hi)}`;
+    };
+    const line = (label, val, why) => `
+      <div style="display:flex;align-items:baseline;gap:14px;padding:9px 0">
+        <span class="t-meta" style="width:150px;flex:none">${label}</span>
+        <b style="flex:none;width:146px;font-size:14px;font-weight:700;color:var(--s900);font-variant-numeric:tabular-nums;white-space:nowrap">${val}</b>
+        <span class="t-meta" style="flex:1;min-width:0;line-height:1.45">${why}</span>
+      </div>`;
+    return `
+  <div style="margin-top:16px;padding:16px 18px;border-radius:var(--r-xs);
+       background:linear-gradient(168deg,rgba(109,90,198,.055),rgba(255,255,255,0) 74%);box-shadow:inset 0 0 0 1px rgba(109,90,198,.14)">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="band" style="color:var(--cmb)">${same ? "The effects are independent" : "The effects interact"}</span>${src("combined")}
+    </div>
+    <div style="margin-top:8px">
+      ${line("Technical contribution", rng(cn.technicalFirst.technical, cn.commercialFirst.technical),
+        same ? "the same on either financial case" : "depending on which financial case it is applied to")}
+      ${line("Financial contribution", rng(cn.commercialFirst.commercial, cn.technicalFirst.commercial),
+        same ? "the same on either asset" : "depending on which asset it is applied to")}
+      ${line("Final delta", (cn.total >= 0 ? "+" : "−") + shortFmt(mk, Math.abs(cn.total), true), "the same whichever order is taken")}
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:12px;margin-top:10px;padding-top:11px;border-top:1px solid rgba(109,90,198,.14)">
+      <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.55">
         ${same
-          ? "The two effects are close to independent here, so either order can be quoted."
-          : `A wider spread is worth more on the larger battery, so the financial step depends on which asset it is applied to. Neither order is the true decomposition — the Suite shows both rather than picking one.`}
+          ? "Either order can be quoted — the two changes barely affect each other on this metric."
+          : "Neither change has one universal contribution. Its impact depends on the other side of the analysis case, so quoting a single split would be inventing precision."}
       </span>
-    </span>
-  </div>
+      <a href="#" style="flex:none;font-size:12.5px;font-weight:500;white-space:nowrap">How this works${ic("right", 12, 2)}</a>
+    </div>
+  </div>`;
+  })()}
 </section>`;
 };
 
@@ -6377,7 +6471,7 @@ const saveDialog = () => capabilityModal({
 /* §3 · arrived at from Explain difference: four cases, two of them the
    controlled intermediates the matrix already held. */
 SEL = explainSet(BASE, caseOf("v4h", "high")).cases;
-writeFileSync("CompareExplained.dc.html", doc({ w: 1440, h: 4910, side: projectSide("compare"),
+writeFileSync("CompareExplained.dc.html", doc({ w: 1440, h: 5060, side: projectSide("compare"),
   body: compareBody({ mk: "irr", explained: true }) }));
 SEL = [caseOf("base2h", "base"), caseOf("base2h", "high"), caseOf("v4h", "high")];
 
@@ -7401,44 +7495,72 @@ const impactBlock = (fromId, toId) => {
     <span class="cov"><i style="background:${k.dot}"></i>${k.label}</span>
   </div>
   ${(() => {
-    /* §4 · The three questions a comparison has to answer before any table:
-       what does it cost, what does that buy technically, and what comes out
-       financially. Splitting ENABLES from REQUIRES matters — capital and
-       the physical capability it buys are different things, and collapsing
-       them into "technical change" hides which one the user is trading. */
-    const sgn = (v, d, u) => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(d) + u;
-    const tSame = A.c.t.id === B.c.t.id;
-    const grp = (band, tone, sr, rows, none) => `
-      <div style="flex:1;min-width:0;padding:16px 20px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="band" style="font-size:10px;color:${tone}">${band}</span>${sr}
-        </div>
-        ${rows.length ? `<div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">${rows.map(([v, l]) => `
-          <span>
-            <span style="display:block;font-size:16px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${v}</span>
-            <span class="t-meta" style="display:block;margin-top:2px">${l}</span>
-          </span>`).join("")}</div>`
-        : `<p class="t-meta" style="margin-top:12px;line-height:1.55">${none}</p>`}
-      </div>`;
+    /* §17, §50 · The hero of Compare: the chain from a technical decision to
+       a financial consequence, in the order it actually happens. Storage
+       bought -> capital committed -> energy that buys -> revenue it earns ->
+       value it creates -> rate that value returns.
+
+       It is a sequence, not a flow diagram: the quantities are in different
+       units and do not conserve, so drawing them as a Sankey would imply a
+       conservation that is not there. Each step keeps its own unit, its own
+       provenance, and its sign; the connector carries the reading, not the
+       magnitude. The colour crosses from StoreBrid blue to ReveNew magenta
+       exactly where ownership of the number changes — which is the whole
+       argument for the Suite existing, drawn once. */
+    const sgn = (v, d, u, pre = "") => (v >= 0 ? "+" : "−") + pre + Math.abs(v).toFixed(d) + u;
+    const tMoved = A.c.t.id !== B.c.t.id;
+    /* The chain starts wherever the change started. A financial-only case has
+       no asset step to show, and inventing one — "+0 MWh" — would suggest a
+       decision nobody made. */
+    const steps = tMoved
+      ? [{ v: sgn(B.c.t.mwh - A.c.t.mwh, 0, " MWh"), l: "storage bought", who: "sb" },
+         { v: sgn(B.capex - A.capex, 1, "M", "€"), l: "capital committed", who: "sb" },
+         { v: sgn(B.c.t.gwh - A.c.t.gwh, 1, " GWh/yr"), l: "energy that buys", who: "sb" },
+         { v: sgn(B.rev - A.rev, 2, "M/yr", "€"), l: "revenue it earns", who: "rn" },
+         { v: sgn(B.npv - A.npv, 1, "M", "€"), l: "value it creates", who: "rn" },
+         { v: sgn(B.irr - A.irr, 1, " pp"), l: "rate that value returns", who: "cmb" }]
+      : [{ v: sgn(B.c.sc.capture - A.c.sc.capture, 1, "/MWh", "€"), l: "capture price moved", who: "rn" },
+         { v: "€0.0M", l: "capital committed", who: "sb" },
+         { v: sgn(B.rev - A.rev, 2, "M/yr", "€"), l: "revenue it earns", who: "rn" },
+         { v: sgn(B.npv - A.npv, 1, "M", "€"), l: "value it creates", who: "rn" },
+         { v: sgn(B.irr - A.irr, 1, " pp"), l: "rate that value returns", who: "cmb" }];
+    const tone = { sb: SB, rn: RN, cmb: CMB };
     return `
-<div style="display:flex;align-items:stretch;margin-bottom:16px;border-radius:var(--r-sm);overflow:hidden;
-     background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.28));box-shadow:inset 0 0 0 1px var(--hair)">
-  ${grp("Requires", "var(--b700)", src("storebrid"),
-    tSame ? [] : [[sgn(B.c.t.mwh - A.c.t.mwh, 0, " MWh"), "additional storage"],
-                  [sgn(B.capex - A.capex, 1, "M").replace(/([+−])/, "$1€"), "additional CAPEX"]],
-    "No additional capital. The same StoreBrid simulation stands behind both cases.")}
-  <span style="width:1px;background:var(--hair);flex:none"></span>
-  ${grp("Enables", "var(--b700)", src("storebrid"),
-    tSame ? [] : [[sgn(B.c.t.gwh - A.c.t.gwh, 1, " GWh/yr"), "more energy discharged"],
-                  [sgn(B.c.t.dur - A.c.t.dur, 1, " h"), "duration at the same power"]],
-    "Nothing changes physically — the asset moves the same energy.")}
-  <span style="width:1px;background:var(--hair);flex:none"></span>
-  ${grp("Produces", "var(--rv600)", src("revenew"),
-    [[sgn(B.rev - A.rev, 2, "M/yr").replace(/([+−])/, "$1€"), "expected revenue"],
-     [sgn(B.npv - A.npv, 1, "M").replace(/([+−])/, "$1€"), "net present value"],
-     [sgn(B.irr - A.irr, 1, " pp"), "internal rate of return"]], "")}
+<div style="margin-bottom:16px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+    <span class="band" style="color:var(--su700)">${tMoved ? "From the technical decision to its financial consequence" : "From the market view to its financial consequence"}</span>
+    <span class="hr" style="flex:1"></span>
+    <span class="t-meta">Each step in its own unit</span>
+  </div>
+  <div style="display:flex;align-items:stretch;gap:0">
+    ${steps.map((st, i) => `
+      <div style="flex:1;min-width:0;display:flex;align-items:center">
+        <div style="flex:1;min-width:0;padding:14px 12px;border-radius:var(--r-xs);text-align:center;
+             background:linear-gradient(168deg,rgba(255,255,255,.62),rgba(255,255,255,.34));
+             box-shadow:inset 0 0 0 1px var(--hair)">
+          <span style="display:block;font-size:17px;font-weight:700;letter-spacing:-.022em;
+                color:var(--s900);font-variant-numeric:tabular-nums">${st.v}</span>
+          <span class="t-meta" style="display:block;margin-top:5px;line-height:1.35">${st.l}</span>
+          <span style="display:flex;justify-content:center;margin-top:7px">
+            <i style="width:5px;height:5px;border-radius:50%;background:${tone[st.who]};display:block"></i>
+          </span>
+        </div>
+        ${i < steps.length - 1 ? `
+        <span style="flex:none;width:26px;display:flex;align-items:center;justify-content:center;color:${
+          steps[i + 1].who !== st.who ? "var(--s700)" : "var(--s300)"}">${ic("right", 15, 2)}</span>` : ""}
+      </div>`).join("")}
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;margin-top:11px;flex-wrap:wrap">
+    <span style="display:inline-flex;align-items:center;gap:6px"><i style="width:5px;height:5px;border-radius:50%;background:${SB};display:block"></i><span class="t-meta">StoreBrid decides these</span></span>
+    <span style="display:inline-flex;align-items:center;gap:6px"><i style="width:5px;height:5px;border-radius:50%;background:${RN};display:block"></i><span class="t-meta">ReveNew produces these</span></span>
+    <span style="display:inline-flex;align-items:center;gap:6px"><i style="width:5px;height:5px;border-radius:50%;background:${CMB};display:block"></i><span class="t-meta">Needs both</span></span>
+    <span style="flex:1"></span>
+    <span class="t-meta">A sequence, not a flow — the quantities are in different units and do not conserve.</span>
+  </div>
 </div>`;
   })()}
+
+
 
 
   <div style="display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)">
@@ -7737,7 +7859,7 @@ const createAC = () => {
   });
 };
 writeFileSync("CreateAnalysisCase.dc.html",
-  doc({ w: 1440, h: 2820, side: projectSide("compare"), body: alternativesBody(), overlay: createAC() }));
+  doc({ w: 1440, h: 2740, side: projectSide("compare"), body: alternativesBody(), overlay: createAC() }));
 
 /* ═══════════════════════════════════════════════════════════════
    §13-§17 · DECISION BRIEF
@@ -7801,12 +7923,12 @@ const decisionBrief = () => {
   });
 };
 
-writeFileSync("DecisionBrief.dc.html", doc({ w: 1440, h: 2820, side: projectSide("compare"),
+writeFileSync("DecisionBrief.dc.html", doc({ w: 1440, h: 2740, side: projectSide("compare"),
   body: alternativesBody(), overlay: decisionBrief() }));
 console.log("DecisionBrief.dc.html");
 
 writeFileSync("CompareAlternatives.dc.html",
-  doc({ w: 1440, h: 2820, side: projectSide("compare"), body: alternativesBody() }));
+  doc({ w: 1440, h: 2740, side: projectSide("compare"), body: alternativesBody() }));
 
 /* ═══════════════════════════════════════════════════════════════
    §3 · SIGN IN — the way into the Suite
@@ -7939,7 +8061,7 @@ console.log("Login.dc.html", login.length);
 
 /* §2 · the full table as its own destination, one level below Compare. */
 writeFileSync("CompareAllMetrics.dc.html",
-  doc({ w: 1440, h: 3660, side: projectSide("compare"), body: alternativesBody({ detail: true }) }));
+  doc({ w: 1440, h: 3570, side: projectSide("compare"), body: alternativesBody({ detail: true }) }));
 console.log("CompareAllMetrics.dc.html");
 
 /* ═══════════════════════════════════════════════════════════════
@@ -8082,21 +8204,21 @@ console.log("deck slides -> export/slides");
 const COLX = [0, 1560, 3120];
 const PAGES = [
   { id: "page-1", name: "Project workspace", rows: [
-    [["ProjectOverview.dc.html", 1440, 2250, "1 · Overview"],
+    [["ProjectOverview.dc.html", 1440, 2380, "1 · Overview"],
      ["CaseMatrix.dc.html", 1440, 3190, "2 · Case matrix"],
      ["CaseMatrixRobustness.dc.html", 1440, 1180, "2b · Case matrix — robustness"],
      ["CaseMatrixUnevaluated.dc.html", 1440, 3190, "2c · Case matrix — evaluation states"],
-     ["CompareAlternatives.dc.html", 1440, 2820, "3 · Compare"],
-     ["CompareAllMetrics.dc.html", 1440, 3660, "3b · Compare — all metrics"],
-     ["DecisionBrief.dc.html", 1440, 2820, "3c · Save decision brief"]],
-    [["OverviewChangeSim.dc.html", 1440, 2250, "4 · Change technical simulation"],
-     ["OverviewChangeScenario.dc.html", 1440, 2250, "5 · Change financial case"],
-     ["OverviewTechnical.dc.html", 1440, 2250, "6 · Technical details"]],
+     ["CompareAlternatives.dc.html", 1440, 2740, "3 · Compare"],
+     ["CompareAllMetrics.dc.html", 1440, 3570, "3b · Compare — all metrics"],
+     ["DecisionBrief.dc.html", 1440, 2740, "3c · Save decision brief"]],
+    [["OverviewChangeSim.dc.html", 1440, 2380, "4 · Change technical simulation"],
+     ["OverviewChangeScenario.dc.html", 1440, 2380, "5 · Change financial case"],
+     ["OverviewTechnical.dc.html", 1440, 2380, "6 · Technical details"]],
     [["FinancialDetails.dc.html", 1440, 1160, "7 · Financial details"],
-     ["CreateAnalysisCase.dc.html", 1440, 2820, "8 · Create analysis case"],
-     ["CompareExplained.dc.html", 1440, 4910, "9 · Explain difference"]],
-    [["OverviewStale.dc.html", 1440, 2340, "10 · Financial results outdated"],
-     ["EditProjectDetails.dc.html", 1440, 2250, "11 · Project details"]],
+     ["CreateAnalysisCase.dc.html", 1440, 2740, "8 · Create analysis case"],
+     ["CompareExplained.dc.html", 1440, 5060, "9 · Explain difference"]],
+    [["OverviewStale.dc.html", 1440, 2470, "10 · Financial results outdated"],
+     ["EditProjectDetails.dc.html", 1440, 2380, "11 · Project details"]],
   ]},
   { id: "page-2", name: "Suite", rows: [
     [["Login.dc.html", 1440, 900, "Sign in"],

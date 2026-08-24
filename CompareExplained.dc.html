@@ -262,8 +262,8 @@ a.glass-sm:hover{
 .grid{display:grid;gap:20px}
 </style>
 </helmet>
-<div class="atmos" style="width:1440px;min-height:4910px;position:relative">
-  <div class="shell" style="min-height:4910px">
+<div class="atmos" style="width:1440px;min-height:5060px;position:relative">
+  <div class="shell" style="min-height:5060px">
     <aside class="side">
 
 <div class="brand">
@@ -816,17 +816,38 @@ a.glass-sm:hover{
       
   </div>
 </div>
-  <div style="display:flex;align-items:flex-start;gap:11px;margin-top:16px;padding:14px 16px;border-radius:var(--r-xs);
-       background:linear-gradient(168deg,rgba(109,90,198,.055),rgba(255,255,255,0) 72%);box-shadow:inset 0 0 0 1px rgba(109,90,198,.14)">
-    <span style="color:var(--cmb);display:flex;flex:none;margin-top:1px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 3 6.8 3.6L10 10.2 3.2 6.6z"/><path d="m3.2 10.6 6.8 3.6 6.8-3.6"/></svg></span>
-    <span style="flex:1;min-width:0">
-      <span style="display:block;font-size:12.5px;font-weight:600;color:var(--s900)">
-        Total +1.3 pt either way · the split moves by 0.3 pt
+  
+  <div style="margin-top:16px;padding:16px 18px;border-radius:var(--r-xs);
+       background:linear-gradient(168deg,rgba(109,90,198,.055),rgba(255,255,255,0) 74%);box-shadow:inset 0 0 0 1px rgba(109,90,198,.14)">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="band" style="color:var(--cmb)">The effects interact</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+    </div>
+    <div style="margin-top:8px">
+      
+      <div style="display:flex;align-items:baseline;gap:14px;padding:9px 0">
+        <span class="t-meta" style="width:150px;flex:none">Technical contribution</span>
+        <b style="flex:none;width:146px;font-size:14px;font-weight:700;color:var(--s900);font-variant-numeric:tabular-nums;white-space:nowrap">+0.4 pt → +0.7 pt</b>
+        <span class="t-meta" style="flex:1;min-width:0;line-height:1.45">depending on which financial case it is applied to</span>
+      </div>
+      
+      <div style="display:flex;align-items:baseline;gap:14px;padding:9px 0">
+        <span class="t-meta" style="width:150px;flex:none">Financial contribution</span>
+        <b style="flex:none;width:146px;font-size:14px;font-weight:700;color:var(--s900);font-variant-numeric:tabular-nums;white-space:nowrap">+0.6 pt → +0.9 pt</b>
+        <span class="t-meta" style="flex:1;min-width:0;line-height:1.45">depending on which asset it is applied to</span>
+      </div>
+      
+      <div style="display:flex;align-items:baseline;gap:14px;padding:9px 0">
+        <span class="t-meta" style="width:150px;flex:none">Final delta</span>
+        <b style="flex:none;width:146px;font-size:14px;font-weight:700;color:var(--s900);font-variant-numeric:tabular-nums;white-space:nowrap">+1.3 pt</b>
+        <span class="t-meta" style="flex:1;min-width:0;line-height:1.45">the same whichever order is taken</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:12px;margin-top:10px;padding-top:11px;border-top:1px solid rgba(109,90,198,.14)">
+      <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.55">
+        Neither change has one universal contribution. Its impact depends on the other side of the analysis case, so quoting a single split would be inventing precision.
       </span>
-      <span class="t-meta" style="display:block;margin-top:5px;line-height:1.55">
-        A wider spread is worth more on the larger battery, so the financial step depends on which asset it is applied to. Neither order is the true decomposition — the Suite shows both rather than picking one.
-      </span>
-    </span>
+      <a href="#" style="flex:none;font-size:12.5px;font-weight:500;white-space:nowrap">How this works<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></a>
+    </div>
   </div>
 </section>
   
@@ -1208,7 +1229,7 @@ a.glass-sm:hover{
   
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":4910}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":5060}}'>
 class Component extends DCLogic {}
 </script>
 </body>

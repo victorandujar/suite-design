@@ -262,8 +262,8 @@ a.glass-sm:hover{
 .grid{display:grid;gap:20px}
 </style>
 </helmet>
-<div class="atmos" style="width:1440px;min-height:2340px;position:relative">
-  <div class="shell" style="min-height:2340px">
+<div class="atmos" style="width:1440px;min-height:2470px;position:relative">
+  <div class="shell" style="min-height:2470px">
     <aside class="side">
 
 <div class="brand">
@@ -525,9 +525,9 @@ a.glass-sm:hover{
   <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px">
     <div style="flex:1;min-width:0">
       <div style="display:flex;align-items:center;gap:9px"><span class="band">What the combination produces</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span></div>
-      <h2 class="t-sec" style="margin-top:9px">What each case invests, and what it returns</h2>
+      <h2 class="t-sec" style="margin-top:9px">Investment against value</h2>
       <p class="t-meta" style="margin-top:7px;font-size:12px;line-height:1.6;max-width:96ch">
-        Both bars are euros on the same scale. Cost comes from StoreBrid, value from ReveNew — neither product can draw this alone.
+        Cost from StoreBrid, value from ReveNew. The dashed line is the rate the current analysis returns today — above it, capital works harder; below it, the extra euro buys less.
       </p>
     </div>
     <div style="display:flex;gap:30px;flex:none">
@@ -547,66 +547,51 @@ a.glass-sm:hover{
     </div>
   </div>
   <div style="margin-top:18px">
-<svg viewBox="0 0 1240 268" width="100%" style="display:block" role="img" aria-label="CAPEX and NPV for each analysis case">
-  <style>.mk{transition:opacity .12s} .mk:hover{opacity:.82}</style>
-  
-    <line x1="479.8" y1="22" x2="479.8" y2="260" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
-    <text x="479.8" y="16" text-anchor="middle" font-size="9.5" fill="#5F6C82">€20M</text>
-    <line x1="791.6" y1="22" x2="791.6" y2="260" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
-    <text x="791.6" y="16" text-anchor="middle" font-size="9.5" fill="#5F6C82">€40M</text>
-  <line x1="168" y1="22" x2="168" y2="260" stroke="rgba(30,58,138,.18)" stroke-width="1"/>
-  
-    <text x="152" y="51" text-anchor="end" font-size="12" font-weight="600" fill="#0F172A">Base case</text>
-    <text x="152" y="67" text-anchor="end" font-size="9.5" fill="#5F6C82">current analysis</text>
-
-    <path class="mk" d="M168 54L168 37Q168 34 171 34L821.3154301319983 34Q824.3154301319983 34 824.3154301319983 37L824.3154301319983 54Z" fill="#2563EB" fill-opacity=".55">
-      <title>Base case — €42.1M invested</title></path>
-    <text x="834.3" y="49" font-size="11" font-weight="600" fill="#5F6C82">€42.1M invested</text>
-
-    <path class="mk" d="M168 80L168 63Q168 60 171 60L294.6986053956515 60Q297.6986053956515 60 297.6986053956515 63L297.6986053956515 80Z" fill="#AF47B2" fill-opacity=".8">
-      <title>Base case — €8.3M of value created</title></path>
-    <text x="307.7" y="75" font-size="11.5" font-weight="700" fill="#0F172A">€8.3M returned</text>
-
-    <text x="1226" y="54" text-anchor="end" font-size="17" font-weight="700" fill="#0F172A">€0.20</text>
-    <text x="1226" y="70" text-anchor="end" font-size="9.5" fill="#5F6C82">of NPV per € invested</text>
-    <text x="152" y="129" text-anchor="end" font-size="12" font-weight="600" fill="#0F172A">High storage</text>
-    <text x="152" y="145" text-anchor="end" font-size="9.5" fill="#5F6C82">4 h variant</text>
-
-    <path class="mk" d="M168 132L168 115Q168 112 171 112L955.3846153846154 112Q958.3846153846154 112 958.3846153846154 115L958.3846153846154 132Z" fill="#2563EB" fill-opacity=".55">
-      <title>High storage — €50.7M invested</title></path>
-    <text x="968.4" y="127" font-size="11" font-weight="600" fill="#5F6C82">€50.7M invested</text>
-
-    <path class="mk" d="M168 158L168 141Q168 138 171 138L341.014190447809 138Q344.014190447809 138 344.014190447809 141L344.014190447809 158Z" fill="#AF47B2" fill-opacity=".8">
-      <title>High storage — €11.3M of value created</title></path>
-    <text x="354.0" y="153" font-size="11.5" font-weight="700" fill="#0F172A">€11.3M returned</text>
-
-    <text x="1226" y="132" text-anchor="end" font-size="17" font-weight="700" fill="#0F172A">€0.22</text>
-    <text x="1226" y="148" text-anchor="end" font-size="9.5" fill="#0E9469">per € — better than current</text>
-    <text x="152" y="207" text-anchor="end" font-size="12" font-weight="600" fill="#0F172A">Stress test</text>
-    <text x="152" y="223" text-anchor="end" font-size="9.5" fill="#5F6C82">outdated</text>
-
-    <path class="mk" d="M168 210L168 193Q168 190 171 190L955.3846153846154 190Q958.3846153846154 190 958.3846153846154 193L958.3846153846154 210Z" fill="#2563EB" fill-opacity=".28">
-      <title>Stress test — €50.7M invested</title></path>
-    <text x="968.4" y="205" font-size="11" font-weight="600" fill="#5F6C82">€50.7M invested</text>
-
-    <path class="mk" d="M168 236L168 219Q168 216 171 216L187.79175145787053 216Q190.79175145787053 216 190.79175145787053 219L190.79175145787053 236Z" fill="#AF47B2" fill-opacity=".3">
-      <title>Stress test — €1.5M of value created</title></path>
-    <text x="200.8" y="231" font-size="11.5" font-weight="700" fill="#5F6C82">€1.5M returned</text>
-
-    <text x="1226" y="210" text-anchor="end" font-size="17" font-weight="700" fill="#5F6C82">€0.03</text>
-    <text x="1226" y="226" text-anchor="end" font-size="9.5" fill="#9A6208">per € — worse than current</text>
+<svg viewBox="0 0 1240 396" width="100%" style="display:block" role="img"
+  aria-label="CAPEX against NPV for each analysis case, with a reference line at the current case's return per euro invested">
+  <style>.mk{transition:opacity .12s} .mk:hover{opacity:.82}</style><line x1="62.0" y1="26" x2="62.0" y2="344" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
+     <text x="62.0" y="361" text-anchor="middle" font-size="9.5" fill="#5F6C82">€0M</text><line x1="377.6" y1="26" x2="377.6" y2="344" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
+     <text x="377.6" y="361" text-anchor="middle" font-size="9.5" fill="#5F6C82">€20M</text><line x1="693.2" y1="26" x2="693.2" y2="344" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
+     <text x="693.2" y="361" text-anchor="middle" font-size="9.5" fill="#5F6C82">€40M</text><line x1="62" y1="344.0" x2="990" y2="344.0" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
+     <text x="53" y="347.4" text-anchor="end" font-size="9.5" fill="#5F6C82">€0M</text><line x1="62" y1="228.6" x2="990" y2="228.6" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
+     <text x="53" y="232.0" text-anchor="end" font-size="9.5" fill="#5F6C82">€5M</text><line x1="62" y1="113.1" x2="990" y2="113.1" stroke="rgba(30,58,138,.07)" stroke-width="1"/>
+     <text x="53" y="116.5" text-anchor="end" font-size="9.5" fill="#5F6C82">€10M</text>
+    <line x1="62" y1="344" x2="990.0" y2="75.7"
+      stroke="#0E9DA8" stroke-width="1.5" stroke-dasharray="5 4" opacity=".7"/>
+    <text x="451.8" y="248.3"
+      font-size="10" font-weight="600" fill="var(--su700)">€0.20 of NPV per € — the current rate</text>
+    <circle cx="726.3" cy="151.9" r="17.0" fill="none" stroke="#0E9DA8" stroke-width="1.6" stroke-dasharray="3 3"/>
+    <circle class="mk" cx="726.3" cy="151.9" r="11.0"
+      fill="#0E9DA8" fill-opacity=".3" stroke="#fff" stroke-width="2.2">
+      <title>Base case — €42.1M CAPEX · €8.3M NPV · 12.8% IRR · €8.42M revenue</title></circle>
+    <text x="747.3" y="149.9" font-size="11.5" font-weight="600" fill="#0F172A">Base case</text>
+    <text x="747.3" y="164.9" font-size="10" fill="#5F6C82">€0.20 per € invested</text>
+    
+    <circle class="mk" cx="862.0" cy="83.3" r="19.0"
+      fill="#6D5AC6" fill-opacity=".62" stroke="#fff" stroke-width="2.2">
+      <title>High storage — €50.7M CAPEX · €11.3M NPV · 13.2% IRR · €10.35M revenue</title></circle>
+    <text x="891.0" y="81.3" font-size="11.5" font-weight="600" fill="#0F172A">High storage</text>
+    <text x="891.0" y="96.3" font-size="10" fill="#5F6C82">€0.22 per € invested · above today's rate</text>
+    
+    <circle class="mk" cx="862.0" cy="310.2" r="19.0"
+      fill="#8496AD" fill-opacity=".24" stroke="#fff" stroke-width="2.2">
+      <title>Stress test — €50.7M CAPEX · €1.5M NPV · 10.0% IRR · €8.50M revenue · outdated</title></circle>
+    <text x="891.0" y="308.2" font-size="11.5" font-weight="600" fill="#0F172A">Stress test</text>
+    <text x="891.0" y="323.2" font-size="10" fill="#5F6C82">€0.03 per € invested · outdated</text>
+  <text x="62" y="388" font-size="10.5" fill="#5F6C82">CAPEX — what it costs to build · StoreBrid</text>
+  <text transform="translate(15,185) rotate(-90)" text-anchor="middle" font-size="10.5" fill="#5F6C82">NPV over 15 years · ReveNew</text>
 </svg></div>
   <div style="display:flex;align-items:center;gap:18px;padding-top:12px;border-top:1px solid var(--hair);flex-wrap:wrap">
     <span style="display:inline-flex;align-items:center;gap:7px">
-      <span style="width:14px;height:9px;border-radius:2px;background:#2563EB;opacity:.55;display:block"></span>
-      <span class="t-meta">CAPEX — what it costs to build</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
+      <span style="width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 0 0 1.6px #0E9DA8;display:block"></span>
+      <span class="t-meta">Current analysis</span>
     </span>
     <span style="display:inline-flex;align-items:center;gap:7px">
-      <span style="width:14px;height:9px;border-radius:2px;background:#AF47B2;opacity:.8;display:block"></span>
-      <span class="t-meta">NPV — value created over 15 years</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
+      <svg width="26" height="10" aria-hidden="true"><circle cx="6" cy="5" r="4" fill="#6D5AC6" fill-opacity=".62"/><circle cx="19" cy="5" r="6" fill="#6D5AC6" fill-opacity=".62"/></svg>
+      <span class="t-meta">Point size = storage capacity</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
     </span>
     <span style="flex:1"></span>
-    <span class="t-meta">The right-hand figure divides one by the other</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
+    <span class="t-meta">Position against the dashed line is the reading</span><span class="src"><span class="pair"><i style="background:#2563EB"></i><i style="background:#AF47B2"></i></span>Combined</span>
   </div>
 </section>
 
@@ -793,7 +778,7 @@ a.glass-sm:hover{
   
 </div>
 </x-dc>
-<script data-dc-script data-props='{"$preview":{"width":1440,"height":2340}}'>
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":2470}}'>
 class Component extends DCLogic {}
 </script>
 </body>
