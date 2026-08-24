@@ -6,6 +6,7 @@
   "description": "Prototipo de diseño de la Suite Sunveon (StoreBrid + ReveNew)",
   "scripts": {
     "build": "node build-site.mjs",
+    "check": "node build-site.mjs && node check-links.mjs",
     "dev": "node build-site.mjs && npx --yes serve public"
   }
 }
