@@ -66,12 +66,33 @@ editas navegación dentro de ellos, la pierdes en la siguiente regeneración.
 | `PREFIX` | Filas cuyo texto arrastra cifras («High spread €138.0/MWh…») |
 | `EXTERNAL` | Sale hacia StoreBrid o ReveNew: se marca, no navega |
 
+Dos detalles del resolvedor que hay que conocer antes de tocar un diálogo:
+
+- **Una clave de `OVERRIDE` terminada en `*` coincide por prefijo, y sólo en esa
+  pantalla.** Hace falta justo donde un texto lleva a una pantalla desde fuera y
+  significa otra cosa dentro de ella: «Base case 2027 — 4 h duration» abre el
+  selector desde Overview, pero dentro del selector es la opción que se elige.
+  Se prueban de más larga a más corta. Apuntar el prefijo a la propia pantalla es
+  la forma de dejar un elemento inerte a pesar de `NAV` o `PREFIX`.
+- **Un botón de sólo icono se resuelve por su `aria-label`.** Es lo que hace que
+  el aspa de cerrar tenga destino. Sin una entrada `"Close"` en el `OVERRIDE` de
+  la pantalla, un diálogo es un callejón sin salida: lo único clicable queda
+  detrás del desenfoque y no parece pulsable.
+
 ## Decisiones de diseño que hay que respetar
 
 **Las salidas a StoreBrid y ReveNew no llevan a ninguna pantalla.** Son ~59
 elementos marcados con contorno discontinuo y un tooltip. Es el principio central
 del diseño: la Suite enlaza fuera en vez de duplicar el producto dueño del dato.
 No inventes esas pantallas.
+
+**Todo lo que se abre encima de una pantalla es el mismo diálogo centrado.**
+`capabilityModal` es el único contenedor: selectores, detalle de sólo lectura,
+formularios y el panel de atención. No vuelvas a introducir cajones laterales —
+una columna de 520px al lado de una página de 1440 obliga a apilar contenido que
+cabe de lado, y empuja contra el borde justo lo que hay que leer. El ancho se
+elige por contenido; el diálogo va anclado arriba, no al 50%, porque en un
+artboard de 2.400px el 50% queda fuera de la vista al abrir la pantalla.
 
 **Lo que no navega se queda inerte a propósito.** Pestañas, filtros, paginación y
 campos de formulario no responden porque no hay estado en la página. Simularlo

@@ -33,9 +33,25 @@ const stats = { wired: 0, external: 0, inert: 0 };
 
 function wireBody(body, screen, valid) {
   const over = OVERRIDE[screen] || {};
+  /* Claves de OVERRIDE terminadas en `*`: coinciden por prefijo y sólo en
+     esta pantalla. Hacen falta porque el mismo texto significa cosas
+     distintas justo en la pantalla a la que ese texto lleva desde fuera:
+     «Base case 2027 — 4 h duration» abre el selector desde Overview, pero
+     dentro del selector es la opción que se elige. Se prueban de más
+     larga a más corta para que un prefijo no se coma a otro. */
+  const overPre = Object.entries(over)
+    .filter(([k]) => k.endsWith("*"))
+    .map(([k, v]) => [k.slice(0, -1), v])
+    .sort((a, b) => b[0].length - a[0].length);
+
   return body.replace(/<(a|button)\b([^>]*)>([\s\S]*?)<\/\1>/g, (all, tag, attrs, inner) => {
-    const key = label(inner);
-    const target = over[key] ?? NAV[key] ??
+    /* Un botón cuyo contenido es sólo un icono no deja texto con el que
+       resolverlo; su aria-label es entonces la etiqueta. Sin esto, cada
+       aspa de cerrar del prototipo es un callejón sin salida. */
+    const key = label(inner) || (attrs.match(/aria-label="([^"]*)"/) || [])[1] || "";
+    const target = over[key] ??
+      (overPre.find(([p]) => key.startsWith(p)) || [])[1] ??
+      NAV[key] ??
       (PREFIX.find(([p]) => key.startsWith(p)) || [])[1];
 
     if (target && valid.has(target) && target !== screen) {

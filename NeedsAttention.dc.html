@@ -810,17 +810,21 @@ a.glass-sm:hover{
 
 <div style="position:absolute;inset:0;z-index:10;backdrop-filter:blur(9px) saturate(.92);-webkit-backdrop-filter:blur(9px) saturate(.92);
      background:linear-gradient(168deg,rgba(236,245,247,.5),rgba(238,244,248,.46))"></div>
-<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:auto;width:520px;z-index:11;overflow:hidden;
-       display:flex;flex-direction:column">
+
+<div class="raise" style="position:absolute;left:50%;top:96px;transform:translateX(-50%);width:860px;z-index:11;overflow:hidden">
   <span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
-        background:linear-gradient(90deg,rgba(245,158,11,0),rgba(245,158,11,.8) 18%,rgba(245,158,11,.8) 82%,rgba(245,158,11,0))"></span>
-  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
+        background:linear-gradient(90deg,#9A620800,#9A6208cc 18%,#9A6208cc 82%,#9A620800)"></span>
+  <div style="display:flex;align-items:center;gap:16px;padding:17px 22px;border-bottom:1px solid var(--hair)">
     <div style="flex:1;min-width:0">
       <div class="t-card" style="font-size:16px">Needs attention</div>
-      <div class="t-meta" style="margin-top:5px">Conditions that require action across your portfolio.</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
+        <span class="t-meta">Conditions that require action across your portfolio.</span>
+      </div>
     </div>
+    
     <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5.4 5.4l9.2 9.2M14.6 5.4l-9.2 9.2"/></svg></button>
   </div>
+  
   <div style="padding:13px 22px;border-bottom:1px solid var(--hair);display:flex;align-items:center;gap:10px">
     <span style="color:#9A6208;display:flex;flex:none"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
     <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
@@ -903,12 +907,14 @@ a.glass-sm:hover{
       <i style="width:6px;height:6px;border-radius:50%;background:#2563EB;display:block"></i>Recalculate in StoreBrid<svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
   </div>
 </div></div>
-  <div style="padding:15px 22px;border-top:1px solid var(--hair);display:flex;align-items:center;gap:12px">
-    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">
-      Nothing is dismissed here. A case leaves this list when both sides are back in step.
-    </span>
+  
+  <div style="display:flex;align-items:center;gap:14px;padding:16px 22px;border-top:1px solid var(--hair)">
+    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">Nothing is dismissed here. A case leaves this list when both sides are back in step.</span>
+    
+    
+    
   </div>
-</aside>
+</div>
 </div>
 </x-dc>
 <script data-dc-script data-props='{"$preview":{"width":1440,"height":2040}}'>

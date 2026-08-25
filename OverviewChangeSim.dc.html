@@ -808,85 +808,86 @@ a.glass-sm:hover{
 
 <div style="position:absolute;inset:0;z-index:10;backdrop-filter:blur(9px) saturate(.92);-webkit-backdrop-filter:blur(9px) saturate(.92);
      background:linear-gradient(168deg,rgba(236,245,247,.5),rgba(238,244,248,.46))"></div>
-<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:20px;width:520px;z-index:11;overflow:hidden;display:flex;flex-direction:column">
+
+<div class="raise" style="position:absolute;left:50%;top:96px;transform:translateX(-50%);width:940px;z-index:11;overflow:hidden">
   <span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
         background:linear-gradient(90deg,#2563EB00,#2563EBcc 18%,#2563EBcc 82%,#2563EB00)"></span>
-  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
+  <div style="display:flex;align-items:center;gap:16px;padding:17px 22px;border-bottom:1px solid var(--hair)">
     <div style="flex:1;min-width:0">
       <div class="t-card" style="font-size:16px">Change technical simulation</div>
       <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
         <span class="t-meta">Base case · Valencia BESS</span><span class="src"><i style="background:#2563EB"></i>StoreBrid</span>
       </div>
     </div>
+    
     <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5.4 5.4l9.2 9.2M14.6 5.4l-9.2 9.2"/></svg></button>
   </div>
-  <div style="flex:1;min-width:0;padding:16px 20px;overflow:hidden">
-    
-      <a href="#" class="glass-sm" style="display:block;padding:15px 17px;margin-bottom:10px;text-decoration:none;
-         box-shadow:0 0 0 1px rgba(14,157,168,.3), var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.92)">
-        <span style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:13.5px;font-weight:600;color:var(--s900)">Base case 2027</span>
-          <span class="cov"><i style="background:#0E9DA8"></i>In use</span>
-          <span style="flex:1"></span>
-          <span class="t-meta">StoreBrid · 2h ago</span>
+  
+    <div style="display:flex;gap:14px;padding:20px 22px">
+      
+      <a href="#" class="glass-sm" style="flex:1;min-width:0;display:block;padding:16px 18px;text-decoration:none;
+         box-shadow:0 0 0 1.5px #2563EB59, var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.92)">
+        <span style="display:flex;align-items:flex-start;gap:9px;min-height:38px">
+          <span style="flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--s900);line-height:1.35">Base case 2027</span>
+          <span class="cov" style="flex:none"><i style="background:#0E9DA8"></i>In use</span>
         </span>
-        <span class="t-meta" style="display:block;margin-top:5px">100 MW / 200 MWh · 2.0 h · 88% RTE</span>
-        <span style="display:flex;gap:22px;margin-top:11px;padding-top:11px;border-top:1px solid var(--hair)">
-          <span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">65.2 GWh</span>
-            <span class="t-meta" style="display:block;margin-top:2px">discharged</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">326</span>
-            <span class="t-meta" style="display:block;margin-top:2px">cycles/yr</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€42.1M</span>
-            <span class="t-meta" style="display:block;margin-top:2px">CAPEX</span></span>
+        <span class="t-meta" style="display:block;margin-top:6px">100 MW / 200 MWh · 2.0 h · 88% RTE</span>
+        <span class="t-meta" style="display:block;margin-top:3px">StoreBrid · 2h ago</span>
+        <span style="display:block;margin-top:13px;padding-top:12px;border-top:1px solid var(--hair)">
+          <span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+            <span class="t-meta">discharged</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">65.2 GWh</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">cycles/yr</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">326</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">CAPEX</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€42.1M</span></span>
         </span>
       </a>
-      <a href="#" class="wash" style="display:block;padding:15px 17px;margin-bottom:10px;text-decoration:none;
+      <a href="#" class="wash" style="flex:1;min-width:0;display:block;padding:16px 18px;text-decoration:none;
          ">
-        <span style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:13.5px;font-weight:600;color:var(--s900)">Base case 2027 — 4 h duration</span>
+        <span style="display:flex;align-items:flex-start;gap:9px;min-height:38px">
+          <span style="flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--s900);line-height:1.35">Base case 2027 — 4 h duration</span>
           
-          <span style="flex:1"></span>
-          <span class="t-meta">StoreBrid · 1d ago</span>
         </span>
-        <span class="t-meta" style="display:block;margin-top:5px">100 MW / 400 MWh · 4.0 h · 88% RTE</span>
-        <span style="display:flex;gap:22px;margin-top:11px;padding-top:11px;border-top:1px solid var(--hair)">
-          <span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">92.4 GWh</span>
-            <span class="t-meta" style="display:block;margin-top:2px">discharged</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">231</span>
-            <span class="t-meta" style="display:block;margin-top:2px">cycles/yr</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€50.7M</span>
-            <span class="t-meta" style="display:block;margin-top:2px">CAPEX</span></span>
+        <span class="t-meta" style="display:block;margin-top:6px">100 MW / 400 MWh · 4.0 h · 88% RTE</span>
+        <span class="t-meta" style="display:block;margin-top:3px">StoreBrid · 1d ago</span>
+        <span style="display:block;margin-top:13px;padding-top:12px;border-top:1px solid var(--hair)">
+          <span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+            <span class="t-meta">discharged</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">92.4 GWh</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">cycles/yr</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">231</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">CAPEX</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€50.7M</span></span>
         </span>
       </a>
-      <a href="#" class="wash" style="display:block;padding:15px 17px;margin-bottom:10px;text-decoration:none;
+      <a href="#" class="wash" style="flex:1;min-width:0;display:block;padding:16px 18px;text-decoration:none;
          ">
-        <span style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:13.5px;font-weight:600;color:var(--s900)">Base case 2027 — 85% round-trip</span>
+        <span style="display:flex;align-items:flex-start;gap:9px;min-height:38px">
+          <span style="flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--s900);line-height:1.35">Base case 2027 — 85% round-trip</span>
           
-          <span style="flex:1"></span>
-          <span class="t-meta">StoreBrid · 3d ago</span>
         </span>
-        <span class="t-meta" style="display:block;margin-top:5px">100 MW / 200 MWh · 2.0 h · 85% RTE</span>
-        <span style="display:flex;gap:22px;margin-top:11px;padding-top:11px;border-top:1px solid var(--hair)">
-          <span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">63.6 GWh</span>
-            <span class="t-meta" style="display:block;margin-top:2px">discharged</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">318</span>
-            <span class="t-meta" style="display:block;margin-top:2px">cycles/yr</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€41.2M</span>
-            <span class="t-meta" style="display:block;margin-top:2px">CAPEX</span></span>
+        <span class="t-meta" style="display:block;margin-top:6px">100 MW / 200 MWh · 2.0 h · 85% RTE</span>
+        <span class="t-meta" style="display:block;margin-top:3px">StoreBrid · 3d ago</span>
+        <span style="display:block;margin-top:13px;padding-top:12px;border-top:1px solid var(--hair)">
+          <span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+            <span class="t-meta">discharged</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">63.6 GWh</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">cycles/yr</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">318</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">CAPEX</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€41.2M</span></span>
         </span>
       </a>
-  </div>
-  <div style="display:flex;align-items:center;gap:12px;padding:16px 22px;border-top:1px solid var(--hair)">
-    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">
-      Creating or editing a simulation happens in StoreBrid.
-    </span>
+    </div>
+  
+  <div style="display:flex;align-items:center;gap:14px;padding:16px 22px;border-top:1px solid var(--hair)">
+    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">Creating or editing a simulation happens in StoreBrid.</span>
     <button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:#2563EB;display:block"></i>Open in StoreBrid<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
+    
+    
   </div>
-</aside>
+</div>
 </div>
 </x-dc>
 <script data-dc-script data-props='{"$preview":{"width":1440,"height":2670}}'>

@@ -522,132 +522,143 @@ a.glass-sm:hover{
 
 <div style="position:absolute;inset:0;z-index:10;backdrop-filter:blur(9px) saturate(.92);-webkit-backdrop-filter:blur(9px) saturate(.92);
      background:linear-gradient(168deg,rgba(236,245,247,.5),rgba(238,244,248,.46))"></div>
-<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:20px;width:520px;z-index:11;overflow:hidden;display:flex;flex-direction:column">
+
+<div class="raise" style="position:absolute;left:50%;top:96px;transform:translateX(-50%);width:980px;z-index:11;overflow:hidden">
   <span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
         background:linear-gradient(90deg,#AF47B200,#AF47B2cc 18%,#AF47B2cc 82%,#AF47B200)"></span>
-  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
+  <div style="display:flex;align-items:center;gap:16px;padding:17px 22px;border-bottom:1px solid var(--hair)">
     <div style="flex:1;min-width:0">
       <div class="t-card" style="font-size:16px">Financial details</div>
       <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
         <span class="t-meta">Base market · Valencia BESS</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
       </div>
     </div>
+    
     <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5.4 5.4l9.2 9.2M14.6 5.4l-9.2 9.2"/></svg></button>
   </div>
-  <div style="flex:1;min-width:0;padding:6px 22px 22px;overflow:hidden">
+  
+    <div style="padding:20px 22px">
+      <div style="display:flex;gap:14px;align-items:stretch">
+        
+<div class="wash" style="flex:1;min-width:0;padding:15px 17px">
+  <div class="band" style="font-size:10px">Forecast</div>
+  <div style="margin-top:11px">
     
-  <div style="padding:16px 0;border-top:1px solid var(--hair)">
-    <div class="band" style="font-size:10px">Forecast</div>
-    <div style="margin-top:10px">
-      
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Average price</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€71.4/MWh</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Volatility</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€41.4/MWh</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Market</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">OMIE — Spain</b>
-        </div>
-    </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;">
+        <span style="font-size:12px;color:var(--s500)">Average price</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">€71.4/MWh</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">Volatility</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">€41.4/MWh</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">Market</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">OMIE — Spain</b>
+      </div>
   </div>
+</div>
+        
+<div class="wash" style="flex:1;min-width:0;padding:15px 17px">
+  <div class="band" style="font-size:10px">Energy</div>
+  <div style="margin-top:11px">
     
-  <div style="padding:16px 0;border-top:1px solid var(--hair)">
-    <div class="band" style="font-size:10px">Energy</div>
-    <div style="margin-top:10px">
-      
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Annual production</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">65.2 GWh</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Full cycles</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">326</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Round-trip efficiency</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">88%</b>
-        </div>
-    </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;">
+        <span style="font-size:12px;color:var(--s500)">Annual production</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">65.2 GWh</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">Full cycles</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">326</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">Round-trip efficiency</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">88%</b>
+      </div>
   </div>
+</div>
+        
+<div class="wash" style="flex:1;min-width:0;padding:15px 17px">
+  <div class="band" style="font-size:10px">Revenue</div>
+  <div style="margin-top:11px">
     
-  <div style="padding:16px 0;border-top:1px solid var(--hair)">
-    <div class="band" style="font-size:10px">Revenue</div>
-    <div style="margin-top:10px">
-      
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Annual revenue</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€8.42M</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Capture price</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€118.4/MWh</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Capture rate</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">166%</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Contracted share</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">62%</b>
-        </div>
-    </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;">
+        <span style="font-size:12px;color:var(--s500)">Annual revenue</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">€8.42M</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">Capture price</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">€118.4/MWh</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">Capture rate</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">166%</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">Contracted share</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">62%</b>
+      </div>
   </div>
+</div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:stretch;margin-top:14px">
+        
+<div class="wash" style="flex:1;min-width:0;padding:15px 17px">
+  <div class="band" style="font-size:10px">Costs</div>
+  <div style="margin-top:11px">
     
-  <div style="padding:16px 0;border-top:1px solid var(--hair)">
-    <div class="band" style="font-size:10px">Costs</div>
-    <div style="margin-top:10px">
-      
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">DevEx</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€1.4M</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">CapEx</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€42.1M</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">OpEx</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€1.7M/yr</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">ReCapEx</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">not modelled</b>
-        </div>
-    </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;">
+        <span style="font-size:12px;color:var(--s500)">DevEx</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">€1.4M</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">CapEx</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">€42.1M</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">OpEx</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">€1.7M/yr</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">ReCapEx</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">not modelled</b>
+      </div>
   </div>
+</div>
+        
+<div class="wash" style="flex:1;min-width:0;padding:15px 17px">
+  <div class="band" style="font-size:10px">Financial model</div>
+  <div style="margin-top:11px">
     
-  <div style="padding:16px 0;border-top:1px solid var(--hair)">
-    <div class="band" style="font-size:10px">Financial model</div>
-    <div style="margin-top:10px">
-      
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">NPV</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€8.3M</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">IRR</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">12.8%</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Payback</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">6.3 years</b>
-        </div>
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">Cost of capital</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">9.5%</b>
-        </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;">
+        <span style="font-size:12px;color:var(--s500)">NPV</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">€8.3M</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">IRR</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">12.8%</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">Payback</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">6.3 years</b>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--hair)">
+        <span style="font-size:12px;color:var(--s500)">Cost of capital</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">9.5%</b>
+      </div>
+  </div>
+</div>
+        <div style="flex:1;min-width:0"></div>
+      </div>
     </div>
-  </div>
-  </div>
-  <div style="display:flex;align-items:center;gap:12px;padding:16px 22px;border-top:1px solid var(--hair)">
+  
+  <div style="display:flex;align-items:center;gap:14px;padding:16px 22px;border-top:1px solid var(--hair)">
     <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">Read-only. Every value is modelled in ReveNew.</span>
     <button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Open in ReveNew<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
+    
+    
   </div>
-</aside>
+</div>
 </div>
 </x-dc>
 <script data-dc-script data-props='{"$preview":{"width":1440,"height":1160}}'>

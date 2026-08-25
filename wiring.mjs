@@ -118,16 +118,43 @@ export const PREFIX = [
   ["Weakest",                         "CompareExplained"],
 ];
 
-/* Cuando la misma etiqueta significa cosas distintas según la pantalla. */
+/* Cuando la misma etiqueta significa cosas distintas según la pantalla.
+   Una clave terminada en `*` coincide por prefijo, y sólo en esa pantalla.
+
+   Todo lo que se abre encima de una pantalla —selectores, detalle, formularios—
+   cierra con un aspa. Ese botón no lleva texto, así que se resuelve por su
+   aria-label, «Close»: sin un destino aquí, la pantalla es un callejón sin
+   salida, porque lo único clicable queda detrás del desenfoque. */
 export const OVERRIDE = {
   // §12: el contador de Home y el indicador global abren el MISMO panel.
   Main:                { "View": "NeedsAttention" },
   // §15: al calcular una combinación pendiente, la celda pasa a estar disponible.
   CaseMatrixUnevaluated: { "Calculate": "CaseMatrix" },
   Analytics:             { "Open the widest in its case matrix": "CaseMatrixRobustness" },
-  // Desde el panel se entra al caso afectado, que es la pantalla stale.
-  NeedsAttention:      { "Review case": "OverviewStale", "Recalculate in ReveNew": "OverviewStale",
+  // Cerrar devuelve a la pantalla sobre la que se abrió el diálogo.
+  NeedsAttention:      { "Close": "Main", "Review case": "OverviewStale",
+                         "Recalculate in ReveNew": "OverviewStale",
                          "Recalculate in StoreBrid": "OverviewStale" },
+
+  /* Los tres selectores del picker: elegir uno lleva a la matriz, donde se ve
+     lo que ese emparejamiento produce. El que ya está en uso vuelve a Overview,
+     porque elegirlo no cambia nada. */
+  OverviewChangeSim: {
+    "Close": "ProjectOverview",
+    "Base case 2027 In use*": "ProjectOverview",
+    "Base case 2027 — 4 h duration*": "CaseMatrix",
+    "Base case 2027 — 85% round-trip*": "CaseMatrix",
+  },
+  OverviewChangeScenario: {
+    "Close": "ProjectOverview",
+    "Base market In use*": "ProjectOverview",
+    "High spread*": "CaseMatrix",
+    "Low spread*": "CaseMatrix",
+  },
+  OverviewTechnical:   { "Close": "ProjectOverview" },
+  FinancialDetails:    { "Close": "ProjectOverview" },
+  DecisionBrief:       { "Close": "CompareAlternatives", "Cancel": "CompareAlternatives" },
+
   // Flujo 5: el aviso de obsoleto lleva a la pantalla stale; desde ahí, recalcular
   // devuelve el resultado ya fresco.
   CompareAlternatives: { "Recalculate in ReveNew": "OverviewStale" },
@@ -135,15 +162,31 @@ export const OVERRIDE = {
   OverviewStale:       { "Recalculate in ReveNew": "ProjectOverview" },
 
   // El formulario enviado aterriza en el proyecto; cancelar vuelve atrás.
-  CreateProject:       { "Create project": "ProjectOverview", "Cancel": "Projects" },
+  CreateProject:       { "Close": "Projects", "Create project": "ProjectOverview", "Cancel": "Projects" },
   /* Crear un caso aterriza en la matriz con el caso ya guardado: el flujo
      tenía principio pero no final, y el final es la consecuencia visible. */
-  CreateAnalysisCase:  { "Cancel": "CaseMatrix", "Save": "CaseMatrix",
-                         "Create analysis case": "CaseCreated" },
-  CreateCaseUnpriced:  { "Cancel": "CaseMatrix", "Create analysis case": "CaseCreated" },
+  /* En el modal de creación los dos catálogos son una SELECCIÓN, no una
+     navegación: elegir una fila no debe abrir el selector antiguo al que
+     ese mismo texto lleva desde Overview. Apuntar el prefijo a la propia
+     pantalla las deja inertes, como las pestañas y los filtros. */
+  CreateAnalysisCase:  { "Close": "CaseMatrix", "Cancel": "CaseMatrix", "Save": "CaseMatrix",
+                         "Create analysis case": "CaseCreated",
+                         "Analysis cases": "CompareAlternatives",
+                         "Base case 2027*": "CreateAnalysisCase",
+                         "Base market*": "CreateAnalysisCase",
+                         "High spread*": "CreateAnalysisCase",
+                         "Low spread*": "CreateAnalysisCase" },
+  CreateCaseUnpriced:  { "Close": "CaseMatrix", "Cancel": "CaseMatrix",
+                         "Create analysis case": "CaseCreated",
+                         "Analysis cases": "CompareAlternatives",
+                         "Base case 2027*": "CreateCaseUnpriced",
+                         "Base market*": "CreateCaseUnpriced",
+                         "High spread*": "CreateCaseUnpriced",
+                         "Low spread*": "CreateCaseUnpriced" },
   CaseCreated:         { "Recalculate in ReveNew": "OverviewStale",
                          "Base 2 h + Base market": "ProjectOverview" },
-  EditProjectDetails:  { "Cancel": "ProjectOverview", "Save": "ProjectOverview" },
+  EditProjectDetails:  { "Close": "ProjectOverview", "Cancel": "ProjectOverview",
+                         "Save": "ProjectOverview", "Save changes": "ProjectOverview" },
   States:              { "Create project": "CreateProject" },
   ProjectNew:          { "Configure plant": "CreateProject", "Open StoreBrid": "ProjectStoreBrid",
                          "Open ReveNew": "ProjectReveNew" },

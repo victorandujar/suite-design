@@ -808,85 +808,86 @@ a.glass-sm:hover{
 
 <div style="position:absolute;inset:0;z-index:10;backdrop-filter:blur(9px) saturate(.92);-webkit-backdrop-filter:blur(9px) saturate(.92);
      background:linear-gradient(168deg,rgba(236,245,247,.5),rgba(238,244,248,.46))"></div>
-<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:20px;width:520px;z-index:11;overflow:hidden;display:flex;flex-direction:column">
+
+<div class="raise" style="position:absolute;left:50%;top:96px;transform:translateX(-50%);width:940px;z-index:11;overflow:hidden">
   <span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
         background:linear-gradient(90deg,#AF47B200,#AF47B2cc 18%,#AF47B2cc 82%,#AF47B200)"></span>
-  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
+  <div style="display:flex;align-items:center;gap:16px;padding:17px 22px;border-bottom:1px solid var(--hair)">
     <div style="flex:1;min-width:0">
       <div class="t-card" style="font-size:16px">Change financial case</div>
       <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
         <span class="t-meta">Base case · Valencia BESS</span><span class="src"><i style="background:#AF47B2"></i>ReveNew</span>
       </div>
     </div>
+    
     <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5.4 5.4l9.2 9.2M14.6 5.4l-9.2 9.2"/></svg></button>
   </div>
-  <div style="flex:1;min-width:0;padding:16px 20px;overflow:hidden">
-    
-      <a href="#" class="glass-sm" style="display:block;padding:15px 17px;margin-bottom:10px;text-decoration:none;
-         box-shadow:0 0 0 1px rgba(14,157,168,.3), var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.92)">
-        <span style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:13.5px;font-weight:600;color:var(--s900)">Base market</span>
-          <span class="cov"><i style="background:#0E9DA8"></i>In use</span>
-          <span style="flex:1"></span>
-          <span class="t-meta">ReveNew · updated 4h ago</span>
+  
+    <div style="display:flex;gap:14px;padding:20px 22px">
+      
+      <a href="#" class="glass-sm" style="flex:1;min-width:0;display:block;padding:16px 18px;text-decoration:none;
+         box-shadow:0 0 0 1.5px #AF47B259, var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.92)">
+        <span style="display:flex;align-items:flex-start;gap:9px;min-height:38px">
+          <span style="flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--s900);line-height:1.35">Base market</span>
+          <span class="cov" style="flex:none"><i style="background:#0E9DA8"></i>In use</span>
         </span>
-        <span class="t-meta" style="display:block;margin-top:5px">Capture €118.4/MWh · €8.42M/yr</span>
-        <span style="display:flex;gap:22px;margin-top:11px;padding-top:11px;border-top:1px solid var(--hair)">
-          <span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€8.3M</span>
-            <span class="t-meta" style="display:block;margin-top:2px">NPV</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">12.8%</span>
-            <span class="t-meta" style="display:block;margin-top:2px">IRR</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">6.3y</span>
-            <span class="t-meta" style="display:block;margin-top:2px">payback</span></span>
+        <span class="t-meta" style="display:block;margin-top:6px">Capture €118.4/MWh · €8.42M/yr</span>
+        <span class="t-meta" style="display:block;margin-top:3px">ReveNew · updated 4h ago</span>
+        <span style="display:block;margin-top:13px;padding-top:12px;border-top:1px solid var(--hair)">
+          <span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+            <span class="t-meta">NPV</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€8.3M</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">IRR</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">12.8%</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">payback</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">6.3y</span></span>
         </span>
       </a>
-      <a href="#" class="wash" style="display:block;padding:15px 17px;margin-bottom:10px;text-decoration:none;
+      <a href="#" class="wash" style="flex:1;min-width:0;display:block;padding:16px 18px;text-decoration:none;
          ">
-        <span style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:13.5px;font-weight:600;color:var(--s900)">High spread</span>
+        <span style="display:flex;align-items:flex-start;gap:9px;min-height:38px">
+          <span style="flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--s900);line-height:1.35">High spread</span>
           
-          <span style="flex:1"></span>
-          <span class="t-meta">ReveNew · updated 1d ago</span>
         </span>
-        <span class="t-meta" style="display:block;margin-top:5px">Capture €138.0/MWh · €9.80M/yr</span>
-        <span style="display:flex;gap:22px;margin-top:11px;padding-top:11px;border-top:1px solid var(--hair)">
-          <span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€9.9M</span>
-            <span class="t-meta" style="display:block;margin-top:2px">NPV</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">13.4%</span>
-            <span class="t-meta" style="display:block;margin-top:2px">IRR</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">6.1y</span>
-            <span class="t-meta" style="display:block;margin-top:2px">payback</span></span>
+        <span class="t-meta" style="display:block;margin-top:6px">Capture €138.0/MWh · €9.80M/yr</span>
+        <span class="t-meta" style="display:block;margin-top:3px">ReveNew · updated 1d ago</span>
+        <span style="display:block;margin-top:13px;padding-top:12px;border-top:1px solid var(--hair)">
+          <span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+            <span class="t-meta">NPV</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€9.9M</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">IRR</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">13.4%</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">payback</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">6.1y</span></span>
         </span>
       </a>
-      <a href="#" class="wash" style="display:block;padding:15px 17px;margin-bottom:10px;text-decoration:none;
+      <a href="#" class="wash" style="flex:1;min-width:0;display:block;padding:16px 18px;text-decoration:none;
          ">
-        <span style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:13.5px;font-weight:600;color:var(--s900)">Low spread</span>
+        <span style="display:flex;align-items:flex-start;gap:9px;min-height:38px">
+          <span style="flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--s900);line-height:1.35">Low spread</span>
           
-          <span style="flex:1"></span>
-          <span class="t-meta">ReveNew · updated 2w ago</span>
         </span>
-        <span class="t-meta" style="display:block;margin-top:5px">Capture €97.2/MWh · €6.91M/yr</span>
-        <span style="display:flex;gap:22px;margin-top:11px;padding-top:11px;border-top:1px solid var(--hair)">
-          <span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€0.2M</span>
-            <span class="t-meta" style="display:block;margin-top:2px">NPV</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">9.6%</span>
-            <span class="t-meta" style="display:block;margin-top:2px">IRR</span></span><span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">7.6y</span>
-            <span class="t-meta" style="display:block;margin-top:2px">payback</span></span>
+        <span class="t-meta" style="display:block;margin-top:6px">Capture €97.2/MWh · €6.91M/yr</span>
+        <span class="t-meta" style="display:block;margin-top:3px">ReveNew · updated 2w ago</span>
+        <span style="display:block;margin-top:13px;padding-top:12px;border-top:1px solid var(--hair)">
+          <span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+            <span class="t-meta">NPV</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">€0.2M</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">IRR</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">9.6%</span></span><span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:7px">
+            <span class="t-meta">payback</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">7.6y</span></span>
         </span>
       </a>
-  </div>
-  <div style="display:flex;align-items:center;gap:12px;padding:16px 22px;border-top:1px solid var(--hair)">
-    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">
-      Building or editing a financial case happens in ReveNew.
-    </span>
+    </div>
+  
+  <div style="display:flex;align-items:center;gap:14px;padding:16px 22px;border-top:1px solid var(--hair)">
+    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">Building or editing a financial case happens in ReveNew.</span>
     <button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Open in ReveNew<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
+    
+    
   </div>
-</aside>
+</div>
 </div>
 </x-dc>
 <script data-dc-script data-props='{"$preview":{"width":1440,"height":2670}}'>

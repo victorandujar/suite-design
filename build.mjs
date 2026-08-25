@@ -504,27 +504,50 @@ const scrim = () => `
 <div style="position:absolute;inset:0;z-index:10;backdrop-filter:blur(9px) saturate(.92);-webkit-backdrop-filter:blur(9px) saturate(.92);
      background:linear-gradient(168deg,rgba(236,245,247,.5),rgba(238,244,248,.46))"></div>`;
 
-const capabilityModal = ({ title, context, accent, source, openIn, width, body, footNote, cancel, confirm }) => `
+/* ── The one dialog shell ────────────────────────────────────────
+   Everything that opens over a screen uses this: pickers, read-only
+   detail, forms, the attention panel. It used to be split in two —
+   this centred shell for the things that create something, and a
+   tall right-hand drawer for everything else — and the drawer was
+   the worse half of the split. A 520px column beside a 1440px page
+   forces long content into a scroll nobody can see the end of, and
+   it pushes the thing you are meant to be reading against the edge
+   of the screen while the page it belongs to fills the middle.
+
+   One geometry now, centred, sized to its content. Wide content
+   (detail groups, charts) gets to be wide instead of stacking.
+
+   `openIn`, `footNote`, `cancel`, `confirm` and `foot` are all
+   optional, so a read-only panel is the same shell with an empty
+   footer rather than a different component.                        */
+const capabilityModal = ({ title, context, accent, source, openIn, width, body,
+                           footNote, cancel, confirm, foot }) => `
 ${scrim()}
-<div class="raise" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:${width}px;z-index:11;overflow:hidden">
-  <span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
-        background:linear-gradient(90deg,${accent}00,${accent}cc 18%,${accent}cc 82%,${accent}00)"></span>
+${/* Centrado horizontal, anclado arriba. En la app real esto iría fijo al
+     viewport; aquí el artboard ES la página, y una página de 2.400px con el
+     diálogo al 50% lo deja a 1.200px de altura — invisible al abrir la
+     pantalla, que es exactamente lo que no puede pasarle a un diálogo. */""}
+<div class="raise" style="position:absolute;left:50%;top:96px;transform:translateX(-50%);width:${width}px;z-index:11;overflow:hidden">
+  ${accent ? `<span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
+        background:linear-gradient(90deg,${accent}00,${accent}cc 18%,${accent}cc 82%,${accent}00)"></span>` : ""}
   <div style="display:flex;align-items:center;gap:16px;padding:17px 22px;border-bottom:1px solid var(--hair)">
     <div style="flex:1;min-width:0">
       <div class="t-card" style="font-size:16px">${title}</div>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
-        <span class="t-meta">${context}</span>${source}
-      </div>
+      ${context ? `<div style="display:flex;align-items:center;gap:10px;margin-top:5px">
+        <span class="t-meta">${context}</span>${source || ""}
+      </div>` : ""}
     </div>
-    <button class="btn btn-secondary" style="height:34px">${openIn}${ic("upRight", 14, 1.8)}</button>
+    ${openIn ? `<button class="btn btn-secondary" style="height:34px">${openIn}${ic("upRight", 14, 1.8)}</button>` : ""}
     <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close">${closeX()}</button>
   </div>
   ${body}
+  ${footNote || cancel || confirm || foot ? `
   <div style="display:flex;align-items:center;gap:14px;padding:16px 22px;border-top:1px solid var(--hair)">
-    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">${footNote}</span>
-    <button class="btn btn-secondary">${cancel}</button>
-    <button class="btn btn-primary">${ic("check", 16, 1.9)}${confirm}</button>
-  </div>
+    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">${footNote || ""}</span>
+    ${foot || ""}
+    ${cancel ? `<button class="btn btn-secondary">${cancel}</button>` : ""}
+    ${confirm ? `<button class="btn btn-primary">${ic("check", 16, 1.9)}${confirm}</button>` : ""}
+  </div>` : ""}
 </div>`;
 
 const forecastModal = () => capabilityModal({
@@ -1416,32 +1439,20 @@ const attnRow = (x, last) => `
   </div>
 </div>`;
 
-const attnPanel = () => `
-${scrim()}
-<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:auto;width:520px;z-index:11;overflow:hidden;
-       display:flex;flex-direction:column">
-  <span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
-        background:linear-gradient(90deg,rgba(${WARN.tint},0),rgba(${WARN.tint},.8) 18%,rgba(${WARN.tint},.8) 82%,rgba(${WARN.tint},0))"></span>
-  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
-    <div style="flex:1;min-width:0">
-      <div class="t-card" style="font-size:16px">Needs attention</div>
-      <div class="t-meta" style="margin-top:5px">Conditions that require action across your portfolio.</div>
-    </div>
-    <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close">${closeX()}</button>
-  </div>
+const attnPanel = () => capabilityModal({
+  title: "Needs attention",
+  context: "Conditions that require action across your portfolio.",
+  accent: WARN.ink, width: 860,
+  footNote: "Nothing is dismissed here. A case leaves this list when both sides are back in step.",
+  body: `
   <div style="padding:13px 22px;border-bottom:1px solid var(--hair);display:flex;align-items:center;gap:10px">
     <span style="color:${WARN.ink};display:flex;flex:none">${ic("alert", 15)}</span>
     <span style="flex:1;min-width:0;font-size:12.5px;color:var(--s700);line-height:1.5">
       ${ATTN.length} analysis cases pair a result with data that has moved on since it was calculated.
     </span>
   </div>
-  <div>${ATTN.map((x, i) => attnRow(x, i === ATTN.length - 1)).join("")}</div>
-  <div style="padding:15px 22px;border-top:1px solid var(--hair);display:flex;align-items:center;gap:12px">
-    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">
-      Nothing is dismissed here. A case leaves this list when both sides are back in step.
-    </span>
-  </div>
-</aside>`;
+  <div>${ATTN.map((x, i) => attnRow(x, i === ATTN.length - 1)).join("")}</div>`,
+});
 
 writeFileSync("NeedsAttention.dc.html", doc({ ...HOMEB, side: rootSide("attn"), body: homeBody(), overlay: attnPanel() }));
 console.log("NeedsAttention.dc.html");
@@ -2063,91 +2074,75 @@ const pickDrawer = ({ kind }) => {
           figs: [[eurMs(npvOfCase(c)), "NPV"], [c.irr.toFixed(1) + "%", "IRR"], [paybackOfCase(c).toFixed(1) + "y", "payback"]],
           when: "ReveNew · " + sc.when.toLowerCase() };
       });
-  return `
-${scrim()}
-<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:20px;width:520px;z-index:11;overflow:hidden;display:flex;flex-direction:column">
-  <span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
-        background:linear-gradient(90deg,${tech ? SB : RN}00,${tech ? SB : RN}cc 18%,${tech ? SB : RN}cc 82%,${tech ? SB : RN}00)"></span>
-  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
-    <div style="flex:1;min-width:0">
-      <div class="t-card" style="font-size:16px">${tech ? "Change technical simulation" : "Change financial case"}</div>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
-        <span class="t-meta">Base case · Valencia BESS</span>${src(tech ? "storebrid" : "revenew")}
-      </div>
-    </div>
-    <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close">${closeX()}</button>
-  </div>
-  <div style="flex:1;min-width:0;padding:16px 20px;overflow:hidden">
-    ${items.map((it) => `
-      <a href="#" class="${it.on ? "glass-sm" : "wash"}" style="display:block;padding:15px 17px;margin-bottom:10px;text-decoration:none;
-         ${it.on ? "box-shadow:0 0 0 1px rgba(14,157,168,.3), var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.92)" : ""}">
-        <span style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:13.5px;font-weight:600;color:var(--s900)">${it.name}</span>
-          ${it.on ? `<span class="cov"><i style="background:${SU}"></i>In use</span>` : ""}
-          <span style="flex:1"></span>
-          <span class="t-meta">${it.when}</span>
+  /* Three options side by side rather than stacked: the choice is a
+     comparison, and a comparison wants the candidates on one line.
+     The drawer could only ever show them one under another. */
+  return capabilityModal({
+    title: tech ? "Change technical simulation" : "Change financial case",
+    context: "Base case · Valencia BESS", source: src(tech ? "storebrid" : "revenew"),
+    accent: tech ? SB : RN, width: 940,
+    footNote: tech ? "Creating or editing a simulation happens in StoreBrid."
+                   : "Building or editing a financial case happens in ReveNew.",
+    foot: `<button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:${tech ? SB : RN};display:block"></i>Open in ${tech ? "StoreBrid" : "ReveNew"}${ic("upRight", 14, 1.8)}</button>`,
+    body: `
+    <div style="display:flex;gap:14px;padding:20px 22px">
+      ${items.map((it) => `
+      <a href="#" class="${it.on ? "glass-sm" : "wash"}" style="flex:1;min-width:0;display:block;padding:16px 18px;text-decoration:none;
+         ${it.on ? `box-shadow:0 0 0 1.5px ${tech ? SB : RN}59, var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.92)` : ""}">
+        <span style="display:flex;align-items:flex-start;gap:9px;min-height:38px">
+          <span style="flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--s900);line-height:1.35">${it.name}</span>
+          ${it.on ? `<span class="cov" style="flex:none"><i style="background:${SU}"></i>In use</span>` : ""}
         </span>
-        <span class="t-meta" style="display:block;margin-top:5px">${it.meta}</span>
-        <span style="display:flex;gap:22px;margin-top:11px;padding-top:11px;border-top:1px solid var(--hair)">
-          ${it.figs.map(([v, k]) => `<span style="flex:1;min-width:0">
-            <span style="display:block;font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${v}</span>
-            <span class="t-meta" style="display:block;margin-top:2px">${k}</span></span>`).join("")}
+        <span class="t-meta" style="display:block;margin-top:6px">${it.meta}</span>
+        <span class="t-meta" style="display:block;margin-top:3px">${it.when}</span>
+        <span style="display:block;margin-top:13px;padding-top:12px;border-top:1px solid var(--hair)">
+          ${it.figs.map(([v, k], i) => `<span style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;${i ? "margin-top:7px" : ""}">
+            <span class="t-meta">${k}</span>
+            <span style="font-size:14px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${v}</span></span>`).join("")}
         </span>
       </a>`).join("")}
-  </div>
-  <div style="display:flex;align-items:center;gap:12px;padding:16px 22px;border-top:1px solid var(--hair)">
-    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">
-      ${tech ? "Creating or editing a simulation happens in StoreBrid." : "Building or editing a financial case happens in ReveNew."}
-    </span>
-    <button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:${tech ? SB : RN};display:block"></i>Open in ${tech ? "StoreBrid" : "ReveNew"}${ic("upRight", 14, 1.8)}</button>
-  </div>
-</aside>`;
+    </div>`,
+  });
 };
+
+/* Label/value groups. In the drawer these stacked into one long
+   column; centred, they sit side by side as cards, which is both
+   shorter and easier to scan across. */
+const detailGroup = (label, rows) => `
+<div class="wash" style="flex:1;min-width:0;padding:15px 17px">
+  <div class="band" style="font-size:10px">${label}</div>
+  <div style="margin-top:11px">
+    ${rows.map(([k, v], i) => `
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0;${i ? "border-top:1px solid var(--hair)" : ""}">
+        <span style="font-size:12px;color:var(--s500)">${k}</span>
+        <b style="font-size:13px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums;text-align:right">${v}</b>
+      </div>`).join("")}
+  </div>
+</div>`;
 
 /* the technical counterpart of the financial breakdown: StoreBrid's
    detail, one level down, read-only */
 const techDrawer = () => {
   const t = T("base2h");
-  const grp = (label, rows) => `
-  <div style="padding:16px 0;border-top:1px solid var(--hair)">
-    <div class="band" style="font-size:10px">${label}</div>
-    <div style="margin-top:10px">
-      ${rows.map(([k, v]) => `
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:7px 0">
-          <span style="font-size:12.5px;color:var(--s500)">${k}</span>
-          <b style="font-size:13.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${v}</b>
-        </div>`).join("")}
-    </div>
-  </div>`;
-  return `
-${scrim()}
-<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:20px;width:560px;z-index:11;overflow:hidden;display:flex;flex-direction:column">
-  <span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
-        background:linear-gradient(90deg,${SB}00,${SB}cc 18%,${SB}cc 82%,${SB}00)"></span>
-  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
-    <div style="flex:1;min-width:0">
-      <div class="t-card" style="font-size:16px">Technical details</div>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
-        <span class="t-meta">${t.name} · hourly · 15-year horizon</span>${src("storebrid")}
+  return capabilityModal({
+    title: "Technical details", context: `${t.name} · hourly · 15-year horizon`,
+    source: src("storebrid"), accent: SB, width: 940,
+    footNote: "Read-only. Daily graphs, heat maps and exports are in StoreBrid.",
+    foot: `<button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:${SB};display:block"></i>Open in StoreBrid${ic("upRight", 14, 1.8)}</button>`,
+    body: `
+    <div style="padding:20px 22px">
+      <div style="display:flex;gap:14px;align-items:stretch">
+        ${detailGroup("Configuration", [["Installed power", t.mw + " MW"], ["Storage capacity", t.mwh + " MWh"], ["Duration", t.dur.toFixed(1) + " h"],
+                                        ["Round-trip efficiency", t.rte + "%"], ["Max export power", t.mw + " MW"]])}
+        ${detailGroup("Operation", [["Energy discharged", t.gwh + " GWh/yr"], ["Full cycles", String(t.cycles)], ["Utilisation", t.util + "%"], ["Peak discharge", "70 MW"]])}
+        ${detailGroup("Degradation", [["Capacity at year 15", "73%"], ["Annual degradation", "2.1%/yr"], ["80% threshold", "year 10.5"]])}
       </div>
-    </div>
-    <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close">${closeX()}</button>
-  </div>
-  <div style="flex:1;min-width:0;padding:6px 22px 22px;overflow:hidden">
-    ${grp("Configuration", [["Installed power", t.mw + " MW"], ["Storage capacity", t.mwh + " MWh"], ["Duration", t.dur.toFixed(1) + " h"],
-                            ["Round-trip efficiency", t.rte + "%"], ["Max export power", t.mw + " MW"]])}
-    ${grp("Operation", [["Energy discharged", t.gwh + " GWh/yr"], ["Full cycles", String(t.cycles)], ["Utilisation", t.util + "%"], ["Peak discharge", "70 MW"]])}
-    ${grp("Degradation", [["Capacity at year 15", "73%"], ["Annual degradation", "2.1%/yr"], ["80% threshold", "year 10.5"]])}
-    <div style="padding:16px 0;border-top:1px solid var(--hair)">
-      <div class="band" style="font-size:10px">Power and state of charge</div>
-      <div style="margin-top:12px">${dispatchChart(500)}</div>
-    </div>
-  </div>
-  <div style="display:flex;align-items:center;gap:12px;padding:16px 22px;border-top:1px solid var(--hair)">
-    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">Read-only. Daily graphs, heat maps and exports are in StoreBrid.</span>
-    <button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:${SB};display:block"></i>Open in StoreBrid${ic("upRight", 14, 1.8)}</button>
-  </div>
-</aside>`;
+      <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--hair)">
+        <div class="band" style="font-size:10px">Power and state of charge</div>
+        <div style="margin-top:12px">${dispatchChart(880)}</div>
+      </div>
+    </div>`,
+  });
 };
 
 const field = (label, value, { unit, chev, help, req, placeholder } = {}) => `
@@ -2165,7 +2160,7 @@ const field = (label, value, { unit, chev, help, req, placeholder } = {}) => `
   <span style="display:block;font-size:11px;color:var(--s400);margin-top:7px;min-height:15px;line-height:1.4">${help || ""}</span>
 </div>`;
 
-function siteMap() {
+function siteMap({ lon = -5.9845, lat = 37.3891, name = "Sevilla" } = {}) {
   const X = (lon) => ((lon + 10) / 14) * 400;
   const Y = (lat) => ((44 - lat) / 8) * 300;
   const coast = [[-9.3,42.9],[-8.4,43.4],[-5.7,43.5],[-3.8,43.5],[-3.0,43.4],[-1.6,43.5],[3.0,42.7],
@@ -2175,9 +2170,9 @@ function siteMap() {
   const grat = [];
   for (let lo = -8; lo <= 2; lo += 2) grat.push(`<line x1="${X(lo).toFixed(1)}" y1="0" x2="${X(lo).toFixed(1)}" y2="300" stroke="rgba(14,157,168,.13)" stroke-width="1"/>`);
   for (let la = 38; la <= 43; la += 2) grat.push(`<line x1="0" y1="${Y(la).toFixed(1)}" x2="400" y2="${Y(la).toFixed(1)}" stroke="rgba(14,157,168,.13)" stroke-width="1"/>`);
-  const mx = X(-5.9845), my = Y(37.3891);
+  const mx = X(lon), my = Y(lat);
   return `
-<svg viewBox="0 0 400 300" width="100%" style="display:block" role="img" aria-label="Project location, 37.3891 north, 5.9845 west, near Sevilla, Spain">
+<svg viewBox="0 0 400 300" width="100%" style="display:block" role="img" aria-label="Project location, ${Math.abs(lat).toFixed(4)} ${lat >= 0 ? "north" : "south"}, ${Math.abs(lon).toFixed(4)} ${lon >= 0 ? "east" : "west"}, near ${name}, Spain">
   <defs>
     <linearGradient id="sea" x1="0" y1="0" x2="0" y2="300" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#DCEFF2"/><stop offset="1" stop-color="#E8F3F6"/>
@@ -2192,61 +2187,59 @@ function siteMap() {
   <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="19" fill="#0E9DA8" fill-opacity=".12"/>
   <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="11" fill="#0E9DA8" fill-opacity=".2"/>
   <circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="5.5" fill="#0E9DA8" stroke="#fff" stroke-width="2.2"/>
-  <text x="${(mx + 14).toFixed(1)}" y="${(my + 4).toFixed(1)}" font-size="11" font-weight="600" fill="#0F172A">Sevilla</text>
+  <text x="${(mx + 14).toFixed(1)}" y="${(my + 4).toFixed(1)}" font-size="11" font-weight="600" fill="#0F172A">${name}</text>
   <text x="12" y="290" font-size="8.5" fill="rgba(15,23,42,.34)">Schematic · coordinates are authoritative</text>
 </svg>`;
 }
 
-const detailsDrawer = () => `
-${scrim()}
-<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:20px;width:520px;z-index:11;overflow:hidden;
-       display:flex;flex-direction:column">
-  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
-    <div style="flex:1;min-width:0">
-      <div class="t-card" style="font-size:16px">Edit project details</div>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
-        <span class="t-meta">Valencia BESS</span>${src("suite")}
+/* The form and the map were stacked in a 520px column, which made the
+   map a postage stamp under six fields. Centred, the two halves sit
+   beside each other: the values on the left, where they are read, and
+   the place they describe on the right, at a size worth drawing. */
+const detailsDrawer = () => capabilityModal({
+  title: "Edit project details", context: "Valencia BESS", source: src("suite"),
+  accent: SU, width: 900,
+  footNote: "Shared across the Suite — both products read these values.",
+  cancel: "Cancel", confirm: "Save changes",
+  body: `
+  <div style="display:flex;gap:22px;padding:22px">
+    <div style="flex:1.15;min-width:0">
+      <div class="band" style="color:var(--su700)">Project details</div>
+      <div style="display:flex;gap:16px;margin-top:14px">
+        ${field("Project name", "Valencia BESS", { req: true })}
+        ${field("Technology", "Stand-alone BESS", { req: true, chev: true })}
+      </div>
+      <div style="display:flex;gap:16px">
+        ${field("Installed power", "100", { unit: "MW" })}
+        ${field("Storage capacity", "200", { unit: "MWh" })}
+      </div>
+      <div style="display:flex;gap:16px">
+        ${field("Currency", "EUR — Euro", { req: true, chev: true })}
+        ${field("Commercial operation date", "2027", { chev: true })}
       </div>
     </div>
-    <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close">${closeX()}</button>
-  </div>
-  <div style="flex:1;min-width:0;padding:22px;overflow:hidden">
-    <div class="band" style="color:var(--su700)">Project details</div>
-    <div style="display:flex;gap:16px;margin-top:14px">
-      ${field("Project name", "Valencia BESS", { req: true })}
-      ${field("Technology", "Stand-alone BESS", { req: true, chev: true })}
-    </div>
-    <div style="display:flex;gap:16px">
-      ${field("Installed power", "100", { unit: "MW" })}
-      ${field("Storage capacity", "200", { unit: "MWh" })}
-    </div>
-    <div style="display:flex;gap:16px">
-      ${field("Currency", "EUR — Euro", { req: true, chev: true })}
-      ${field("Commercial operation date", "2027", { chev: true })}
-    </div>
-    <div class="hr" style="margin:6px 0 18px"></div>
-    <div class="band" style="color:var(--su700)">Location</div>
-    <div style="display:flex;gap:16px;margin-top:14px">
-      ${field("Latitude", "39.4699", { req: true, unit: "°" })}
-      ${field("Longitude", "−0.3763", { req: true, unit: "°" })}
-    </div>
-    <div style="border-radius:var(--r-sm);overflow:hidden;position:relative;
-         border:1px solid rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(14,157,168,.12), var(--sh-sm)">
-      ${siteMap()}
-      <div style="position:absolute;left:10px;bottom:10px;display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:9px;
-           background:linear-gradient(168deg,rgba(255,255,255,.92),rgba(255,255,255,.76));
-           border:1px solid rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(14,157,168,.1), var(--sh-xs)">
-        <i style="width:6px;height:6px;border-radius:50%;background:var(--su);display:block"></i>
-        <span style="font-size:12px;font-weight:600;color:var(--s900)">Valencia, Spain</span>
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+      <div class="band" style="color:var(--su700)">Location</div>
+      <div style="display:flex;gap:16px;margin-top:14px">
+        ${field("Latitude", "39.4699", { req: true, unit: "°" })}
+        ${field("Longitude", "−0.3763", { req: true, unit: "°" })}
+      </div>
+      <div style="border-radius:var(--r-sm);overflow:hidden;position:relative;
+           border:1px solid rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(14,157,168,.12), var(--sh-sm)">
+        ${/* El mapa dibujaba Sevilla bajo un formulario que dice Valencia. En un
+             cajón de 520px casi no se veía; centrado y grande, el error es lo
+             primero que se lee. */""}
+        ${siteMap({ lon: -0.3763, lat: 39.4699, name: "Valencia" })}
+        <div style="position:absolute;left:10px;bottom:10px;display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:9px;
+             background:linear-gradient(168deg,rgba(255,255,255,.92),rgba(255,255,255,.76));
+             border:1px solid rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(14,157,168,.1), var(--sh-xs)">
+          <i style="width:6px;height:6px;border-radius:50%;background:var(--su);display:block"></i>
+          <span style="font-size:12px;font-weight:600;color:var(--s900)">Valencia, Spain</span>
+        </div>
       </div>
     </div>
-  </div>
-  <div style="display:flex;align-items:center;gap:12px;padding:16px 22px;border-top:1px solid var(--hair)">
-    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">Shared across the Suite — both products read these values.</span>
-    <button class="btn btn-secondary">Cancel</button>
-    <button class="btn btn-primary">${ic("check", 16, 1.9)}Save changes</button>
-  </div>
-</aside>`;
+  </div>`,
+});
 
 
 const OVB = { w: 1440, h: 2380, side: projectSide("overview") };
@@ -3832,22 +3825,13 @@ const drawerField = (label, value, { req, chev, help, ph } = {}) => `
   ${help ? `<span style="display:block;font-size:11px;color:var(--s400);margin-top:7px;line-height:1.45">${help}</span>` : ""}
 </div>`;
 
-const uploadDrawer = () => `
-<div style="position:absolute;inset:0;z-index:10;backdrop-filter:blur(9px) saturate(.92);-webkit-backdrop-filter:blur(9px) saturate(.92);
-     background:linear-gradient(168deg,rgba(236,245,247,.5),rgba(238,244,248,.46))"></div>
-<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:20px;width:456px;z-index:11;overflow:hidden;
-       border-radius:var(--r-md);display:flex;flex-direction:column">
-  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
-    <div style="flex:1;min-width:0">
-      <div class="t-card" style="font-size:16px">Upload file</div>
-      <div style="display:flex;align-items:center;gap:9px;margin-top:4px">
-        <span class="t-meta">Valencia BESS</span>${src("suite")}
-      </div>
-    </div>
-    <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close">${closeX()}</button>
-  </div>
-
-  <div style="flex:1;min-width:0;padding:22px;display:flex;flex-direction:column;gap:20px">
+const uploadDrawer = () => capabilityModal({
+  title: "Upload file", context: "Valencia BESS", source: src("suite"),
+  accent: SU, width: 620,
+  footNote: "Nothing is shared until the file finishes processing.",
+  cancel: "Cancel", confirm: "Upload",
+  body: `
+  <div style="padding:22px;display:flex;flex-direction:column;gap:20px">
     <div style="border-radius:var(--r-sm);padding:26px 20px;text-align:center;
          background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 70%);
          box-shadow:inset 0 0 0 1.5px rgba(14,157,168,.22)">
@@ -3870,14 +3854,8 @@ const uploadDrawer = () => `
     ${drawerField("File type", "Price data", { req: true, chev: true, help: "Tells the Suite what the file represents, so the right product can read it." })}
     ${drawerField("Project", "Valencia BESS", { chev: true, help: "Preselected because you started from inside this project." })}
     ${drawerField("Description", "Add a note or version reference", { ph: true })}
-  </div>
-
-  <div style="display:flex;align-items:center;gap:12px;padding:16px 22px;border-top:1px solid var(--hair)">
-    <span class="t-meta" style="flex:1;min-width:0">Nothing is shared until the file finishes processing.</span>
-    <button class="btn btn-secondary">Cancel</button>
-    <button class="btn btn-primary">${ic("check", 16, 1.9)}Upload</button>
-  </div>
-</aside>`;
+  </div>`,
+});
 
 const filesUpload = doc({ w: 1440, h: 1140, side: projectSide("files"),
   body: filesBody({ drawer: true }), overlay: uploadDrawer() });
@@ -7745,32 +7723,28 @@ const finDrawer = () => {
         </div>`).join("")}
     </div>
   </div>`;
-  return `
-${scrim()}
-<aside class="raise" style="position:absolute;top:20px;right:20px;bottom:20px;width:520px;z-index:11;overflow:hidden;display:flex;flex-direction:column">
-  <span style="position:absolute;left:0;right:0;top:0;height:2px;display:block;z-index:3;
-        background:linear-gradient(90deg,${RN}00,${RN}cc 18%,${RN}cc 82%,${RN}00)"></span>
-  <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)">
-    <div style="flex:1;min-width:0">
-      <div class="t-card" style="font-size:16px">Financial details</div>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
-        <span class="t-meta">Base market · Valencia BESS</span>${src("revenew")}
+  /* Five groups. Stacked in a 520px drawer that was a very long
+     scroll; as a grid it is one screen, and the order still reads
+     the way the model runs — price, energy, revenue, cost, result. */
+  return capabilityModal({
+    title: "Financial details", context: "Base market · Valencia BESS",
+    source: src("revenew"), accent: RN, width: 980,
+    footNote: "Read-only. Every value is modelled in ReveNew.",
+    foot: `<button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:${RN};display:block"></i>Open in ReveNew${ic("upRight", 14, 1.8)}</button>`,
+    body: `
+    <div style="padding:20px 22px">
+      <div style="display:flex;gap:14px;align-items:stretch">
+        ${detailGroup("Forecast", [["Average price", "€71.4/MWh"], ["Volatility", "€41.4/MWh"], ["Market", "OMIE — Spain"]])}
+        ${detailGroup("Energy", [["Annual production", c.t.gwh + " GWh"], ["Full cycles", String(c.t.cycles)], ["Round-trip efficiency", c.t.rte + "%"]])}
+        ${detailGroup("Revenue", [["Annual revenue", eurM(c.rev)], ["Capture price", "€" + c.sc.capture.toFixed(1) + "/MWh"], ["Capture rate", "166%"], ["Contracted share", "62%"]])}
       </div>
-    </div>
-    <button class="btn btn-ghost btn-icon" style="height:34px;width:34px" aria-label="Close">${closeX()}</button>
-  </div>
-  <div style="flex:1;min-width:0;padding:6px 22px 22px;overflow:hidden">
-    ${grp("Forecast", [["Average price", "€71.4/MWh"], ["Volatility", "€41.4/MWh"], ["Market", "OMIE — Spain"]])}
-    ${grp("Energy", [["Annual production", c.t.gwh + " GWh"], ["Full cycles", String(c.t.cycles)], ["Round-trip efficiency", c.t.rte + "%"]])}
-    ${grp("Revenue", [["Annual revenue", eurM(c.rev)], ["Capture price", "€" + c.sc.capture.toFixed(1) + "/MWh"], ["Capture rate", "166%"], ["Contracted share", "62%"]])}
-    ${grp("Costs", [["DevEx", "€1.4M"], ["CapEx", "€" + c.t.capex.toFixed(1) + "M"], ["OpEx", "€1.7M/yr"], ["ReCapEx", "not modelled"]])}
-    ${grp("Financial model", [["NPV", eurMs(npvOfCase(c))], ["IRR", c.irr.toFixed(1) + "%"], ["Payback", paybackOfCase(c).toFixed(1) + " years"], ["Cost of capital", (WACC * 100).toFixed(1) + "%"]])}
-  </div>
-  <div style="display:flex;align-items:center;gap:12px;padding:16px 22px;border-top:1px solid var(--hair)">
-    <span class="t-meta" style="flex:1;min-width:0;line-height:1.5">Read-only. Every value is modelled in ReveNew.</span>
-    <button class="btn btn-secondary"><i style="width:6px;height:6px;border-radius:50%;background:${RN};display:block"></i>Open in ReveNew${ic("upRight", 14, 1.8)}</button>
-  </div>
-</aside>`;
+      <div style="display:flex;gap:14px;align-items:stretch;margin-top:14px">
+        ${detailGroup("Costs", [["DevEx", "€1.4M"], ["CapEx", "€" + c.t.capex.toFixed(1) + "M"], ["OpEx", "€1.7M/yr"], ["ReCapEx", "not modelled"]])}
+        ${detailGroup("Financial model", [["NPV", eurMs(npvOfCase(c))], ["IRR", c.irr.toFixed(1) + "%"], ["Payback", paybackOfCase(c).toFixed(1) + " years"], ["Cost of capital", (WACC * 100).toFixed(1) + "%"]])}
+        <div style="flex:1;min-width:0"></div>
+      </div>
+    </div>`,
+  });
 };
 
 /* one simplified cash-flow view, not ReveNew's chart with its controls */
