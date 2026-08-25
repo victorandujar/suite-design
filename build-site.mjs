@@ -254,7 +254,8 @@ writeFileSync(`${OUT}/index.html`, `<!doctype html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{color-scheme:light;--ink:#0F172A;--mut:#54617A;--line:rgba(30,58,138,.10);--su:#0E9DA8;--b600:#2563EB}
+  :root{color-scheme:light;--ink:#0F172A;--mut:#54617A;--line:rgba(30,58,138,.10);
+    --su:#0E9DA8;--b600:#2563EB;--rv:#AF47B2}
   *{box-sizing:border-box}
   body{margin:0;font:400 15px/1.6 Inter,system-ui,sans-serif;color:var(--ink);
     background:radial-gradient(1200px 700px at 12% -10%,rgba(37,99,235,.10),transparent 60%),
@@ -272,6 +273,31 @@ writeFileSync(`${OUT}/index.html`, `<!doctype html>
   h2{font:600 13px/1 Inter,sans-serif;text-transform:uppercase;letter-spacing:.09em;
     color:var(--mut);margin:40px 0 14px}
   .lead{margin:-4px 0 18px;color:var(--mut);font-size:14.5px;line-height:1.6;max-width:76ch}
+
+  /* Qué resuelve: prosa corriente, medida a 72ch para que se lea seguido. */
+  .prose{max-width:72ch;margin:0 0 14px;font-size:15px;line-height:1.7;color:var(--ink)}
+  .prose.dim{color:var(--mut)}
+  .prose b{font-weight:600}
+
+  /* El reparto de responsabilidades: tres columnas porque son tres partes,
+     y cada una lleva el color con el que aparece en todas las pantallas. */
+  .split{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin:20px 0 8px}
+  .part{padding:18px 20px;border-radius:14px;background:rgba(255,255,255,.82);
+    border:1px solid var(--line);box-shadow:0 2px 10px -4px rgba(30,58,138,.12)}
+  .part .hd{display:flex;align-items:center;gap:8px}
+  .part .dot{width:7px;height:7px;border-radius:50%;flex:none}
+  .part .nm{font:600 15px/1.3 'DM Sans',Inter,sans-serif}
+  .part .role{margin-top:2px;font-size:12px;font-weight:500;letter-spacing:.04em;
+    text-transform:uppercase;color:var(--mut)}
+  .part p{margin:10px 0 0;font-size:13.5px;line-height:1.6;color:var(--mut)}
+
+  /* Principios: tres columnas y texto corto, para que no compitan con las
+     tarjetas de recorrido, que son la acción principal de esta página. */
+  .princ{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+  .pr{padding:18px 20px;border-radius:14px;background:rgba(255,255,255,.72);
+    border:1px solid var(--line)}
+  .pr h3{margin:0;font:600 14.5px/1.35 'DM Sans',Inter,sans-serif}
+  .pr p{margin:8px 0 0;font-size:13px;line-height:1.6;color:var(--mut)}
   .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
   .card{display:flex;flex-direction:column;gap:4px;padding:16px 18px;border-radius:14px;
     background:rgba(255,255,255,.82);border:1px solid var(--line);text-decoration:none;color:inherit;
@@ -317,6 +343,81 @@ writeFileSync(`${OUT}/index.html`, `<!doctype html>
     <a href="./screens/Login.html">Entrar como un usuario →</a>
   </div>
 
+  <h2>Qué resuelve</h2>
+  <p class="prose">Sunveon vende dos productos que se usan sobre el mismo proyecto.
+  <b>StoreBrid</b> simula cómo se comporta una planta de almacenamiento: potencia, capacidad,
+  energía descargada, ciclos, degradación y el CAPEX que cuesta construirla. <b>ReveNew</b>
+  modela lo que esa energía ingresa: curvas de precio, captura, costes de operación y el
+  modelo financiero.</p>
+  <p class="prose">La pregunta que decide la inversión —si compensa construir una configuración
+  concreta bajo unas hipótesis de mercado concretas— no la puede responder ninguno de los dos
+  por separado: el IRR necesita el CAPEX que calcula StoreBrid y los flujos de caja que modela
+  ReveNew. Sin una capa que los junte, eso se resuelve abriendo los dos productos y cruzando
+  cifras en una hoja de cálculo, sin registro de qué versión de cada lado se usó.</p>
+  <p class="prose">La Suite es esa capa. No simula ni modela nada: empareja una simulación de
+  StoreBrid con un caso financiero de ReveNew, lee las cifras de ambos en vivo, calcula las que
+  necesitan los dos lados y deja comparar los emparejamientos entre sí. Ese par con nombre, el
+  <b>caso de análisis</b>, es lo único que la Suite llega a guardar.</p>
+
+  <div class="split">
+    <div class="part">
+      <div class="hd"><span class="dot" style="background:var(--b600)"></span><span class="nm">StoreBrid</span></div>
+      <div class="role">El activo</div>
+      <p>Potencia, capacidad, energía descargada, ciclos, degradación y CAPEX. Es el dueño de la
+      simulación técnica: crearla o editarla ocurre aquí, no en la Suite.</p>
+    </div>
+    <div class="part">
+      <div class="hd"><span class="dot" style="background:var(--rv)"></span><span class="nm">ReveNew</span></div>
+      <div class="role">El mercado</div>
+      <p>Curvas de precio, captura, ingresos, costes y modelo financiero. Es el dueño del caso
+      financiero: construirlo o editarlo ocurre aquí, no en la Suite.</p>
+    </div>
+    <div class="part">
+      <div class="hd"><span class="dot" style="background:var(--su)"></span><span class="nm">La Suite</span></div>
+      <div class="role">El emparejamiento</div>
+      <p>Junta una simulación con un caso financiero, calcula lo que necesita los dos lados
+      —IRR, payback, NPV por MW, ingreso por MWh— y compara los casos entre sí.</p>
+    </div>
+  </div>
+
+  <h2>Cómo está pensada la experiencia</h2>
+  <p class="lead">Cinco decisiones que explican por qué las pantallas son como son. Todas salen
+  del mismo sitio: la Suite lee de dos productos que no controla y tiene que ser honesta sobre
+  lo que sabe y lo que no.</p>
+  <div class="princ">
+    <div class="pr">
+      <h3>Enlaza fuera en vez de duplicar</h3>
+      <p>Unos sesenta elementos salen hacia StoreBrid o ReveNew en lugar de reproducir sus
+      pantallas; en el prototipo se ven con borde discontinuo y no navegan. Reproducirlas daría
+      una versión peor del producto que es dueño del dato, y habría que mantener las dos.</p>
+    </div>
+    <div class="pr">
+      <h3>Cada cifra dice de dónde viene</h3>
+      <p>Un punto azul marca lo que produce StoreBrid, uno magenta lo de ReveNew, uno teal lo que
+      calcula la Suite, y los dos juntos lo que necesita ambos lados. En una pantalla que mezcla
+      dos fuentes, saber quién produce cada número es lo que permite discutirlo y saber dónde ir
+      a corregirlo.</p>
+    </div>
+    <div class="pr">
+      <h3>Un resultado desfasado se marca, no se esconde</h3>
+      <p>Si la simulación técnica se relanza después de calcular el modelo financiero, el caso
+      queda marcado como obsoleto y se excluye de las conclusiones automáticas. Con dos motores
+      que se ejecutan por separado, ese desfase es el fallo habitual y no una excepción.</p>
+    </div>
+    <div class="pr">
+      <h3>Nombra el compromiso; no recomienda</h3>
+      <p>Las pantallas dicen qué caso gana en cada objetivo y qué cuesta esa ventaja, pero nunca
+      cuál elegir. Qué objetivo importa —máximo NPV, máximo IRR, mínimo CAPEX— depende de un
+      contexto que la Suite no tiene.</p>
+    </div>
+    <div class="pr">
+      <h3>Guarda lo mínimo</h3>
+      <p>Un caso de análisis es un nombre y dos referencias. Las cifras se releen de StoreBrid y
+      ReveNew cada vez que se abre, así que el caso sigue a sus fuentes en lugar de congelar una
+      copia que envejece sin avisar.</p>
+    </div>
+  </div>
+
   <h2>Los siete recorridos</h2>
   <p class="lead">Siete tareas que el prototipo cubre de principio a fin. Cada una arranca de
   una pregunta concreta, explica qué hace y enlaza con la primera pantalla del recorrido.</p>
@@ -335,7 +436,9 @@ ${groups.map(g => `  <h2>${esc(g.name)}</h2>
   <div class="grid">${g.items.map(card).join("")}
   </div>`).join("\n")}
 
-  <footer>Prototipo de diseño — pantallas estáticas de alta fidelidad, sin backend.</footer>
+  <footer>Prototipo de diseño: pantallas estáticas de alta fidelidad, sin backend. Los datos son
+  de ejemplo y los controles no ejecutan lógica —pestañas, filtros, paginación y campos no
+  responden, porque no hay estado en la página. La navegación entre pantallas sí es real.</footer>
 </div>
 </body>
 </html>
