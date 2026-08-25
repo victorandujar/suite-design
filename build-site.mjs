@@ -194,38 +194,39 @@ ${FIT(b.w)}
 }
 
 /* ── Los siete recorridos de Flows.dc.html, como puntos de entrada ── */
-/* Cada recorrido lleva la pregunta que lo desencadena y lo que resuelve.
-   Los pasos por sí solos decían a dónde se va, nunca por qué merece la pena
-   ir: quien abre el índice sin contexto veía siete títulos y una lista de
-   pantallas. La descripción es la razón de ser, y está anclada en lo que la
-   pantalla enseña de verdad — no es un resumen del título con otras palabras. */
+/* Cada recorrido lleva la pregunta que lo desencadena y qué hace.
+   La descripción es informativa, no promocional: primero lo que se hace en
+   concreto, luego para qué sirve. Sin metáforas y sin frases-lema — quien
+   abre el índice quiere saber si este recorrido responde a su pregunta, no
+   leer el argumento de diseño que hay detrás. Ese está en las notas del
+   lienzo, que es donde toca. */
 const FLOWS = [
   ["Revisar el proyecto", "¿Qué está pasando ahora mismo?",
-   "Un proyecto vive repartido entre dos productos, así que saber en qué se está trabajando obligaba a abrir los dos. Overview nombra el emparejamiento activo, sus dos mitades con su procedencia y su frescura, y la cifra que producen juntas.",
+   "Overview muestra el caso de análisis activo: qué simulación técnica y qué caso financiero lo forman, cuándo se calculó cada uno y el NPV y el IRR que dan juntos. Evita abrir StoreBrid y ReveNew por separado sólo para saber por dónde va el proyecto.",
    ["Main","ProjectOverview"]],
 
   ["Análisis técnico", "¿Cómo se comportó esta configuración?",
-   "Tres gráficos y seis KPIs, y nada más: los diarios, los mapas de calor y las exportaciones se quedan en StoreBrid. La Suite enseña lo justo para entender por qué querrías abrirlo, sin intentar ser StoreBrid.",
+   "Abre el detalle técnico de la simulación: configuración, operación, degradación y la curva de potencia y estado de carga. Es de sólo lectura y cubre las preguntas habituales; para los gráficos diarios, los mapas de calor y las exportaciones hay un enlace a StoreBrid.",
    ["ProjectOverview","OverviewTechnical"]],
 
   ["Análisis financiero", "¿Y bajo otras hipótesis de mercado?",
-   "Cambiar el caso financiero sin tocar el activo. Al mover sólo esa mitad del emparejamiento se ve qué parte del resultado la decide el mercado y no la ingeniería.",
+   "Cambia el caso financiero del proyecto —Base market, High spread o Low spread— manteniendo la misma simulación técnica. Como el activo no cambia, la diferencia de NPV e IRR entre uno y otro es lo que aporta la hipótesis de mercado.",
    ["ProjectOverview","OverviewChangeScenario"]],
 
   ["Iteración técnica rápida", "¿Y si fuera una batería de 4 h?",
-   "El único punto donde la Suite escribe en StoreBrid, y escribe un hermano: la simulación base no se modifica, así que los casos ya construidos sobre ella siguen siendo válidos y comparables con los nuevos.",
+   "Cambia la simulación técnica y ve el resultado en la matriz de casos. La simulación original no se toca: la variante se crea aparte en StoreBrid, así que los casos que ya dependían de ella siguen calculados y se pueden comparar con los nuevos.",
    ["ProjectOverview","OverviewChangeSim","CaseMatrix"]],
 
   ["Iteración financiera rápida", "¿Y si la captura subiera un 4%?",
-   "El espejo del anterior. Reeditar la curva en ReveNew marca como obsoletos los casos que dependían de ella y no relanza nada técnico: la dependencia sólo apunta en un sentido, y la interfaz lo dice en vez de recalcularlo todo por si acaso.",
+   "Al editar la curva de precios en ReveNew, los casos calculados con la versión anterior quedan marcados como obsoletos y se recalculan desde la Suite. Los resultados técnicos no se relanzan, porque un cambio de precios no altera cómo despacha la batería.",
    ["CaseMatrix","OverviewStale","ProjectOverview"]],
 
   ["Decisión entre productos", "¿Se justifica la inversión extra?",
-   "La razón de ser de la Suite. Ninguno de los dos productos puede dibujar esta cadena solo: StoreBrid sabe qué hace el activo pero no lo que gana; ReveNew, lo que gana pero no lo que costó construirlo. El trade-off sólo existe donde se encuentran.",
+   "Compara dos o más casos de análisis lado a lado: cuánto CAPEX más cuesta cada uno, cuánto NPV e IRR devuelve y si cumple los criterios fijados. Necesita el coste que calcula StoreBrid y los ingresos que modela ReveNew, así que ninguno de los dos productos puede hacer esta comparación por su cuenta.",
    ["CaseMatrix","CompareAlternatives","CompareAllMetrics"]],
 
   ["Nombrar un emparejamiento", "¿Cómo guardo esta combinación?",
-   "Lo único que la Suite crea. Los dos catálogos se abren a la vez y cada opción muestra lo que produciría contra la mitad ya elegida; el nombre es el único campo, porque es lo único que ninguno de los dos productos guarda ya.",
+   "Guarda una combinación de simulación técnica y caso financiero con un nombre, para volver a ella y compararla. Al elegir, cada opción muestra el IRR y el NPV que daría con la otra mitad ya seleccionada, y avisa si esa combinación ya está guardada como caso.",
    ["CaseMatrix","CreateAnalysisCase","CaseCreated"]],
 ];
 
@@ -317,9 +318,8 @@ writeFileSync(`${OUT}/index.html`, `<!doctype html>
   </div>
 
   <h2>Los siete recorridos</h2>
-  <p class="lead">Cada pantalla del prototipo existe para servir a uno de estos. Cada recorrido
-  arranca de una pregunta real de quien usa el producto y dice qué resuelve; empieza por el
-  que se parezca a la tuya.</p>
+  <p class="lead">Siete tareas que el prototipo cubre de principio a fin. Cada una arranca de
+  una pregunta concreta, explica qué hace y enlaza con la primera pantalla del recorrido.</p>
   <div class="flows">
 ${FLOWS.map(([n, q, why, steps], i) => `    <a class="flow" href="./screens/${steps[0]}.html">
       <span class="fn">Flujo ${i + 1}</span>
