@@ -177,7 +177,7 @@ ${FIT(b.w)}
 `);
 }
 
-/* ── Los seis recorridos de Flows.dc.html, como puntos de entrada ── */
+/* ── Los siete recorridos de Flows.dc.html, como puntos de entrada ── */
 const FLOWS = [
   ["Revisar el proyecto", "¿Qué está pasando ahora mismo?", ["Main","ProjectOverview"]],
   ["Análisis técnico", "¿Cómo se comportó esta configuración?", ["ProjectOverview","OverviewTechnical"]],
@@ -185,6 +185,7 @@ const FLOWS = [
   ["Iteración técnica rápida", "¿Y si fuera una batería de 4 h?", ["ProjectOverview","OverviewChangeSim","CaseMatrix"]],
   ["Iteración financiera rápida", "¿Y si la captura subiera un 4%?", ["CaseMatrix","OverviewStale","ProjectOverview"]],
   ["Decisión entre productos", "¿Se justifica la inversión extra?", ["CaseMatrix","CompareAlternatives","CompareAllMetrics"]],
+  ["Nombrar un emparejamiento", "Esta combinación merece guardarse", ["CaseMatrix","CreateAnalysisCase","CaseCreated"]],
 ];
 
 /* ── Índice ── */
@@ -261,7 +262,7 @@ writeFileSync(`${OUT}/index.html`, `<!doctype html>
     <a href="./screens/Login.html">Entrar como un usuario →</a>
   </div>
 
-  <h2>Los seis recorridos</h2>
+  <h2>Los siete recorridos</h2>
   <div class="flows">
 ${FLOWS.map(([n, q, steps], i) => `    <a class="flow" href="./screens/${steps[0]}.html">
       <span class="fn">Flujo ${i + 1}</span>

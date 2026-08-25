@@ -291,7 +291,7 @@ a.glass-sm:hover{
 <nav class="nav">
   <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/></svg>Overview</a>
   <a href="#" class="on"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 3 6.8 3.6L10 10.2 3.2 6.6z"/><path d="m3.2 10.6 6.8 3.6 6.8-3.6"/></svg>Case matrix<span style="margin-left:auto;font-size:10.5px;color:var(--s400)">9</span></a>
-  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Compare<span style="margin-left:auto;font-size:10.5px;color:var(--s400)">3</span></a>
+  <a href="#" class=""><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Compare<span style="margin-left:auto;font-size:10.5px;color:var(--s400)">4</span></a>
 </nav>
 <div class="grp">Open in</div>
 <nav class="nav">
@@ -342,6 +342,24 @@ a.glass-sm:hover{
             <button class="btn btn-secondary"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Compare analysis cases</button></div>
 </div>
 
+<div style="display:flex;align-items:center;gap:15px;margin-bottom:20px;padding:15px 19px;border-radius:var(--r-sm);
+     background:linear-gradient(168deg,rgba(14,157,168,.085),rgba(255,255,255,0) 74%);
+     box-shadow:inset 0 0 0 1px rgba(14,157,168,.22)">
+  <span style="flex:none;width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+        background:#0E9DA8;color:#fff"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.8 10.4 3.5 3.4 6.9-7.6"/></svg></span>
+  <span style="flex:1;min-width:0">
+    <span style="display:block;font-size:13.5px;color:var(--s900);line-height:1.45">
+      <b style="font-weight:600">Long duration · strong market</b> is now an analysis case — 4 h variant × High spread, created just now.
+    </span>
+    <span class="t-meta" style="display:block;margin-top:4px;line-height:1.5">
+      The Suite kept the name and the two references, nothing else. Its figures go on being read from StoreBrid and ReveNew,
+      so the case follows them instead of freezing a copy of them.
+    </span>
+  </span>
+  
+  <button class="btn btn-secondary" style="flex:none;height:34px;font-size:12.5px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4.6v10.8M4.6 10h10.8"/></svg>Add to comparison</button>
+  <button class="btn btn-secondary" style="flex:none;height:34px;font-size:12.5px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/></svg>Use as current analysis</button>
+</div>
 
 
 <div class="tabs" style="margin-bottom:20px">
@@ -540,7 +558,8 @@ a.glass-sm:hover{
             <span style="font-size:11px;font-weight:600;color:#0E9469">+1.3 pp</span><span class="t-meta" style="margin-left:5px">vs baseline</span>
           </span>
           <span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding-top:9px;border-top:1px solid var(--hair)">
-            <span class="t-meta" style="opacity:.75">Not saved</span>
+            <i style="width:4px;height:4px;flex:none;border-radius:50%;background:#0E9DA8;display:block"></i>
+                 <span class="t-meta" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Long duration · strong market</span>
           </span>
           <span style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:7px">
             <span class="t-meta" style="color:#9A6208">CAPEX over limit</span>
@@ -642,12 +661,12 @@ a.glass-sm:hover{
       <i style="width:5px;height:5px;border-radius:50%;background:#AF47B2;display:block"></i>
       <span style="font-size:14px;font-weight:600;color:var(--s900)">High spread</span>
     </span>
-    <span class="cov" style="opacity:.82">Unsaved combination</span>
+    <span class="cov"><i style="background:#0E9DA8"></i>Saved as Long duration · strong market</span>
     <span class="cov" style="background:linear-gradient(168deg,rgba(245,158,11,.14),rgba(245,158,11,.07));border-color:rgba(245,158,11,.3);color:#9A6208">
      <i style="background:#9A6208"></i>CAPEX exceeds limit by €2.7M</span>
     <span class="cov"><i style="background:#6D5AC6"></i>Technical and financial vs baseline</span>
     <span style="flex:1"></span>
-    <button class="btn btn-secondary" style="height:34px;font-size:12.5px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4.6v10.8M4.6 10h10.8"/></svg>Save as analysis case</button>
+    <button class="btn btn-ghost" style="height:34px;font-size:12.5px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.1 14.4a7 7 0 1 1 11.8 0"/><path d="m10 10.6 3-3.1"/></svg>Use as current analysis</button>
     <button class="btn btn-secondary" style="height:34px;font-size:12.5px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4.6v10.8M4.6 10h10.8"/></svg>Add to comparison</button>
     <button class="btn btn-primary" style="height:34px;font-size:12.5px"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.6h14"/><path d="M5.4 13.4V9.1"/><path d="M9.2 13.4V4.9"/><path d="M13 13.4v-5.6"/><path d="M16.6 13.4v-2.6"/></svg>Explain difference<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.8 4.6 5.2 5.4-5.2 5.4"/></svg></button>
   </div>
@@ -799,14 +818,7 @@ a.glass-sm:hover{
     Both dimensions moved, so these two contributions cannot be added into a causal split — the share each takes depends on which one moves first. <b style="font-weight:600;color:var(--s700)">Explain difference</b> builds both controlled orders and names the residual.
   </p>
 </div>
-  <div style="margin-top:14px">
-<div style="display:flex;align-items:center;gap:11px;padding:10px 15px;border-radius:var(--r-xs);
-     background:linear-gradient(168deg,rgba(14,157,168,.05),rgba(255,255,255,0) 78%);
-     box-shadow:inset 0 0 0 1px rgba(14,157,168,.13)">
-  <span style="color:var(--su700);display:flex;flex:none"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 3 6.8 3.6L10 10.2 3.2 6.6z"/><path d="m3.2 10.6 6.8 3.6 6.8-3.6"/></svg></span>
-  <span style="flex:1;min-width:0;font-size:12px;color:var(--s700);line-height:1.55">Right now this pairing exists only while the cell is selected. Give it a name and it becomes an analysis case — it can be set as the current analysis, pulled into Compare, and reopened later with its figures re-read from both products.</span>
   
-</div></div>
 </section>
 </section>
 
@@ -926,7 +938,7 @@ a.glass-sm:hover{
   <span style="color:#9A6208;display:flex;flex:none;"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.6 2.9 16.1h14.2z"/><path d="M10 8.2v3.3"/><circle cx="10" cy="13.7" r=".85" fill="currentColor" stroke="none"/></svg></span>
   <span style="flex:1;min-width:0">
     
-    <span class="t-meta" style="display:block;line-height:1.55;font-size:12.5px">1 of the 3 saved analysis cases is outdated — <b style="font-weight:600;color:var(--s900)">Stress test</b> was priced before the technical simulation changed. The other 6 combinations are calculated live and are never outdated.</span>
+    <span class="t-meta" style="display:block;line-height:1.55;font-size:12.5px">1 of the 4 saved analysis cases is outdated — <b style="font-weight:600;color:var(--s900)">Stress test</b> was priced before the technical simulation changed. The other 5 combinations are calculated live and are never outdated.</span>
   </span>
   <button class="btn btn-secondary" style="flex:none;height:32px;font-size:12.5px"><i style="width:6px;height:6px;border-radius:50%;background:#AF47B2;display:block"></i>Recalculate in ReveNew<svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 13.8 13.8 6.2"/><path d="M7.4 6.2h6.4v6.4"/></svg></button>
   

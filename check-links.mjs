@@ -1,5 +1,5 @@
 // Verifica el sitio generado antes de publicar: que no haya destinos rotos,
-// que las pantallas sigan alcanzándose pulsando, y que los seis recorridos
+// que las pantallas sigan alcanzándose pulsando, y que los siete recorridos
 // documentados en Flows.dc.html se recorran de extremo a extremo.
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 
@@ -36,6 +36,7 @@ const FLOWS = [
   ["4 Iteración técnica",        ["ProjectOverview", "OverviewChangeSim", "CaseMatrix"]],
   ["5 Iteración financiera",     ["CaseMatrix", "OverviewStale", "ProjectOverview"]],
   ["6 Decisión entre productos", ["CaseMatrix", "CompareAlternatives", "CompareAllMetrics"]],
+  ["7 Nombrar un emparejamiento", ["CaseMatrix", "CreateAnalysisCase", "CaseCreated"]],
 ];
 
 let failed = 0;
@@ -60,4 +61,4 @@ if (broken || failed) {
   console.error(`\nFALLO — ${broken} enlaces rotos, ${failed} recorridos incompletos. No publiques.`);
   process.exit(1);
 }
-console.log("OK — sin enlaces rotos y los seis recorridos se completan.");
+console.log("OK — sin enlaces rotos y los siete recorridos se completan.");

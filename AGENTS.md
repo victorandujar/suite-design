@@ -30,7 +30,7 @@ Dos matices que sí requieren criterio:
 
 ## Qué es esto
 
-Prototipo de diseño de la Suite Sunveon: 27 pantallas de la integración entre
+Prototipo de diseño de la Suite Sunveon: 35 pantallas de la integración entre
 StoreBrid (ingeniería) y ReveNew (financiero). Maquetas estáticas de alta
 fidelidad con navegación real entre ellas. Sin backend, sin estado en la página.
 
@@ -77,8 +77,14 @@ No inventes esas pantallas.
 campos de formulario no responden porque no hay estado en la página. Simularlo
 con JavaScript haría el prototipo menos honesto sobre lo que es.
 
-**Los seis recorridos de `Flows.dc.html` son el contrato.** `check-links.mjs` los
+**Los siete recorridos de `Flows.dc.html` son el contrato.** `check-links.mjs` los
 verifica de extremo a extremo. Si un cambio rompe uno, el problema es el cambio.
+Añadir un recorrido significa tocar tres sitios a la vez: el `flow(...)` de
+`build.mjs`, el `FLOWS` de `build-site.mjs` y el `FLOWS` de `check-links.mjs`.
+
+**`npm run check` no regenera los artboards.** Sólo reconstruye `public/` desde los
+`*.dc.html` que ya hay en disco. Si has tocado `build.mjs`, ejecuta `node build.mjs`
+antes, o estarás validando la versión anterior de las pantallas.
 
 ## Alcance
 

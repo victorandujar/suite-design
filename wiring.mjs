@@ -17,6 +17,7 @@ export const NAV = {
   "Overview": "ProjectOverview",
   "Case matrix 9": "CaseMatrix",
   "Compare 3": "CompareAlternatives",
+  "Compare 4": "CompareAlternatives",   // tras crear un caso, la barra lateral cuenta cuatro
   "Files": "Files",
   "Activity": "Activity",
   "All events": "ActivityDecisions",
@@ -135,7 +136,13 @@ export const OVERRIDE = {
 
   // El formulario enviado aterriza en el proyecto; cancelar vuelve atrás.
   CreateProject:       { "Create project": "ProjectOverview", "Cancel": "Projects" },
-  CreateAnalysisCase:  { "Cancel": "CaseMatrix", "Save": "CaseMatrix" },
+  /* Crear un caso aterriza en la matriz con el caso ya guardado: el flujo
+     tenía principio pero no final, y el final es la consecuencia visible. */
+  CreateAnalysisCase:  { "Cancel": "CaseMatrix", "Save": "CaseMatrix",
+                         "Create analysis case": "CaseCreated" },
+  CreateCaseUnpriced:  { "Cancel": "CaseMatrix", "Create analysis case": "CaseCreated" },
+  CaseCreated:         { "Recalculate in ReveNew": "OverviewStale",
+                         "Base 2 h + Base market": "ProjectOverview" },
   EditProjectDetails:  { "Cancel": "ProjectOverview", "Save": "ProjectOverview" },
   States:              { "Create project": "CreateProject" },
   ProjectNew:          { "Configure plant": "CreateProject", "Open StoreBrid": "ProjectStoreBrid",
@@ -155,6 +162,8 @@ export const EXTERNAL = {
   "Open in ReveNew": "Abriría ReveNew, dueño del modelo de ingresos",
   "Configure assumptions": "Abriría ReveNew para configurar las hipótesis",
   "Run first simulation": "Abriría StoreBrid para lanzar la primera simulación",
+  "New simulation in StoreBrid": "Abriría StoreBrid para crear una simulación — la Suite no modela",
+  "New case in ReveNew": "Abriría ReveNew para crear un caso financiero — la Suite no modela",
   "Export brief": "Exportaría el informe de decisión",
   "Export decision brief": "Exportaría el informe de decisión",
 };

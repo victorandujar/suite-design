@@ -1,26 +1,26 @@
 # Sunveon Suite — prototipo StoreBrid + ReveNew
 
 Prototipo de diseño de alta fidelidad de la integración de experiencia entre
-**StoreBrid** (ingeniería) y **ReveNew** (financiero): 27 pantallas repartidas en
+**StoreBrid** (ingeniería) y **ReveNew** (financiero): 35 pantallas repartidas en
 tres secciones — espacio de trabajo del proyecto, la Suite, y estados/licencias/patrones.
 
 ## Qué se publica
 
 | Ruta | Contenido |
 | --- | --- |
-| `/` | Índice con las 27 pantallas agrupadas por sección |
+| `/` | Índice con las 35 pantallas agrupadas por sección |
 | `/screens/<Pantalla>` | Cada pantalla, cableada: se pulsa y se navega |
 | `/canvas.html` | El lienzo completo con zoom y desplazamiento (archivo único) |
 
 ## Navegación
 
-Las 27 pantallas están enlazadas entre sí, así que se recorre como una aplicación:
+Las 35 pantallas están enlazadas entre sí, así que se recorre como una aplicación:
 pulsar «Compare» abre la comparación, «Change simulation» abre el cambio de caso
-técnico, y la barra lateral funciona. 25 de las 27 se alcanzan pulsando desde
-«Sign in»; las dos restantes (`Flows`, `ProjectNew`) son material de referencia y
-se abren desde el índice.
+técnico, «Create analysis case» abre el emparejamiento, y la barra lateral funciona.
+30 de las 35 se alcanzan pulsando desde «Sign in»; las cinco restantes son variantes
+de arquitectura y material de referencia, y se abren desde el índice.
 
-Los seis recorridos documentados en `Flows.dc.html` son los puntos de entrada del
+Los siete recorridos documentados en `Flows.dc.html` son los puntos de entrada del
 índice y están verificados de extremo a extremo.
 
 Extras de revisión: **Zonas activas** en la barra superior resalta lo clicable

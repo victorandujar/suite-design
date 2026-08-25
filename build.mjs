@@ -478,7 +478,7 @@ ${brand()}
 <nav class="nav">
   <a href="#" class="${["overview", "simulations", "results", "financial"].includes(active) ? "on" : ""}">${ic("gauge", 17)}Overview</a>
   ${caps !== "both" ? "" : `<a href="#" class="${active === "cases" ? "on" : ""}">${ic("layers", 17)}Case matrix<span style="margin-left:auto;font-size:10.5px;color:var(--s400)">9</span></a>`}
-  ${caps !== "both" ? "" : `<a href="#" class="${active === "compare" ? "on" : ""}">${ic("analytics", 17)}Compare<span style="margin-left:auto;font-size:10.5px;color:var(--s400)">3</span></a>`}
+  ${caps !== "both" ? "" : `<a href="#" class="${active === "compare" ? "on" : ""}">${ic("analytics", 17)}Compare<span style="margin-left:auto;font-size:10.5px;color:var(--s400)">${ACASES.length}</span></a>`}
 </nav>
 <div class="grp">Open in</div>
 <nav class="nav">
@@ -5949,7 +5949,7 @@ ${CRITERIA.length ? `<p class="t-meta" style="margin:14px 0 0;padding-top:14px;b
 `;
 };
 
-const casesBody = ({ mk = "irr", sel, baselinePop, view = "perf", evalModel = false } = {}) => {
+const casesBody = ({ mk = "irr", sel, baselinePop, view = "perf", evalModel = false, created } = {}) => {
   const m = MET[mk], x = MX[mk];
   return `
 ${head({
@@ -5960,6 +5960,7 @@ ${head({
   actions: `<button class="btn btn-secondary">${ic("plus", 16, 1.9)}New analysis case</button>
             <button class="btn btn-secondary">${ic("analytics", 16)}Compare analysis cases</button>`,
 })}
+${created ? createdStrip(created) : ""}
 
 ${/* §5 · Two rows used to sit between the title and the grid: a lone
       baseline selector, and a strip doing the arithmetic the grid itself
@@ -7611,7 +7612,7 @@ ${tileRow([
 ])}`,
 });
 
-/* §31 · the six journeys the whole thing has to support */
+/* §31 · the seven journeys the whole thing has to support */
 const flowStep = ({ n, label, where, dot, last }) => `
 <span style="display:flex;align-items:center;gap:10px;flex:none">
   <span style="display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0">
@@ -7638,9 +7639,9 @@ const flow = ({ n, title, question, steps, note }) => `
 </section>`;
 
 const flows = sheet({
-  w: 1440, h: 1720,
+  w: 1440, h: 1900,
   body: `
-${sheetHead("End-to-end", "The six journeys",
+${sheetHead("End-to-end", "The seven journeys",
   "Every screen in this canvas exists to serve one of these. Blue steps happen in a StoreBrid-owned surface, magenta in a ReveNew-owned one, teal in the Suite. The shape of the product is visible in the colour of the chain: the Suite is where the two meet, and the deep work stays where it belongs.")}
 
 ${flow({ n: 1, title: "Review the project", question: "What is happening with this project right now?",
@@ -7675,6 +7676,12 @@ ${flow({ n: 6, title: "Cross-product decision", question: "Is the extra investme
           { label: "Open cells", where: "preview in place", dot: SU }, { label: "Compare", where: "2–4 cases", dot: SU },
           { label: "Baseline", where: "declared", dot: SU }, { label: "Decide", where: "or go deeper ↗", dot: CMB }],
   note: "The reason the Suite exists. Neither product can draw this chain alone: StoreBrid knows what the asset does but not what it earns, ReveNew knows what it earns but not what it cost to build. The trade-off only exists where they meet." })}
+
+${flow({ n: 7, title: "Name a pairing", question: "This combination is worth keeping — how do I keep it?",
+  steps: [{ label: "Case matrix", where: "an unsaved cell", dot: SU }, { label: "Pick the asset", where: "StoreBrid catalogue", dot: SB },
+          { label: "Pick the market", where: "ReveNew catalogue", dot: RN }, { label: "Name it", where: "Suite", dot: SU },
+          { label: "Analysis case", where: "in the matrix, in Compare", dot: CMB }],
+  note: "The only thing the Suite creates, and the shortest flow here on purpose. Both catalogues are open at once and every option shows what it would produce against the half already chosen, so choosing is the whole interaction — the name is the one field, because the name is the one thing neither product already holds. Nothing is written to StoreBrid or ReveNew; a case is a reference to both, and it re-reads them every time it is opened." })}
 
 <div style="display:flex;align-items:center;gap:16px;padding:20px 24px;margin-top:26px;border-radius:var(--r-sm);
      background:linear-gradient(122deg,rgba(37,99,235,.08),rgba(175,71,178,.07));box-shadow:inset 0 0 0 1px rgba(37,99,235,.1)">
@@ -8492,41 +8499,245 @@ ${detail ? `
 
 `;
 
-/* §16 · a name and two references. Nothing else, because nothing else
-   is stored — every figure in the preview is read from the two products. */
-const createAC = () => {
-  const c = caseOf("v4h", "high"), npv = npvOfCase(c);
+/* ═══════════════════════════════════════════════════════════════
+   §16 · CREATE AN ANALYSIS CASE — a pairing, not a form
+
+   An analysis case is one StoreBrid simulation held against one ReveNew
+   financial case. That is a choice on two axes, and an earlier pass hid
+   both of them inside closed dropdowns — which put the one moment where
+   the two products actually meet behind two clicks that showed nothing.
+
+   Both catalogues are open, side by side, each in its owner's colour.
+   Every option carries what it produces AGAINST THE HALF ALREADY CHOSEN,
+   so the consequence of a choice is legible before it is made, and the
+   band underneath reads the pairing that results. Choosing is the whole
+   interaction: there is nothing to fill in but the name.
+
+   Still deliberately thin — one step, no wizard, no CRUD module, no
+   draft. The Suite stores a name and two references; every figure on
+   this screen is read from the products that own it.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* one option in either catalogue. `outcome` is the pairing this option
+   would form with the half already chosen — the only thing on the row
+   that belongs to neither product alone. */
+const pairOption = ({ name, when, meta, figs, on, accent, status, outcome }) => `
+<a href="#" class="${on ? "glass-sm" : "wash"}" style="display:block;padding:12px 14px;margin-bottom:8px;text-decoration:none;
+   ${on ? `box-shadow:0 0 0 1.5px ${accent}59, var(--sh-sm), inset 0 1px 0 rgba(255,255,255,.92)` : ""}">
+  <span style="display:flex;align-items:center;gap:9px">
+    <span style="width:15px;height:15px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;
+          ${on ? `background:${accent};color:#fff` : "box-shadow:inset 0 0 0 1.5px rgba(30,58,138,.2)"}">
+      ${on ? `<span style="width:5px;height:5px;border-radius:50%;background:#fff;display:block"></span>` : ""}
+    </span>
+    <span style="flex:1;min-width:0;font-size:13px;font-weight:${on ? "600" : "500"};color:var(--s900);
+          overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span>
+    ${status}
+    <span class="t-meta" style="flex:none">${when}</span>
+  </span>
+  <span class="t-meta" style="display:block;margin:5px 0 0 24px">${meta}</span>
+  <span style="display:flex;gap:16px;margin:9px 0 0 24px">
+    ${figs.map(([v, k]) => `<span style="min-width:0">
+      <span style="font-size:12.5px;font-weight:600;color:var(--s900);font-variant-numeric:tabular-nums">${v}</span>
+      <span class="t-meta" style="margin-left:5px">${k}</span></span>`).join("")}
+  </span>
+  <span style="display:flex;align-items:center;gap:8px;margin:9px 0 0 24px;padding-top:9px;border-top:1px solid var(--hair)">
+    ${outcome}
+  </span>
+</a>`;
+
+/* What an option ALREADY IS belongs with its identity; what it WOULD
+   PRODUCE belongs on its own line. Splitting them that way also keeps
+   every row one line tall, so the two catalogues stay in step.
+
+   Only the positive states are drawn. Most pairings are unsaved, so a
+   "Not saved" on four rows out of six is chrome that crowds out the two
+   marks that carry the signal — and the band underneath already names
+   the state of the pairing being built. */
+const pairStatus = (tid, sid) => {
+  const saved = savedAs(tid, sid);
+  if (!saved) return "";
+  return `<span style="flex:none;display:inline-flex;align-items:center;gap:6px">
+    ${isStale(tid, sid) ? staleTag() : ""}
+    <span class="cov"><i style="background:${SU}"></i>${saved.name}</span>
+  </span>`;
+};
+
+/* what this option would be worth in combination — or, when the pairing
+   has never been priced, the honest absence of a figure. */
+const pairOutcome = (tid, sid, otherLabel, priced) => {
+  if (!priced(tid, sid)) return `
+    <span class="t-meta" style="flex:1;min-width:0">With ${otherLabel} · <b style="font-weight:600;color:var(--s500)">no result yet</b></span>`;
+  const c = caseOf(tid, sid), stale = isStale(tid, sid);
+  const ink = stale ? "var(--s500)" : "var(--s900)";
+  return `
+    <span style="flex:1;min-width:0;font-size:11.5px;color:var(--s500)">
+      With ${otherLabel} <span style="color:var(--s400)">→</span>
+      <b style="font-weight:600;color:${ink};font-variant-numeric:tabular-nums">${c.irr.toFixed(1)}% IRR</b>
+      <span style="color:var(--s400)"> · </span>
+      <b style="font-weight:600;color:${ink};font-variant-numeric:tabular-nums">${eurMs(npvOfCase(c))} NPV</b>
+    </span>`;
+};
+
+/* the pairing the two choices make. Everything StoreBrid owns is known
+   as soon as the left column is chosen; the financial half is the one
+   that has to be computed — which is why the unpriced state can only
+   ever hollow out the right-hand figures. */
+const pairingBand = (tid, sid, priced) => {
+  const c = caseOf(tid, sid), ok = priced(tid, sid), saved = savedAs(tid, sid);
+  const fig = (k, v, sr, dim) => `
+    <span style="flex:1;min-width:0">
+      <span class="t-meta" style="display:block">${k}</span>
+      <span style="display:block;font-size:19px;font-weight:700;letter-spacing:-.02em;margin-top:5px;font-variant-numeric:tabular-nums;
+            color:${dim ? "var(--s300)" : "var(--s900)"}">${v}</span>
+      <span style="display:block;margin-top:6px">${sr}</span>
+    </span>`;
+  return `
+<div class="wash" style="padding:17px 19px;margin-top:16px">
+  <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap">
+    <span class="band" style="font-size:10px;color:var(--su700)">This pairing</span>
+    <span style="display:inline-flex;align-items:center;gap:7px">
+      <i style="width:5px;height:5px;border-radius:50%;background:${SB};display:block"></i>
+      <span style="font-size:13px;font-weight:600;color:var(--s900)">${c.t.short}</span>
+    </span>
+    <span style="font-size:12px;color:var(--s400)">×</span>
+    <span style="display:inline-flex;align-items:center;gap:7px">
+      <i style="width:5px;height:5px;border-radius:50%;background:${RN};display:block"></i>
+      <span style="font-size:13px;font-weight:600;color:var(--s900)">${c.sc.name}</span>
+    </span>
+    <span style="flex:1"></span>
+    ${saved ? `<span class="cov"><i style="background:${SU}"></i>Already saved as ${saved.name}</span>`
+            : `<span class="cov" style="opacity:.82">Unsaved combination</span>`}
+  </div>
+  <div style="display:flex;gap:24px;margin-top:15px">
+    ${fig("Capacity", c.t.mw + " MW / " + c.t.mwh + " MWh", src("storebrid"))}
+    ${fig("CAPEX", "€" + c.t.capex.toFixed(1) + "M", src("storebrid"))}
+    ${fig("NPV", ok ? eurMs(npvOfCase(c)) : "—", src("revenew"), !ok)}
+    ${fig("IRR", ok ? c.irr.toFixed(1) + "%" : "—", src("combined"), !ok)}
+  </div>
+  <p class="t-meta" style="margin-top:14px;line-height:1.55">
+    ${ok
+      ? `Read live from both products. Nothing here is copied into the case — reopening it re-reads ${c.t.short} from StoreBrid and ${c.sc.name} from ReveNew.`
+      : `The asset is known the moment the simulation is chosen: StoreBrid has already costed it. What is missing is the financial half — this combination has never been priced, so ReveNew computes it when the case is created and the figures fill in where the dashes are.`}
+  </p>
+</div>`;
+};
+
+const createAC = ({ tid = "v4h", sid = "high", name = "Long duration · strong market",
+                    priced = () => true } = {}) => {
+  const c = caseOf(tid, sid), ok = priced(tid, sid);
+  const column = ({ side, label, sub, items, more }) => {
+    const tech = side === "sb", accent = tech ? SB : RN;
+    return `
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+        <span style="font-size:12px;font-weight:600;color:var(--s700)">${label}<span style="color:var(--rv600);margin-left:3px">*</span></span>
+        <span style="flex:1"></span>${src(tech ? "storebrid" : "revenew")}
+      </div>
+      <div style="height:2px;border-radius:2px;margin-bottom:11px;
+           background:linear-gradient(90deg,${accent}66,${accent}14 78%,${accent}00)"></div>
+      ${items}
+      <div style="display:flex;align-items:center;gap:10px;margin-top:2px">
+        <span class="t-meta" style="flex:1;min-width:0">${sub}</span>
+        <button class="btn btn-ghost" style="height:28px;font-size:11.5px;padding:0 9px">${more}${ic("upRight", 13, 1.8)}</button>
+      </div>
+    </div>`;
+  };
   return capabilityModal({
     title: "Create analysis case", context: "Valencia BESS", accent: SU, source: src("suite"),
-    openIn: "Analysis cases", width: 640,
-    footNote: "Nothing is created in StoreBrid or ReveNew — this is a named pairing of what already exists.",
+    openIn: "Analysis cases", width: 900,
+    footNote: ok
+      ? "Nothing is created in StoreBrid or ReveNew — this is a named pairing of what already exists."
+      : "Nothing is created in StoreBrid or ReveNew. The pairing is saved now and priced when ReveNew finishes; the case shows its result the moment it lands.",
     cancel: "Cancel", confirm: "Create analysis case",
     body: `
-    <div style="padding:22px 24px">
-      ${field("Name", "Long duration · strong market", { req: true })}
-      <div style="display:flex;gap:16px">
-        ${field("Technical simulation", "Base case 2027 — 4 h duration", { req: true, chev: true, help: "StoreBrid · completed 1d ago" })}
-        ${field("Financial case", "High spread", { req: true, chev: true, help: "ReveNew · updated 1d ago" })}
+    <div style="padding:20px 24px">
+      ${field("Name", name, { req: true })}
+      <div style="display:flex;gap:20px;margin-top:6px">
+        ${column({ side: "sb", label: "Technical simulation",
+          sub: TECH.length + " simulations in this project",
+          more: "New simulation in StoreBrid",
+          items: TECH.map((t) => pairOption({
+            name: t.name, when: t.when, on: t.id === tid, accent: SB,
+            meta: `${t.mw} MW / ${t.mwh} MWh · ${t.dur.toFixed(1)} h · ${t.rte}% RTE`,
+            figs: [[t.gwh + " GWh", "discharged"], ["€" + t.capex.toFixed(1) + "M", "CAPEX"]],
+            status: pairStatus(t.id, sid), outcome: pairOutcome(t.id, sid, c.sc.name, priced),
+          })).join("") })}
+        <span style="width:1px;flex:none;background:var(--hair);margin-top:26px"></span>
+        ${column({ side: "rn", label: "Financial case",
+          sub: SCEN.length + " cases in this project",
+          more: "New case in ReveNew",
+          items: SCEN.map((s2) => {
+            const cc = caseOf(tid, s2.id);
+            return pairOption({
+              name: s2.name, when: s2.when.replace("Updated ", ""), on: s2.id === sid, accent: RN,
+              meta: `Capture €${s2.capture.toFixed(1)}/MWh · OMIE Spain`,
+              figs: priced(tid, s2.id)
+                ? [[eurM(cc.rev), "revenue/yr"], ["€" + cc.perMwh.toFixed(1), "per MWh"]]
+                : [["—", "revenue/yr"], ["—", "per MWh"]],
+              status: pairStatus(tid, s2.id), outcome: pairOutcome(tid, s2.id, c.t.short, priced),
+            });
+          }).join("") })}
       </div>
-      <div class="wash" style="padding:16px 18px;margin-top:6px">
-        <div class="band" style="font-size:10px">Summary</div>
-        <div style="display:flex;gap:26px;margin-top:14px">
-          ${[["Capacity", c.t.mw + " MW / " + c.t.mwh + " MWh", src("storebrid")],
-             ["CAPEX", "€" + c.t.capex.toFixed(1) + "M", src("storebrid")],
-             ["NPV", eurMs(npv), src("revenew")],
-             ["IRR", c.irr.toFixed(1) + "%", src("combined")]].map(([k, v, sr]) => `
-            <span style="flex:1;min-width:0">
-              <span class="t-meta" style="display:block">${k}</span>
-              <span style="display:block;font-size:18px;font-weight:700;color:var(--s900);margin-top:5px;font-variant-numeric:tabular-nums">${v}</span>
-              <span style="display:block;margin-top:6px">${sr}</span>
-            </span>`).join("")}
-        </div>
-      </div>
+      ${pairingBand(tid, sid, priced)}
     </div>`,
   });
 };
+
 writeFileSync("CreateAnalysisCase.dc.html",
   doc({ w: 1440, h: 2700, side: projectSide("compare"), body: alternativesBody(), overlay: createAC() }));
+console.log("CreateAnalysisCase.dc.html");
+
+/* §16b · The same screen where evaluating a combination costs something —
+   the architecture 2c is drawn against. Only pairings already saved as
+   cases were priced when they were named; the rest have no figure yet,
+   and the screen says so rather than drawing one. What changes is the
+   right-hand half of every reading: StoreBrid's side is known throughout. */
+writeFileSync("CreateCaseUnpriced.dc.html",
+  doc({ w: 1440, h: 2700, side: projectSide("compare"), body: alternativesBody(),
+        overlay: createAC({ priced: (t2, s2) => !!savedAs(t2, s2) }) }));
+console.log("CreateCaseUnpriced.dc.html");
+
+/* §16c · The landing. Creating a case had no visible consequence: the
+   modal closed and the user was returned to a matrix that looked exactly
+   as it had. The named cell, the strip that says what was created, and
+   the two moves worth making next are that consequence — and they close
+   the loop the flow left open.
+
+   Not a toast. Staleness taught the same lesson elsewhere in this set:
+   a condition that matters does not clear because someone glanced at it.
+   A case having just been created is worth stating until it is acted on. */
+const createdStrip = (a) => {
+  const c = acCase(a);
+  return `
+<div style="display:flex;align-items:center;gap:15px;margin-bottom:20px;padding:15px 19px;border-radius:var(--r-sm);
+     background:linear-gradient(168deg,rgba(14,157,168,.085),rgba(255,255,255,0) 74%);
+     box-shadow:inset 0 0 0 1px rgba(14,157,168,.22)">
+  <span style="flex:none;width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+        background:${SU};color:#fff">${ic("check", 15, 2.4)}</span>
+  <span style="flex:1;min-width:0">
+    <span style="display:block;font-size:13.5px;color:var(--s900);line-height:1.45">
+      <b style="font-weight:600">${a.name}</b> is now an analysis case — ${c.t.short} × ${c.sc.name}, created just now.
+    </span>
+    <span class="t-meta" style="display:block;margin-top:4px;line-height:1.5">
+      The Suite kept the name and the two references, nothing else. Its figures go on being read from StoreBrid and ReveNew,
+      so the case follows them instead of freezing a copy of them.
+    </span>
+  </span>
+  ${/* Both secondary on purpose. The strip reports something already done;
+        a primary button here would imply the task is still open, and
+        "Use as current analysis" is drawn as a secondary in Compare too. */""}
+  <button class="btn btn-secondary" style="flex:none;height:34px;font-size:12.5px">${ic("plus", 15, 1.9)}Add to comparison</button>
+  <button class="btn btn-secondary" style="flex:none;height:34px;font-size:12.5px">${ic("gauge", 15)}Use as current analysis</button>
+</div>`;
+};
+
+const NEWAC = { id: "long", name: "Long duration · strong market", tid: "v4h", sid: "high",
+                goal: "Evaluate more storage in a strong market", when: "Created just now" };
+ACASES.push(NEWAC);
+writeFileSync("CaseCreated.dc.html", doc({ w: 1440, h: 3290, side: projectSide("cases"),
+  body: casesBody({ mk: "irr", sel: { tid: "v4h", sid: "high" }, created: NEWAC }) }));
+ACASES.pop();
+console.log("CaseCreated.dc.html");
 
 /* ═══════════════════════════════════════════════════════════════
    §13-§17 · DECISION BRIEF
@@ -8883,6 +9094,8 @@ const PAGES = [
      ["OverviewTechnical.dc.html", 1440, 2670, "6 · Technical details"]],
     [["FinancialDetails.dc.html", 1440, 1160, "7 · Financial details"],
      ["CreateAnalysisCase.dc.html", 1440, 2820, "8 · Create analysis case"],
+     ["CaseCreated.dc.html", 1440, 3370, "8b · Analysis case created"],
+     ["CreateCaseUnpriced.dc.html", 1440, 2820, "8c · Create — pairing not priced"],
      ["CompareExplained.dc.html", 1440, 1675, "9 · Explain difference"]],
     [["OverviewStale.dc.html", 1440, 2760, "10 · Financial results outdated"],
      ["EditProjectDetails.dc.html", 1440, 2670, "11 · Project details"]],
@@ -8907,7 +9120,7 @@ const PAGES = [
     [["States.dc.html", 1440, 850, "Empty and unavailable"],
      ["Administration.dc.html", 1440, 1200, "Administration & licences"],
      ["SourceAttribution.dc.html", 860, 1130, "Patterns"]],
-    [["Flows.dc.html", 1440, 1580, "End-to-end flows"]],
+    [["Flows.dc.html", 1440, 1760, "End-to-end flows"]],
   ]},
 ];
 
@@ -8923,7 +9136,9 @@ const NOTES = {
   "OverviewStale.dc.html": ["n-stale", "6 · OUT OF SYNC\n\nThe state that two engines make necessary. The simulation was re-run 12 minutes ago; the financial case was last calculated 4 hours ago, so the figures below are the earlier calculation.\n\nIt names what changed, which side is behind, and where to fix it. The rest of the page still renders — hiding the numbers would be worse than labelling them."],
   "OverviewTechnical.dc.html": ["n-techdet", "4 · TECHNICAL DETAILS\n\nProgressive disclosure instead of a Technical Results page. Configuration, operation, degradation and the dispatch chart — read-only, one level down from the KPIs that prompted the question.\n\nThe rule this drawer encodes: the Suite shows enough to understand why you might open StoreBrid. It does not try to be StoreBrid."],
   "FinancialDetails.dc.html": ["n-findet", "5 · FINANCIAL BREAKDOWN\n\nThe financial counterpart: Forecast, Energy, Revenue, Costs and Financial Model in one read-only drawer.\n\nThis is where ReveNew's internal structure is allowed to appear — as supporting detail explaining a number, never as navigation. Nothing here is editable; the only action is Open in ReveNew."],
-  "CreateAnalysisCase.dc.html": ["n-createac", "8 · CREATE ALTERNATIVE\n\nA name and two selectors. The summary is read live from both products.\n\nAn analysis case is the only object the Suite owns, and it is deliberately thin — no wizard, no CRUD module, no navigation section. It is a saved combination, nothing more."],
+  "CreateAnalysisCase.dc.html": ["n-createac", "8 · CREATE AN ANALYSIS CASE\n\nCHANGED. This was a name and two closed dropdowns, which put the one moment where the two products actually meet behind two clicks that showed nothing. Both catalogues are open now, side by side, each in its owner's colour — the only screen in the set where StoreBrid and ReveNew face each other as equals, because that symmetry is what the act is.\n\nEvery option carries what it would produce AGAINST THE HALF ALREADY CHOSEN: pick the 4 h variant and each financial case shows the IRR and NPV that pairing would have. Choosing stops being a guess followed by a check.\n\nIt also shows what already exists, so nobody recreates it. Base market is already High storage; Low spread is already Stress test, and outdated. The band underneath reads the pairing that results.\n\nStill deliberately thin: one step, no wizard, no CRUD module, no draft. The Suite writes down a name and two references — the name is the only thing on the screen neither product already holds. Creating one in StoreBrid or ReveNew stays in StoreBrid or ReveNew, and the two footers say so.\n\nThe matrix explores all nine combinations; this picker shows the three-plus-three slice around the choice being made. They answer different questions and neither replaces the other."],
+  "CaseCreated.dc.html": ["n-accreated", "8b · ANALYSIS CASE CREATED\n\nNEW — the end of the flow, which had none. Creating a case closed a modal and returned the user to a matrix that looked exactly as it had; nothing said what had happened or what to do about it.\n\nThe cell now carries the name, Compare counts four, and the strip states the consequence in the Suite's own terms: the name and the two references were kept, nothing else — the figures go on being read from both products, so the case follows them instead of freezing a copy.\n\nDeliberately not a toast. Staleness taught the same lesson elsewhere in this set: a condition worth stating does not clear because someone glanced at it. It stays until one of the two moves worth making is made — carry it into Compare, or make it the current analysis and let Overview read from it."],
+  "CreateCaseUnpriced.dc.html": ["n-acunpriced", "8c · CREATE — PAIRING NOT PRICED\n\nThe same screen under the architecture 2c is drawn against: where evaluating a combination costs something. Only pairings already saved as cases were priced when they were named, so the rest have no figure yet and the screen draws none.\n\nWhat changes is exactly one half of every reading. StoreBrid's side is known throughout — the asset is costed the moment the simulation is chosen — and it is the financial half that hollows out. That asymmetry is the dependency between the two products, drawn rather than described.\n\nCreation is still allowed. A case is a named reference, not a copy of a result, so naming an unpriced pairing is legitimate: ReveNew computes it and the figures fill in where the dashes are. The footer says so instead of blocking the action.\n\nAs with 2c, this exists so the product can ship against either backend model without a redesign."],
   "CompareAlternatives.dc.html": ["n-compare", "3 · COMPARE — where the decision is made\n\nRestructured for hierarchy: decision summary, deltas, technical → financial decomposition. The full metrics table is no longer part of this page — it is collapsed behind \"Show all metrics\" and opens as its own detail level. Nothing analytical was removed; the competition for the reader's attention was.\n\nThe freshness rule matters most here. Stress test's financial result predates the technical change, so it carries an Outdated tag, is excluded from the deterministic Best NPV / Best IRR / Lowest CAPEX conclusions, and the amber line says so. A stale result is never quietly labelled best.\n\n\"Use as current analysis\" appears when a case is selected — compare, choose, and Overview follows\n\nCHANGED. Each comparison block now opens with the trade-off in its shortest form — Requires −> Produces — and closes with a TRADE-OFF reading selected from the figures, never written: it tests the sign of the NPV move against the size of the IRR move, so it cannot claim more than the numbers support.\n\nFor High storage it reads that the extra capital adds absolute value without materially changing how hard the money works. For Stress test, that no capital is committed at all and the whole difference is what the market view is worth on the asset already built.\n\nCHANGED. The All combinations tab is gone. It duplicated the case matrix, and having two places to browse the same nine pairings blurred what each screen was for. Compare now has one continuous view and works only on saved analysis cases; exploring the full set is the matrix, and the subtitle links there.\n\nEach delta block also gained its own Explain difference entry, so someone who arrives straight at Compare can open the decomposition for one specific trade-off without going back to the matrix first."],
   "ProjectFinancial.dc.html": ["n-projfin", "4 · FINANCIALS\n\nScenarios became Financials. ReveNew has Forecast, Energy, Revenue, DevEx, CapEx, OpEx and Financial Model scenarios inside it; exposing that structure in the Suite would have been reproducing ReveNew.\n\nInstead: the five decision figures at the top, the financial case switcher above them, and CASE COMPOSITION underneath — the ReveNew scenarios this case selects, read-only, so a number can be traced without opening the model.\n\nThe line under the KPIs is the cross-product point: this result is priced against Base case 2027. A different simulation gives a different CAPEX and a different NPV."],
   "CasesBaseline.dc.html": ["n-casesbase", "ANALYSIS BASELINE MOVED\n\nThe same nine cases, read from 4 h variant + High spread instead of the project's own case.\n\nNothing was re-run, no scenario was edited and no value moved — only the reference the deltas count from. Every delta has flipped sign, and the question the page answers has flipped with it: not \"what does the 4 h buy us\" but \"what do we give up by not building it\".\n\nThe control says it is not the project baseline and offers the way back. That is the whole safety model for this feature."],
