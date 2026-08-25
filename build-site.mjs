@@ -194,14 +194,39 @@ ${FIT(b.w)}
 }
 
 /* ── Los siete recorridos de Flows.dc.html, como puntos de entrada ── */
+/* Cada recorrido lleva la pregunta que lo desencadena y lo que resuelve.
+   Los pasos por sí solos decían a dónde se va, nunca por qué merece la pena
+   ir: quien abre el índice sin contexto veía siete títulos y una lista de
+   pantallas. La descripción es la razón de ser, y está anclada en lo que la
+   pantalla enseña de verdad — no es un resumen del título con otras palabras. */
 const FLOWS = [
-  ["Revisar el proyecto", "¿Qué está pasando ahora mismo?", ["Main","ProjectOverview"]],
-  ["Análisis técnico", "¿Cómo se comportó esta configuración?", ["ProjectOverview","OverviewTechnical"]],
-  ["Análisis financiero", "¿Y bajo otras hipótesis de mercado?", ["ProjectOverview","OverviewChangeScenario"]],
-  ["Iteración técnica rápida", "¿Y si fuera una batería de 4 h?", ["ProjectOverview","OverviewChangeSim","CaseMatrix"]],
-  ["Iteración financiera rápida", "¿Y si la captura subiera un 4%?", ["CaseMatrix","OverviewStale","ProjectOverview"]],
-  ["Decisión entre productos", "¿Se justifica la inversión extra?", ["CaseMatrix","CompareAlternatives","CompareAllMetrics"]],
-  ["Nombrar un emparejamiento", "Esta combinación merece guardarse", ["CaseMatrix","CreateAnalysisCase","CaseCreated"]],
+  ["Revisar el proyecto", "¿Qué está pasando ahora mismo?",
+   "Un proyecto vive repartido entre dos productos, así que saber en qué se está trabajando obligaba a abrir los dos. Overview nombra el emparejamiento activo, sus dos mitades con su procedencia y su frescura, y la cifra que producen juntas.",
+   ["Main","ProjectOverview"]],
+
+  ["Análisis técnico", "¿Cómo se comportó esta configuración?",
+   "Tres gráficos y seis KPIs, y nada más: los diarios, los mapas de calor y las exportaciones se quedan en StoreBrid. La Suite enseña lo justo para entender por qué querrías abrirlo, sin intentar ser StoreBrid.",
+   ["ProjectOverview","OverviewTechnical"]],
+
+  ["Análisis financiero", "¿Y bajo otras hipótesis de mercado?",
+   "Cambiar el caso financiero sin tocar el activo. Al mover sólo esa mitad del emparejamiento se ve qué parte del resultado la decide el mercado y no la ingeniería.",
+   ["ProjectOverview","OverviewChangeScenario"]],
+
+  ["Iteración técnica rápida", "¿Y si fuera una batería de 4 h?",
+   "El único punto donde la Suite escribe en StoreBrid, y escribe un hermano: la simulación base no se modifica, así que los casos ya construidos sobre ella siguen siendo válidos y comparables con los nuevos.",
+   ["ProjectOverview","OverviewChangeSim","CaseMatrix"]],
+
+  ["Iteración financiera rápida", "¿Y si la captura subiera un 4%?",
+   "El espejo del anterior. Reeditar la curva en ReveNew marca como obsoletos los casos que dependían de ella y no relanza nada técnico: la dependencia sólo apunta en un sentido, y la interfaz lo dice en vez de recalcularlo todo por si acaso.",
+   ["CaseMatrix","OverviewStale","ProjectOverview"]],
+
+  ["Decisión entre productos", "¿Se justifica la inversión extra?",
+   "La razón de ser de la Suite. Ninguno de los dos productos puede dibujar esta cadena solo: StoreBrid sabe qué hace el activo pero no lo que gana; ReveNew, lo que gana pero no lo que costó construirlo. El trade-off sólo existe donde se encuentran.",
+   ["CaseMatrix","CompareAlternatives","CompareAllMetrics"]],
+
+  ["Nombrar un emparejamiento", "¿Cómo guardo esta combinación?",
+   "Lo único que la Suite crea. Los dos catálogos se abren a la vez y cada opción muestra lo que produciría contra la mitad ya elegida; el nombre es el único campo, porque es lo único que ninguno de los dos productos guarda ya.",
+   ["CaseMatrix","CreateAnalysisCase","CaseCreated"]],
 ];
 
 /* ── Índice ── */
@@ -245,6 +270,7 @@ writeFileSync(`${OUT}/index.html`, `<!doctype html>
     box-shadow:0 10px 28px -10px rgba(37,99,235,.5)}
   h2{font:600 13px/1 Inter,sans-serif;text-transform:uppercase;letter-spacing:.09em;
     color:var(--mut);margin:40px 0 14px}
+  .lead{margin:-4px 0 18px;color:var(--mut);font-size:14.5px;line-height:1.6;max-width:76ch}
   .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
   .card{display:flex;flex-direction:column;gap:4px;padding:16px 18px;border-radius:14px;
     background:rgba(255,255,255,.82);border:1px solid var(--line);text-decoration:none;color:inherit;
@@ -253,16 +279,28 @@ writeFileSync(`${OUT}/index.html`, `<!doctype html>
   .card .n{font:600 11px/1 Inter,sans-serif;color:var(--su);letter-spacing:.08em}
   .card .ttl{font-weight:600;font-size:15px}
   .card .dim{font-size:12px;color:var(--mut)}
-  .flows{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));margin-bottom:8px}
-  .flow{display:flex;flex-direction:column;gap:5px;padding:18px 20px;border-radius:16px;
+  /* Dos columnas, no tres: con la descripción, una columna de 320px parte
+     cada frase en cinco líneas y la tarjeta deja de leerse de un vistazo. */
+  .flows{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(430px,1fr));margin-bottom:8px}
+  .flow{display:flex;flex-direction:column;padding:20px 22px;border-radius:16px;
     text-decoration:none;color:inherit;border:1px solid var(--line);
     background:linear-gradient(150deg,rgba(37,99,235,.06),rgba(14,157,168,.05)),rgba(255,255,255,.9);
     box-shadow:0 2px 10px -4px rgba(30,58,138,.12);transition:transform .18s cubic-bezier(.22,.61,.36,1),box-shadow .18s}
   .flow:hover{transform:translateY(-2px);box-shadow:0 18px 40px -20px rgba(30,58,138,.34);border-color:rgba(37,99,235,.30)}
   .flow .fn{font:600 11px/1 Inter,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--b600)}
-  .flow .ttl{font:600 17px/1.3 'DM Sans',Inter,sans-serif}
-  .flow .q{color:var(--mut);font-size:14px}
-  .flow .steps{margin-top:6px;font-size:12px;color:var(--su);font-weight:500}
+  .flow .ttl{font:600 17px/1.3 'DM Sans',Inter,sans-serif;margin-top:6px}
+  /* La pregunta es la voz de quien usa el producto; la descripción es la
+     respuesta del diseño. Se separan por peso y color, sin cursiva: siete
+     párrafos en cursiva seguidos se leen peor, no mejor. */
+  .flow .q{margin-top:7px;font-size:14.5px;font-weight:500;color:var(--ink)}
+  .flow .why{margin-top:9px;font-size:13.5px;line-height:1.6;color:var(--mut)}
+  /* Al fondo de la tarjeta: margin-top auto alinea los recorridos de una
+     misma fila aunque las descripciones tengan distinto largo. */
+  .flow .steps{margin-top:auto;padding-top:14px;font-size:12px;color:var(--su);font-weight:500;
+    display:flex;align-items:baseline;gap:9px}
+  .flow .steps b{font-weight:500;color:var(--mut);flex:none}
+  .flow .steps span{min-width:0}
+  .flow .rule{margin-top:16px;height:1px;background:var(--line)}
   footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--line);color:var(--mut);font-size:13px}
 </style>
 </head>
@@ -271,7 +309,7 @@ writeFileSync(`${OUT}/index.html`, `<!doctype html>
   <h1>Sunveon Suite</h1>
   <p class="sub">Prototipo navegable de la integración de experiencia entre StoreBrid (ingeniería)
   y ReveNew (financiero). ${boards.length} pantallas cableadas entre sí: se pulsa y se avanza,
-  como en la aplicación real. Empieza por un recorrido o entra por cualquier pantalla.</p>
+  como en la aplicación real.</p>
 
   <div class="cta">
     <a class="primary" href="./canvas.html">Abrir el lienzo completo</a>
@@ -279,12 +317,17 @@ writeFileSync(`${OUT}/index.html`, `<!doctype html>
   </div>
 
   <h2>Los siete recorridos</h2>
+  <p class="lead">Cada pantalla del prototipo existe para servir a uno de estos. Cada recorrido
+  arranca de una pregunta real de quien usa el producto y dice qué resuelve; empieza por el
+  que se parezca a la tuya.</p>
   <div class="flows">
-${FLOWS.map(([n, q, steps], i) => `    <a class="flow" href="./screens/${steps[0]}.html">
+${FLOWS.map(([n, q, why, steps], i) => `    <a class="flow" href="./screens/${steps[0]}.html">
       <span class="fn">Flujo ${i + 1}</span>
       <span class="ttl">${esc(n)}</span>
       <span class="q">${esc(q)}</span>
-      <span class="steps">${steps.map(sl => esc(byslug[sl].title)).join(" → ")}</span>
+      <span class="why">${esc(why)}</span>
+      <span class="rule"></span>
+      <span class="steps"><b>${steps.length} pantallas</b><span>${steps.map(sl => esc(byslug[sl].title)).join(" → ")}</span></span>
     </a>`).join("\n")}
   </div>
 
